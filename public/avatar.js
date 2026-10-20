@@ -5,7 +5,12 @@ import {GLTFLoader} from 'https://cdn.jsdelivr.net/npm/three@0.169.0/examples/js
 export const TEAM_COLORS={vermelho:'#d32f2f',amarelo:'#f4c20d'};
 export const OUTFITS=['camisa','terno-faixa'];
 export const ACESSORIOS=['nenhum','bone','chapeu','oculos','megafone'];
-export const DEFAULT_LOOK={team:'vermelho',outfit:'camisa',pele:'#c99a74',cabelo:'#2b1d14',calca:'#28324a',terno:'#2b2f36',acessorio:'nenhum'};
+// Corpos base semi-realistas (gerados no Higgsfield). Arquivos em /assets/bases/<base>-<time>.glb.
+export const BASES=[
+ {id:'boneco',nome:'Boneco'},{id:'homem',nome:'Homem'},{id:'mulher',nome:'Mulher'},
+ {id:'idoso',nome:'Idoso'},{id:'idosa',nome:'Idosa'}
+];
+export const DEFAULT_LOOK={base:'boneco',team:'vermelho',outfit:'camisa',pele:'#c99a74',cabelo:'#2b1d14',calca:'#28324a',terno:'#2b2f36',acessorio:'nenhum'};
 const HEX=/^#[0-9a-f]{6}$/i;
 
 export function sanitizeLook(look={}){
@@ -14,6 +19,7 @@ export function sanitizeLook(look={}){
  if(OUTFITS.includes(look.outfit))out.outfit=look.outfit;
  for(const k of ['pele','cabelo','calca','terno'])if(HEX.test(look[k]||''))out[k]=look[k].toLowerCase();
  if(ACESSORIOS.includes(look.acessorio))out.acessorio=look.acessorio;
+ if(BASES.some(b=>b.id===look.base))out.base=look.base;
  return out;
 }
 
@@ -23,8 +29,8 @@ function part(geo,material,x,y,z,parent){const m=new THREE.Mesh(geo,material);m.
 // Monta (ou remonta) o boneco dentro do grupo. Medidas em metros, altura ~2,2.
 export function dressAvatar(group,lookIn){
  const look=sanitizeLook(lookIn);
- const keepImported=group.userData.imported;
- for(const child of [...group.children])if(child!==keepImported)group.remove(child);
+ const keep=new Set([group.userData.imported,group.userData.baseModel].filter(Boolean));
+ for(const child of [...group.children])if(!keep.has(child))group.remove(child);
  const rig=new THREE.Group();rig.name='rig';group.add(rig);
  const team=TEAM_COLORS[look.team];
  const suit=look.outfit==='terno-faixa';
@@ -80,13 +86,59 @@ export function dressAvatar(group,lookIn){
  }
  group.userData.look=look;
  group.userData.legs=legs;group.userData.arms=arms;group.userData.rig=rig;
- rig.visible=!keepImported;
+ applyBase(group,look);
+ refreshVisibility(group);
  return group;
+}
+
+// Quem aparece: modelo importado (só local) > corpo base > boneco.
+function refreshVisibility(group){
+ const {imported,baseModel,rig}=group.userData;
+ if(baseModel)baseModel.visible=!imported;
+ if(rig)rig.visible=!imported&&!baseModel;
+}
+function normalize(model,altura){
+ const box=new THREE.Box3().setFromObject(model);
+ const size=box.getSize(new THREE.Vector3());
+ if(!size.y||!Number.isFinite(size.y))throw new Error('Modelo sem geometria visível.');
+ model.scale.setScalar(altura/size.y);
+ const box2=new THREE.Box3().setFromObject(model);
+ const c=box2.getCenter(new THREE.Vector3());
+ model.position.set(-c.x,-box2.min.y,-c.z);
+}
+const baseCache=new Map();
+export const baseStatus=new Map(); // chave -> 'ok' | 'faltando'
+function loadBase(key){
+ if(!baseCache.has(key)){
+  baseCache.set(key,new GLTFLoader().loadAsync('/assets/bases/'+key+'.glb')
+   .then(g=>{baseStatus.set(key,'ok');return g.scene})
+   .catch(()=>{baseStatus.set(key,'faltando');return null}));
+ }
+ return baseCache.get(key);
+}
+async function applyBase(group,look){
+ const key=look.base==='boneco'?null:look.base+'-'+look.team;
+ group.userData.baseKey=key;
+ if(group.userData.baseModel&&group.userData.baseModel.userData.key!==key){group.remove(group.userData.baseModel);group.userData.baseModel=null}
+ if(!key||group.userData.baseModel){refreshVisibility(group);return}
+ const scene=await loadBase(key);
+ if(!scene||group.userData.baseKey!==key){refreshVisibility(group);return}
+ const model=scene.clone(true);
+ try{normalize(model,look.base.startsWith('idos')?2.0:2.15)}catch{return}
+ const holder=new THREE.Group();holder.add(model);holder.name='base';holder.userData.key=key;
+ group.add(holder);group.userData.baseModel=holder;
+ refreshVisibility(group);
 }
 
 // Caminhada procedural: balança pernas e braços; parado, respira de leve.
 export function animateAvatar(group,moving,t){
- const {legs,arms,rig,imported,mixer,clips}=group.userData;
+ const {legs,arms,rig,imported,baseModel,mixer,clips}=group.userData;
+ if(!imported&&baseModel){
+  // Modelos base ainda sem esqueleto: passo com leve balanço.
+  baseModel.position.y=moving?Math.abs(Math.sin(t*9))*.06:0;
+  baseModel.rotation.z=moving?Math.sin(t*9)*.04:0;
+  return;
+ }
  if(imported){
   if(mixer&&clips){
    const want=moving?(clips.walk||clips.idle):(clips.idle||clips.walk);
@@ -111,18 +163,11 @@ export async function importModel(group,file){
  const buffer=await file.arrayBuffer();
  const gltf=await new Promise((res,rej)=>new GLTFLoader().parse(buffer,'',res,rej));
  const model=gltf.scene;
- // Normaliza: altura de 2,2 m, pés no chão, centralizado.
- const box=new THREE.Box3().setFromObject(model);
- const size=box.getSize(new THREE.Vector3());
- if(!size.y||!Number.isFinite(size.y))throw new Error('Modelo sem geometria visível.');
- model.scale.setScalar(2.2/size.y);
- const box2=new THREE.Box3().setFromObject(model);
- const center=box2.getCenter(new THREE.Vector3());
- model.position.set(-center.x,-box2.min.y,-center.z);
+ normalize(model,2.2); // altura de 2,2 m, pés no chão, centralizado
  const holder=new THREE.Group();holder.add(model);holder.name='imported';
  removeImported(group);
  group.add(holder);group.userData.imported=holder;
- if(group.userData.rig)group.userData.rig.visible=false;
+ refreshVisibility(group);
  // Se o modelo tiver animações, tenta achar "walk"/"idle" pelo nome.
  if(gltf.animations.length){
   const mixer=new THREE.AnimationMixer(model);
@@ -137,5 +182,5 @@ export function removeImported(group){
  const old=group.userData.imported;
  if(old)group.remove(old);
  group.userData.imported=null;group.userData.mixer=null;group.userData.clips=null;group.userData.current=null;
- if(group.userData.rig)group.userData.rig.visible=true;
+ refreshVisibility(group);
 }

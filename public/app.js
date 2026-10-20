@@ -1,7 +1,7 @@
 import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.169.0/build/three.module.js';
 import {GLTFLoader} from 'https://cdn.jsdelivr.net/npm/three@0.169.0/examples/jsm/loaders/GLTFLoader.js';
 import {OrbitControls} from 'https://cdn.jsdelivr.net/npm/three@0.169.0/examples/jsm/controls/OrbitControls.js';
-import {dressAvatar,animateAvatar,importModel,removeImported,sanitizeLook,TEAM_COLORS} from './avatar.js';
+import {dressAvatar,animateAvatar,importModel,removeImported,sanitizeLook,TEAM_COLORS,BASES,baseStatus} from './avatar.js';
 
 const canvas=document.querySelector('#world');
 const scene=new THREE.Scene();
@@ -203,6 +203,7 @@ document.querySelector('#enter').addEventListener('click',()=>{
 });
 // ---------- Criador de personagem ----------
 const creator={
+ base:document.querySelector('#base'),cards:document.querySelector('#base-cards'),
  team:document.querySelector('#team'),outfit:document.querySelector('#outfit'),
  pele:document.querySelector('#cor-pele'),cabelo:document.querySelector('#cor-cabelo'),
  calca:document.querySelector('#cor-calca'),terno:document.querySelector('#cor-terno'),
@@ -210,9 +211,25 @@ const creator={
  remove:document.querySelector('#remove-model'),info:document.querySelector('#import-info'),
  preview:document.querySelector('#avatar-preview')
 };
-function fillCreator(){for(const k of ['team','outfit','pele','cabelo','calca','terno','acessorio'])creator[k].value=myLook[k]}
+const LOOK_KEYS=['base','team','outfit','pele','cabelo','calca','terno','acessorio'];
+function fillCreator(){for(const k of LOOK_KEYS)creator[k].value=myLook[k];paintCards()}
+// Cartões de corpo base, com foto quando o arquivo existe em /assets/bases.
+function paintCards(){
+ creator.cards.replaceChildren(...BASES.map(b=>{
+  const btn=document.createElement('button');btn.type='button';btn.className='base-card';btn.setAttribute('role','radio');
+  btn.setAttribute('aria-checked',String(myLook.base===b.id));
+  const thumb=document.createElement('span');thumb.className='thumb';
+  if(b.id==='boneco')thumb.textContent='🧍';
+  else{const img=new Image();img.alt='';img.src='/assets/bases/'+b.id+'-'+myLook.team+'.png';img.onerror=()=>{img.remove();thumb.textContent='👤'};thumb.append(img)}
+  btn.append(thumb,document.createTextNode(b.nome));
+  btn.addEventListener('click',()=>{creator.base.value=b.id;readCreator()});
+  return btn;
+ }));
+}
 function readCreator(){
- myLook=sanitizeLook(Object.fromEntries(['team','outfit','pele','cabelo','calca','terno','acessorio'].map(k=>[k,creator[k].value])));
+ myLook=sanitizeLook(Object.fromEntries(LOOK_KEYS.map(k=>[k,creator[k].value])));
+ paintCards();
+ setTimeout(baseNotice,1500);
  dressAvatar(player,myLook);dressAvatar(previewAvatar,myLook);saveLook();
  if(entered)send({type:'look',look:myLook});
 }
@@ -237,7 +254,11 @@ function renderPreview(t){
 let previewWalking=false;
 document.querySelector('#preview-walk').addEventListener('click',e=>{previewWalking=!previewWalking;e.currentTarget.textContent=previewWalking?'Parar':'Ver andando'});
 fillCreator();
-for(const k of ['team','outfit','pele','cabelo','calca','terno','acessorio'])creator[k].addEventListener('input',readCreator);
+for(const k of LOOK_KEYS.slice(1))creator[k].addEventListener('input',readCreator);
+function baseNotice(){
+ const key=myLook.base+'-'+myLook.team;
+ if(myLook.base!=='boneco'&&baseStatus.get(key)==='faltando')creator.info.textContent='O modelo "'+key+'.glb" ainda não está em public/assets/bases. Rode scripts/baixar-modelos.sh; até lá aparece o boneco.';
+}
 creator.file.addEventListener('change',async()=>{
  const file=creator.file.files[0];if(!file)return;
  creator.info.textContent='Carregando '+file.name+'…';
