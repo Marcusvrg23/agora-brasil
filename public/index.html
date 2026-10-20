@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#071522">
+<meta name="description" content="Ágora Brasil: praça cívica virtual 3D, independente e gratuita.">
+<title>Ágora Brasil — Brasília 3D</title>
+<link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+<header class="topbar">
+ <div class="brand"><div class="brandicon">A</div><div><strong>ÁGORA <span>BRASIL</span></strong><small>PRAÇA CÍVICA VIRTUAL · VERSÃO 0.3</small></div></div>
+ <div class="status"><span class="dot" id="status-dot"></span><span id="status-label">Conectando…</span><b id="live-count">0 online</b></div>
+</header>
+<main>
+ <section class="world-wrap" aria-label="Cenário 3D interativo de Brasília">
+  <canvas id="world"></canvas>
+  <div class="scene-label"><span class="tag">CENÁRIO EM DESENVOLVIMENTO</span><h1>Esplanada dos Ministérios</h1><p>Congresso Nacional · Brasília / DF</p></div>
+  <div class="world-tips" id="world-tips">Arraste para olhar · WASD para movimentar · rolagem para zoom</div>
+  <div class="world-footer"><span id="model-status">Carregando Brasília 3D…</span><span>Modelo arquitetônico estilizado · não georreferenciado</span></div>
+  <div class="mobile-controls" aria-label="Controles de movimento"><button id="up" aria-label="Avançar">↑</button><div><button id="left" aria-label="Esquerda">←</button><button id="down" aria-label="Recuar">↓</button><button id="right" aria-label="Direita">→</button></div></div>
+ </section>
+ <aside class="sidebar">
+  <div class="panel intro">
+   <div class="eyebrow">BRASÍLIA É A PRIMEIRA PRAÇA</div>
+   <h2>Sua voz tem lugar aqui.</h2>
+   <p>Entre gratuitamente, caminhe pela praça virtual e converse com outros participantes. Nenhuma filiação ou lado político é exigido.</p>
+   <label for="nickname">Seu apelido</label><input id="nickname" maxlength="24" placeholder="Como quer aparecer?" value="Visitante">
+   <label for="city">Sala</label>
+   <select id="city"><option value="5300108">Brasília · DF</option><option value="3550308">São Paulo · SP (cenário Brasília)</option><option value="3304557">Rio de Janeiro · RJ (cenário Brasília)</option><option value="3106200">Belo Horizonte · MG (cenário Brasília)</option></select>
+   <button id="enter" class="primary">Entrar na manifestação gratuita</button>
+   <div class="fineprint">Todas as salas usam, por enquanto, o mesmo cenário de Brasília. Outras cidades ainda não foram modeladas.</div>
+  </div>
+  <div class="panel chat"><div class="chat-head"><div><div class="eyebrow">CONVERSA EM TEMPO REAL</div><h2>Chat da praça</h2></div><span id="room-label" class="pill">Brasília</span></div>
+   <div id="messages" class="messages" role="log" aria-live="polite"><div class="system">Conecte-se para conversar. Sem login e sem cobrança.</div></div>
+   <form id="chat-form"><input id="chat-input" maxlength="180" placeholder="Diga um oi…" autocomplete="off" aria-label="Mensagem de chat"><button aria-label="Enviar mensagem">➤</button></form>
+  </div>
+  <div class="panel footer-panel"><strong>Sobre o projeto</strong><p>Uma experiência cívica independente, plural e experimental. Não é uma plataforma oficial do Congresso Nacional.</p><a href="https://github.com/Marcusvrg23/agora-brasil" target="_blank" rel="noopener noreferrer">Código-fonte público ↗</a></div>
+ </aside>
+</main>
+<script type="module" src="/app.js"></script>
+</body>
+</html>

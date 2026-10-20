@@ -1,0 +1,40 @@
+name: Importar cena Blender original (Higgsfield)
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/import-blender.yml"
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  download-blender:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Download dos arquivos produzidos no Higgsfield 3D Jutsu
+        run: |
+          set -euo pipefail
+          url="https://d2ol7oe51mr4n9.cloudfront.net/user_3KLobL96cAs3bokj0G7CRMHMham/a2a99edf-f264-41b3-850c-21efcb5df5a1.zip?download=agora-brasil-congresso-esplanada-blender-v4.zip"
+          curl -fsSL --retry 3 "$url" -o /tmp/higgsfield-scene.zip
+          echo "SHA256 download:"
+          sha256sum /tmp/higgsfield-scene.zip
+          unzip -l /tmp/higgsfield-scene.zip
+          mkdir -p public/assets assets/blender previews
+          unzip -p /tmp/higgsfield-scene.zip agora-final-v4/agora-brasil-v4.glb > public/assets/brasilia-v4.glb
+          unzip -p /tmp/higgsfield-scene.zip agora-final-v4/agora-brasil-v4.blend > assets/blender/agora-brasil-v4.blend
+          unzip -p /tmp/higgsfield-scene.zip agora-final-v4/previews/congresso-hero.png > previews/congresso-hero.png
+          unzip -p /tmp/higgsfield-scene.zip agora-final-v4/previews/esplanada-vista-aerea.png > previews/esplanada.png
+          unzip -p /tmp/higgsfield-scene.zip agora-final-v4/previews/personagens-animacao-quadro13.png > previews/avatares-caminhando.png
+          test "$(stat -c%s public/assets/brasilia-v4.glb)" -gt 1000000
+          test "$(stat -c%s assets/blender/agora-brasil-v4.blend)" -gt 1000000
+      - name: Publicar arquivos com histórico versionado
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add assets/blender public/assets previews
+          if ! git diff --cached --quiet; then
+            git commit -m "assets: importar Blender 5.2 e GLB da Esplanada [skip ci]"
+            git push
+          fi
