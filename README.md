@@ -49,7 +49,7 @@ As salas para outros municípios **ainda compartilham o cenário experimental de
 - A interface não oferece pagamentos. Skins políticas são possibilidade futura sujeita a avaliação jurídica, especialmente em período eleitoral.
 - Os modelos foram criados para este projeto; nenhum código, modelo proprietário ou ortofoto do Google Maps ou manifestacao.com foi incorporado.
 - Pendente: material mais realista, escala/colisão precisas, sincronizar animação escolhida por usuário, mobile QA e implantação escalável.
-- Este código é divulgado para inspeção pública; a concessão de licença para redistribuição não está definida. Antes de reutilizar o modelo comercialmente, confira os termos aplicáveis aos assets Higgsfield.
+- O código-fonte está sob a licença MIT (veja [LICENSE](LICENSE)); antes de redistribuir ou explorar comercialmente modelos gerados com Higgsfield, verifique também os termos aplicáveis aos assets. Antes de reutilizar o modelo comercialmente, confira os termos aplicáveis aos assets Higgsfield.
 
 ## Links
 
