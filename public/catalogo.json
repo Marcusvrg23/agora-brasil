@@ -1,0 +1,301 @@
+{
+  "versao": "0.2.0",
+  "moeda": {
+    "nome": "Fichas",
+    "pacotes_brl": [
+      {
+        "id": "fichas_100",
+        "fichas": 100,
+        "preco_brl": 4.9
+      },
+      {
+        "id": "fichas_550",
+        "fichas": 550,
+        "preco_brl": 24.9,
+        "bonus": "10%"
+      },
+      {
+        "id": "fichas_1200",
+        "fichas": 1200,
+        "preco_brl": 49.9,
+        "bonus": "20%"
+      },
+      {
+        "id": "fichas_2600",
+        "fichas": 2600,
+        "preco_brl": 99.9,
+        "bonus": "30%"
+      }
+    ]
+  },
+  "regras_conteudo": {
+    "personagens_reais_proibidos": true,
+    "nota": "Todos os personagens são arquétipos fictícios. Nenhum nome, rosto, número de urna, sigla ou símbolo de partido real em skins, itens ou anúncios.",
+    "anuncio_eleitoral_bloqueado": true
+  },
+  "personagens": [
+    {
+      "id": "senador",
+      "nome": "O Senador",
+      "descricao": "Veterano de terno cinza, bigode e broche de estrela. Sabe negociar tudo, inclusive a vitória.",
+      "classe": "Tanque",
+      "habilidade": "Obstrução: ergue uma barreira de papelada que bloqueia a passagem por 6 s.",
+      "preco_fichas": 0,
+      "modelo": "assets/personagens/senador.glb"
+    },
+    {
+      "id": "ministra",
+      "nome": "A Ministra",
+      "descricao": "Blazer verde-azulado, óculos redondos e pasta sempre cheia de decretos.",
+      "classe": "Suporte",
+      "habilidade": "Decreto: dá +20% de velocidade aos aliados num raio de 8 m por 5 s.",
+      "preco_fichas": 450,
+      "modelo": "assets/personagens/ministra.glb"
+    },
+    {
+      "id": "sindicalista",
+      "nome": "O Sindicalista",
+      "descricao": "Colete laranja, apito no pescoço e voz que atravessa o Eixo Monumental.",
+      "classe": "Controle",
+      "habilidade": "Greve Geral: apito atordoa inimigos próximos por 2 s.",
+      "preco_fichas": 450,
+      "modelo": "assets/personagens/sindicalista.glb"
+    },
+    {
+      "id": "manifestante",
+      "nome": "A Manifestante",
+      "descricao": "Moletom roxo, bandana e estrela pintada no rosto. Mais rápida da Esplanada.",
+      "classe": "Velocista",
+      "habilidade": "Corrente Humana: puxa até 3 aliados para perto de si.",
+      "preco_fichas": 0,
+      "modelo": "assets/personagens/manifestante.glb"
+    },
+    {
+      "id": "lobista",
+      "nome": "O Lobista",
+      "descricao": "Terno impecável, maleta e sorriso de quem já almoçou com todo mundo.",
+      "classe": "Furtivo",
+      "habilidade": "Bastidores: fica invisível por 4 s.",
+      "preco_fichas": 700,
+      "modelo": null,
+      "status": "a gerar"
+    },
+    {
+      "id": "influencer",
+      "nome": "A Influencer",
+      "descricao": "Ring light na mão e live ligada 24 h.",
+      "classe": "Revelação",
+      "habilidade": "Ao Vivo: revela inimigos invisíveis no raio de 15 m.",
+      "preco_fichas": 700,
+      "modelo": null,
+      "status": "a gerar"
+    }
+  ],
+  "cosmeticos": [
+    {
+      "id": "faixa_peito",
+      "nome": "Faixa no peito (cor livre)",
+      "slot": "torso",
+      "preco_fichas": 80
+    },
+    {
+      "id": "megafone_ouro",
+      "nome": "Megafone dourado",
+      "slot": "mao",
+      "preco_fichas": 150
+    },
+    {
+      "id": "cartaz_custom",
+      "nome": "Cartaz com texto livre (moderado)",
+      "slot": "mao",
+      "preco_fichas": 120
+    },
+    {
+      "id": "chapeu_panama",
+      "nome": "Chapéu panamá",
+      "slot": "cabeca",
+      "preco_fichas": 90
+    },
+    {
+      "id": "guarda_chuva_chuva_de_brasilia",
+      "nome": "Guarda-chuva (outubro em Brasília)",
+      "slot": "mao",
+      "preco_fichas": 60
+    },
+    {
+      "id": "emote_discurso",
+      "nome": "Emote: discurso inflamado",
+      "slot": "emote",
+      "preco_fichas": 100
+    },
+    {
+      "id": "emote_cafezinho",
+      "nome": "Emote: cafezinho no Congresso",
+      "slot": "emote",
+      "preco_fichas": 100
+    }
+  ],
+  "veiculos": [
+    {
+      "id": "trio_eletrico",
+      "nome": "Trio elétrico",
+      "duracao_min": 15,
+      "preco_fichas": 900,
+      "efeito": "Aura de som: +15% de velocidade para o grupo e área de presença dupla no PvP.",
+      "modelo": "assets/veiculos/trio_eletrico.glb"
+    },
+    {
+      "id": "caminhao_som",
+      "nome": "Caminhão de som",
+      "duracao_min": 15,
+      "preco_fichas": 500,
+      "efeito": "Megafone global: sua mensagem aparece no chat da sala.",
+      "modelo": null
+    },
+    {
+      "id": "carreata_5",
+      "nome": "Carreata (5 carros)",
+      "duracao_min": 10,
+      "preco_fichas": 700,
+      "efeito": "Comboio percorre o Eixo Monumental; jogadores podem subir.",
+      "modelo": null
+    }
+  ],
+  "publicidade": {
+    "permitido": [
+      "comércios",
+      "marcas",
+      "eventos culturais",
+      "serviços"
+    ],
+    "proibido": [
+      "propaganda eleitoral",
+      "candidatos",
+      "partidos",
+      "pedidos de voto",
+      "conteúdo de ódio"
+    ],
+    "moderacao": "Toda peça passa por aprovação manual antes de ir ao ar.",
+    "espacos": [
+      {
+        "id": "outdoor_eixo",
+        "nome": "Outdoor no Eixo Monumental",
+        "preco_brl_dia": 29.9
+      },
+      {
+        "id": "telao_esplanada",
+        "nome": "Telão na Esplanada (vídeo 15 s)",
+        "preco_brl_dia": 79.9
+      },
+      {
+        "id": "faixa_trio",
+        "nome": "Faixa lateral do trio elétrico",
+        "preco_brl_dia": 49.9
+      },
+      {
+        "id": "patrocinio_partida",
+        "nome": "Patrocínio de partida PvP (logo na tela de placar)",
+        "preco_brl_dia": 149.9
+      }
+    ]
+  },
+  "pvp": {
+    "modo": "Domínio da Esplanada",
+    "times": 2,
+    "jogadores_por_time": 8,
+    "duracao_min": 10,
+    "zonas": [
+      {
+        "id": "praca_tres_poderes",
+        "nome": "Praça dos Três Poderes",
+        "pontos_por_segundo": 3
+      },
+      {
+        "id": "espelho_dagua",
+        "nome": "Espelho d'água do Congresso",
+        "pontos_por_segundo": 2
+      },
+      {
+        "id": "gramado_central",
+        "nome": "Gramado central",
+        "pontos_por_segundo": 1
+      },
+      {
+        "id": "catedral",
+        "nome": "Entorno da Catedral",
+        "pontos_por_segundo": 1
+      }
+    ],
+    "combate": "Não-violento: itens empurram, atordoam ou atrapalham (confete, apito, papelada, bolha de sabão). Jogador 'cansado' volta ao ponto inicial em 5 s.",
+    "regra_pay_to_win": "Itens pagos são só cosméticos ou de duração curta com efeito de grupo; nenhum item vende vantagem permanente."
+  },
+  "times": {
+    "nota": "Times identificados só por cor. Sem nome, sigla, número ou símbolo de partido real.",
+    "lista": [
+      {
+        "id": "vermelho",
+        "nome": "Time Vermelho",
+        "cor": "#d32f2f"
+      },
+      {
+        "id": "amarelo",
+        "nome": "Time Amarelo",
+        "cor": "#f4c20d"
+      }
+    ],
+    "trajes": [
+      {
+        "id": "camisa",
+        "nome": "Camisa do time",
+        "preco_fichas": 0
+      },
+      {
+        "id": "terno-faixa",
+        "nome": "Terno com faixa do time",
+        "preco_fichas": 0
+      }
+    ],
+    "modelos": {
+      "camisa-vermelho": "assets/jogadores/camisa-vermelho.glb",
+      "camisa-amarelo": "assets/jogadores/camisa-amarelo.glb",
+      "terno-faixa-vermelho": "assets/jogadores/terno-faixa-vermelho.glb",
+      "terno-faixa-amarelo": "assets/jogadores/terno-faixa-amarelo.glb"
+    }
+  },
+  "debate": {
+    "local": "Tribuna da Esplanada (gramado, à frente do espelho d'água)",
+    "entrada": "Fila aberta; o debate começa com dois inscritos, preferindo adversários de times diferentes.",
+    "roteiro": [
+      {
+        "fase": "abertura",
+        "segundos": 60,
+        "cada": true
+      },
+      {
+        "fase": "replica",
+        "segundos": 45,
+        "cada": true
+      },
+      {
+        "fase": "treplica",
+        "segundos": 30,
+        "cada": true
+      },
+      {
+        "fase": "votacao",
+        "segundos": 30
+      },
+      {
+        "fase": "resultado",
+        "segundos": 10
+      }
+    ],
+    "regras": [
+      "Só o orador da vez fala (até 280 caracteres, intervalo de 2 s).",
+      "O orador pode passar a vez antes do tempo.",
+      "Plateia vota uma vez; debatedores não votam; placar fica oculto até o resultado.",
+      "Debatedor que sai da sala perde por W.O."
+    ],
+    "pago": false
+  }
+}

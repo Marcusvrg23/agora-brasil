@@ -72,22 +72,55 @@ new ResizeObserver(resize).observe(canvas);
 let socket=null,myId=null,entered=false,name='Visitante',room='5300108';
 const live=document.querySelector('#status-dot'),status=document.querySelector('#status-label');
 const peers=new Map();
+// Times e trajes: cores genéricas, sem nome, sigla ou símbolo de partido.
+const TEAM_COLORS={vermelho:'#d32f2f',amarelo:'#f4c20d'};
+const SUIT_COLOR='#2b2f36';
+let myTeam='vermelho',myOutfit='camisa';
+// Monta o corpo do avatar dentro do grupo: camisa na cor do time, ou terno escuro com faixa diagonal.
+function dressAvatar(group,team,outfit,scale=1){
+ for(const child of [...group.children])group.remove(child);
+ const teamColor=TEAM_COLORS[team]||TEAM_COLORS.vermelho;
+ const suit=outfit==='terno-faixa';
+ const body=new THREE.Mesh(new THREE.CapsuleGeometry(.35*scale,1.0*scale,4,8),new THREE.MeshStandardMaterial({color:suit?SUIT_COLOR:teamColor,roughness:.7}));
+ body.position.y=1.22;group.add(body);
+ if(suit){
+  const sash=new THREE.Mesh(new THREE.BoxGeometry(.16,1.05,.74),new THREE.MeshStandardMaterial({color:teamColor,roughness:.5}));
+  sash.position.y=1.32;sash.rotation.z=-.62;group.add(sash);
+ }
+ const head=new THREE.Mesh(new THREE.SphereGeometry(.25*scale,12,10),new THREE.MeshStandardMaterial({color:'#c99a74'}));
+ head.position.y=2.08;group.add(head);
+ group.userData.team=team;group.userData.outfit=outfit;
+}
 const player=new THREE.Group();
 scene.add(player);
-const playerBody=new THREE.Mesh(new THREE.CapsuleGeometry(.35,1.05,4,8),new THREE.MeshStandardMaterial({color:'#42a5f5'}));
-playerBody.position.y=1.25;player.add(playerBody);
-const playerHead=new THREE.Mesh(new THREE.SphereGeometry(.25,12,10),new THREE.MeshStandardMaterial({color:'#d09b74'}));
-playerHead.position.y=2.1;player.add(playerHead);
+dressAvatar(player,myTeam,myOutfit);
 player.position.set(0,0,-70);
 player.visible=false;
-function remoteAvatar(id,x,z,label) {
+function remoteAvatar(id,x,z,label,team,outfit) {
  if(peers.has(id))return peers.get(id);
  const mesh=new THREE.Group();
- const body=new THREE.Mesh(new THREE.CapsuleGeometry(.34,.95,4,7),new THREE.MeshStandardMaterial({color:'#f1bd50'}));body.position.y=1.2;mesh.add(body);
- const head=new THREE.Mesh(new THREE.SphereGeometry(.24,10,8),new THREE.MeshStandardMaterial({color:'#c89f78'}));head.position.y=2.05;mesh.add(head);
+ dressAvatar(mesh,team||'vermelho',outfit||'camisa',.97);
+ mesh.userData.name=label||'';
  mesh.position.set(x||0,0,z||-75);scene.add(mesh);
  peers.set(id,mesh);return mesh;
 }
+
+// Tribuna do debate no gramado, à frente do espelho d'água.
+const TRIBUNA={x:42,z:-62};
+const PULPITO={a:{x:TRIBUNA.x-6,z:TRIBUNA.z},b:{x:TRIBUNA.x+6,z:TRIBUNA.z}};
+(function buildTribuna(){
+ const palco=new THREE.Mesh(new THREE.BoxGeometry(20,.25,8),new THREE.MeshStandardMaterial({color:'#e9e4d6',roughness:.8}));
+ palco.position.set(TRIBUNA.x,.12,TRIBUNA.z);scene.add(palco);
+ for(const [lado,cor] of [['a','#9fd8c6'],['b','#c5b8f0']]){
+  const pos=PULPITO[lado];
+  const pulpito=new THREE.Mesh(new THREE.BoxGeometry(1.4,1.25,.8),new THREE.MeshStandardMaterial({color:'#5b4636',roughness:.6}));
+  pulpito.position.set(pos.x,.88,pos.z+1.1);scene.add(pulpito);
+  const placa=new THREE.Mesh(new THREE.BoxGeometry(1.2,.3,.05),new THREE.MeshStandardMaterial({color:cor}));
+  placa.position.set(pos.x,1.15,pos.z+1.53);scene.add(placa);
+ }
+ const telao=new THREE.Mesh(new THREE.BoxGeometry(10,4,.3),new THREE.MeshStandardMaterial({color:'#101820',emissive:'#0d2a33',roughness:.4}));
+ telao.position.set(TRIBUNA.x,4.2,TRIBUNA.z-3.2);scene.add(telao);
+})();
 function log(msg,nick,time){
  const pane=document.querySelector('#messages');
  const el=document.createElement('div');
@@ -107,7 +140,7 @@ function connect(){
  socket=new WebSocket(scheme+'//'+location.host);
  socket.onopen=()=>{
   live.classList.add('connected');status.textContent='Conectado';
-  send({type:'join',room,name});
+  send({type:'join',room,name,team:myTeam,outfit:myOutfit});
  };
  socket.onmessage=(event)=>{
   let data;try{data=JSON.parse(event.data)}catch{return}
@@ -115,18 +148,21 @@ function connect(){
   if(data.type==='joined'){
    entered=true;player.visible=true;
    for(const mesh of peers.values())scene.remove(mesh);peers.clear();
-   for(const other of data.peers||[])remoteAvatar(other.id,other.position?.x,other.position?.z,other.name);
+   for(const other of data.peers||[])remoteAvatar(other.id,other.position?.x,other.position?.z,other.name,other.team,other.outfit);
    log('Você entrou na praça. Participação gratuita e plural.');
    count.textContent=data.count+' online';
   }
   if(data.type==='presence')count.textContent=data.count+' online';
   if(data.type==='chat')log(data.text,data.name,data.time);
-  if(data.type==='enter'&&data.id!==myId)remoteAvatar(data.id,data.position?.x,data.position?.z,data.name);
+  if(data.type==='enter'&&data.id!==myId)remoteAvatar(data.id,data.position?.x,data.position?.z,data.name,data.team,data.outfit);
+  if(data.type==='look'&&data.id!==myId){const p=peers.get(data.id);if(p)dressAvatar(p,data.team,data.outfit,.97)}
+  if(data.type==='debate')renderDebate(data.state);
+  if(data.type==='debate-fala')debateLog(data);
   if(data.type==='leave'){const p=peers.get(data.id);if(p){scene.remove(p);peers.delete(data.id)}}
   if(data.type==='move'){const p=remoteAvatar(data.id,data.x,data.z,'');p.position.set(data.x,0,data.z)}
  };
  socket.onclose=()=>{
-  entered=false;live.classList.remove('connected');status.textContent='Desconectado';count.textContent='0 online';
+  entered=false;renderDebate(null);live.classList.remove('connected');status.textContent='Desconectado';count.textContent='0 online';
  };
  socket.onerror=()=>{status.textContent='Sem conexão'};
 }
@@ -136,6 +172,92 @@ document.querySelector('#enter').addEventListener('click',()=>{
  const sel=document.querySelector('#city');document.querySelector('#room-label').textContent=sel.selectedOptions[0].textContent.split('·')[0].trim();
  connect();
 });
+for(const id of ['team','outfit']){
+ document.querySelector('#'+id).addEventListener('change',()=>{
+  myTeam=document.querySelector('#team').value;myOutfit=document.querySelector('#outfit').value;
+  dressAvatar(player,myTeam,myOutfit);
+  if(entered)send({type:'look',team:myTeam,outfit:myOutfit});
+ });
+}
+
+// ---------- Modo debate ----------
+const FASES={aguardando:'Aguardando',abertura:'Abertura',replica:'Réplica',treplica:'Tréplica',votacao:'Votação',resultado:'Resultado'};
+const dbg={
+ phase:document.querySelector('#debate-phase'),timer:document.querySelector('#debate-timer'),
+ a:document.querySelector('#debate-a'),b:document.querySelector('#debate-b'),
+ feed:document.querySelector('#debate-feed'),join:document.querySelector('#debate-join'),
+ form:document.querySelector('#debate-form'),input:document.querySelector('#debate-input'),
+ pass:document.querySelector('#debate-pass'),vote:document.querySelector('#debate-vote')
+};
+let debateState=null,myVote=null,lastPhaseKey='';
+function debateSystem(text){
+ const el=document.createElement('div');el.className='system';el.textContent=text;
+ dbg.feed.append(el);dbg.feed.scrollTop=dbg.feed.scrollHeight;
+ while(dbg.feed.children.length>80)dbg.feed.firstChild.remove();
+}
+function debateLog(data){
+ const el=document.createElement('div');el.className='message';
+ const tag=document.createElement('span');tag.className='tag-'+data.side;tag.textContent=data.side.toUpperCase();el.append(tag);
+ const strong=document.createElement('b');strong.textContent=data.name;el.append(strong);
+ el.append(document.createTextNode(data.text));
+ dbg.feed.append(el);dbg.feed.scrollTop=dbg.feed.scrollHeight;
+ while(dbg.feed.children.length>80)dbg.feed.firstChild.remove();
+}
+function paintSide(el,info,speaking){
+ el.querySelector('b').textContent=info?info.name:'—';
+ el.className='side'+(info?' '+info.team:'')+(speaking?' falando':'');
+}
+function mySide(st){return st?.a?.id===myId?'a':(st?.b?.id===myId?'b':null)}
+function renderDebate(st){
+ debateState=st;
+ const fase=st?.fase||'aguardando';
+ dbg.phase.textContent=FASES[fase]||fase;
+ paintSide(dbg.a,st?.a,st?.orador==='a');paintSide(dbg.b,st?.b,st?.orador==='b');
+ const side=mySide(st);
+ const inQueue=!!st?.fila?.some(p=>p.id===myId);
+ dbg.join.hidden=!entered||!!side;
+ dbg.join.textContent=inQueue?'Sair da fila ('+st.fila.length+' na fila)':'Entrar na fila do debate'+(st?.fila?.length?' ('+st.fila.length+' na fila)':'');
+ const myTurn=!!side&&st.orador===side;
+ dbg.form.hidden=!myTurn;dbg.pass.hidden=!myTurn;
+ const voting=fase==='votacao'&&entered&&!side;
+ dbg.vote.hidden=!voting;
+ for(const b of dbg.vote.querySelectorAll('button'))b.disabled=!!myVote;
+ const key=fase+':'+(st?.orador||'')+':'+(st?.a?.id||'')+':'+(st?.b?.id||'');
+ if(key!==lastPhaseKey){
+  lastPhaseKey=key;
+  if(fase==='abertura'&&st.orador==='a'){myVote=null;debateSystem('Começou o debate: '+st.a.name+' x '+st.b.name+'.')}
+  if(st?.orador)debateSystem(FASES[fase]+': vez de '+st[st.orador].name+'.');
+  if(fase==='votacao')debateSystem('Votação aberta por 30 s. Debatedores não votam.');
+  if(fase==='resultado'){
+   const v=st.votos||{a:0,b:0};
+   const quem=st.vencedor==='empate'?'Empate':('Venceu '+st[st.vencedor].name);
+   debateSystem(st.motivo==='wo'?quem+' por W.O.':quem+' · '+v.a+' x '+v.b+' votos.');
+  }
+  // Debatedor vai para o púlpito do seu lado.
+  if(side&&fase!=='resultado'){const pos=PULPITO[side];player.position.set(pos.x,0,pos.z);send({type:'move',x:pos.x,z:pos.z})}
+ }
+}
+function debateClock(){
+ const st=debateState;
+ if(!st||!st.terminaEm||st.fase==='aguardando'){dbg.timer.textContent='vs';return}
+ const s=Math.max(0,Math.ceil((st.terminaEm-Date.now())/1000));
+ dbg.timer.textContent=Math.floor(s/60)+':'+String(s%60).padStart(2,'0');
+}
+setInterval(debateClock,250);
+dbg.join.addEventListener('click',()=>{
+ const inQueue=!!debateState?.fila?.some(p=>p.id===myId);
+ send({type:inQueue?'debate-leave':'debate-join'});
+});
+dbg.form.addEventListener('submit',e=>{
+ e.preventDefault();const text=dbg.input.value.trim();
+ if(text)send({type:'debate-say',text});dbg.input.value='';
+});
+dbg.pass.addEventListener('click',()=>send({type:'debate-pass'}));
+for(const b of dbg.vote.querySelectorAll('button')){
+ b.addEventListener('click',()=>{if(myVote)return;myVote=b.dataset.side;send({type:'debate-vote',side:myVote});renderDebate(debateState)});
+}
+renderDebate(null);
+
 document.querySelector('#chat-form').addEventListener('submit',e=>{
  e.preventDefault();const input=document.querySelector('#chat-input');const text=input.value.trim();
  if(!entered){log('Entre na manifestação para conversar.');return}

@@ -37,6 +37,13 @@ npm test
 
 A primeira execução do GitHub Actions deve baixar os assets da [versão 4 do Higgsfield](https://higgsfield.ai/3d-jutsu/daecc7f2-a214-462a-830d-80adddb81368), usando o ZIP disponibilizado pelo próprio projeto. Caso o download não seja executado, a cena 3D tem fallback geométrico local.
 
+## Times e modo debate (v0.4)
+
+- **Times por cor:** Vermelho ou Amarelo, com traje "Camisa do time" ou "Terno com faixa". A escolha aparece para todos e pode mudar a qualquer momento. Os times não têm nome, sigla ou símbolo de partido.
+- **Modo debate** (`debate.js`): fila aberta na Tribuna da Esplanada. Com dois inscritos, o debate começa com abertura (60 s), réplica (45 s) e tréplica (30 s) para cada lado. Depois vem a votação da plateia (30 s, um voto por pessoa, debatedores não votam) e o resultado. Quem sai da sala perde por W.O.
+- **Catálogo:** `public/catalogo.json` lista personagens, times, trajes, itens, veículos, espaços de anúncio e regras.
+- **Modelos 3D:** `bash scripts/baixar-modelos.sh` baixa os GLB gerados no Higgsfield para `public/assets/`.
+
 ## Como funciona
 
 A navegação é por teclado (WASD / setas), rotação e zoom por mouse/toque. É possível entrar com um apelido, selecionar sala, conversar em tempo real pelo WebSocket e visualizar uma representação simples dos demais participantes.

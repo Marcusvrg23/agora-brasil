@@ -10,7 +10,7 @@
 </head>
 <body>
 <header class="topbar">
- <div class="brand"><div class="brandicon">A</div><div><strong>ÁGORA <span>BRASIL</span></strong><small>PRAÇA CÍVICA VIRTUAL · VERSÃO 0.3</small></div></div>
+ <div class="brand"><div class="brandicon">A</div><div><strong>ÁGORA <span>BRASIL</span></strong><small>PRAÇA CÍVICA VIRTUAL · VERSÃO 0.4</small></div></div>
  <div class="status"><span class="dot" id="status-dot"></span><span id="status-label">Conectando…</span><b id="live-count">0 online</b></div>
 </header>
 <main>
@@ -29,8 +29,27 @@
    <label for="nickname">Seu apelido</label><input id="nickname" maxlength="24" placeholder="Como quer aparecer?" value="Visitante">
    <label for="city">Sala</label>
    <select id="city"><option value="5300108">Brasília · DF</option><option value="3550308">São Paulo · SP (cenário Brasília)</option><option value="3304557">Rio de Janeiro · RJ (cenário Brasília)</option><option value="3106200">Belo Horizonte · MG (cenário Brasília)</option></select>
+   <div class="look-row">
+    <div><label for="team">Time</label><select id="team"><option value="vermelho">Vermelho</option><option value="amarelo">Amarelo</option></select></div>
+    <div><label for="outfit">Traje</label><select id="outfit"><option value="camisa">Camisa do time</option><option value="terno-faixa">Terno com faixa</option></select></div>
+   </div>
    <button id="enter" class="primary">Entrar na manifestação gratuita</button>
    <div class="fineprint">Todas as salas usam, por enquanto, o mesmo cenário de Brasília. Outras cidades ainda não foram modeladas.</div>
+  </div>
+  <div class="panel debate" id="debate-panel">
+   <div class="chat-head"><div><div class="eyebrow">MODO DEBATE</div><h2>Tribuna da Esplanada</h2></div><span id="debate-phase" class="pill">Aguardando</span></div>
+   <div class="debate-vs">
+    <div class="side" id="debate-a"><small>Lado A</small><b>—</b></div>
+    <span class="vs" id="debate-timer">vs</span>
+    <div class="side" id="debate-b"><small>Lado B</small><b>—</b></div>
+   </div>
+   <div id="debate-feed" class="messages" role="log" aria-live="polite"><div class="system">Entre na fila. Quando houver dois inscritos, o debate começa: abertura, réplica e tréplica, e a plateia vota.</div></div>
+   <div class="debate-actions">
+    <button id="debate-join" class="secondary" type="button">Entrar na fila do debate</button>
+    <form id="debate-form" hidden><input id="debate-input" maxlength="280" placeholder="Sua fala…" autocomplete="off" aria-label="Fala no debate"><button aria-label="Falar">➤</button></form>
+    <button id="debate-pass" class="secondary" type="button" hidden>Passar a vez</button>
+    <div id="debate-vote" class="vote" hidden><button type="button" data-side="a">Votar no Lado A</button><button type="button" data-side="b">Votar no Lado B</button></div>
+   </div>
   </div>
   <div class="panel chat"><div class="chat-head"><div><div class="eyebrow">CONVERSA EM TEMPO REAL</div><h2>Chat da praça</h2></div><span id="room-label" class="pill">Brasília</span></div>
    <div id="messages" class="messages" role="log" aria-live="polite"><div class="system">Conecte-se para conversar. Sem login e sem cobrança.</div></div>
