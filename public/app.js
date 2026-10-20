@@ -144,7 +144,7 @@ document.querySelector('#chat-form').addEventListener('submit',e=>{
 const pressed=new Set();
 window.addEventListener('keydown',e=>{
  if(e.target.matches('input,select,textarea'))return;
- const key=e.key.toLowerCase();if('wasdarrowup arrowdown arrowleft arrowright'.includes(key)){pressed.add(key);if(key.startsWith('arrow'))e.preventDefault()}
+ const key=e.key.toLowerCase();if(['w','a','s','d','arrowup','arrowdown','arrowleft','arrowright'].includes(key)){pressed.add(key);if(key.startsWith('arrow'))e.preventDefault()}
 });
 window.addEventListener('keyup',e=>pressed.delete(e.key.toLowerCase()));
 for(const [id,key] of [['up','w'],['down','s'],['left','a'],['right','d']]){
