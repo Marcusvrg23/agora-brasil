@@ -30,17 +30,19 @@ function team(value) { return TEAMS.has(value) ? value : 'vermelho'; }
 function outfit(value) { return OUTFITS.has(value) ? value : 'camisa'; }
 const ACESSORIOS = new Set(['nenhum','bone','chapeu','oculos','megafone']);
 const BASES = new Set(['boneco','homem','mulher','idoso','idosa']);
+const CABELOS = new Set(['auto','curto','ondulado','longo','cacheado','cacheado-curto','coque','grisalho','careca']);
 const HEX = /^#[0-9a-f]{6}$/i;
 // Visual completo do personagem; qualquer campo inválido cai no padrão.
 function lookOf(input) {
   const src = input && typeof input === 'object' ? input : {};
   const cor = (v, padrao) => HEX.test(String(v || '')) ? String(v).toLowerCase() : padrao;
   return {
-    base: BASES.has(src.base) ? src.base : 'boneco',
+    base: BASES.has(src.base) ? src.base : 'homem',
     team: team(src.team), outfit: outfit(src.outfit),
     pele: cor(src.pele, '#c99a74'), cabelo: cor(src.cabelo, '#2b1d14'),
     calca: cor(src.calca, '#28324a'), terno: cor(src.terno, '#2b2f36'),
     acessorio: ACESSORIOS.has(src.acessorio) ? src.acessorio : 'nenhum',
+    cabeloEstilo: CABELOS.has(src.cabeloEstilo) ? src.cabeloEstilo : 'auto',
   };
 }
 function setLook(ws, input) { ws.look = lookOf(input); ws.team = ws.look.team; ws.outfit = ws.look.outfit; }

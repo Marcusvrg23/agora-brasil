@@ -1,7 +1,7 @@
 import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.169.0/build/three.module.js';
 import {GLTFLoader} from 'https://cdn.jsdelivr.net/npm/three@0.169.0/examples/jsm/loaders/GLTFLoader.js';
 import {OrbitControls} from 'https://cdn.jsdelivr.net/npm/three@0.169.0/examples/jsm/controls/OrbitControls.js';
-import {dressAvatar,animateAvatar,importModel,removeImported,sanitizeLook,TEAM_COLORS,BASES,baseStatus} from './avatar.js';
+import {dressAvatar,animateAvatar,importModel,removeImported,sanitizeLook,TEAM_COLORS,BASES,baseStatus,updateAvatarMixers,ESTILOS_CABELO,THUMB_CDN} from './avatar.js';
 
 const canvas=document.querySelector('#world');
 const scene=new THREE.Scene();
@@ -207,11 +207,11 @@ const creator={
  team:document.querySelector('#team'),outfit:document.querySelector('#outfit'),
  pele:document.querySelector('#cor-pele'),cabelo:document.querySelector('#cor-cabelo'),
  calca:document.querySelector('#cor-calca'),terno:document.querySelector('#cor-terno'),
- acessorio:document.querySelector('#acessorio'),file:document.querySelector('#import-model'),
+ acessorio:document.querySelector('#acessorio'),cabeloEstilo:document.querySelector('#cabelo-estilo'),file:document.querySelector('#import-model'),
  remove:document.querySelector('#remove-model'),info:document.querySelector('#import-info'),
  preview:document.querySelector('#avatar-preview')
 };
-const LOOK_KEYS=['base','team','outfit','pele','cabelo','calca','terno','acessorio'];
+const LOOK_KEYS=['base','team','outfit','pele','cabelo','calca','terno','acessorio','cabeloEstilo'];
 function fillCreator(){for(const k of LOOK_KEYS)creator[k].value=myLook[k];paintCards()}
 // Cartões de corpo base, com foto quando o arquivo existe em /assets/bases.
 function paintCards(){
@@ -220,7 +220,11 @@ function paintCards(){
   btn.setAttribute('aria-checked',String(myLook.base===b.id));
   const thumb=document.createElement('span');thumb.className='thumb';
   if(b.id==='boneco')thumb.textContent='🧍';
-  else{const img=new Image();img.alt='';img.src='/assets/bases/'+b.id+'-'+myLook.team+'.png';img.onerror=()=>{img.remove();thumb.textContent='👤'};thumb.append(img)}
+  else{
+   const key=b.id+'-'+myLook.team,img=new Image();img.alt='';img.src='/assets/bases/'+key+'.png';
+   img.onerror=()=>{if(THUMB_CDN[key]&&img.src!==THUMB_CDN[key]){img.src=THUMB_CDN[key]}else{img.remove();thumb.textContent='👤'}};
+   thumb.append(img);
+  }
   btn.append(thumb,document.createTextNode(b.nome));
   btn.addEventListener('click',()=>{creator.base.value=b.id;readCreator()});
   return btn;
@@ -248,7 +252,7 @@ function renderPreview(t){
  if(creator.preview.width!==Math.round(w*1.5)){previewRenderer.setPixelRatio(1.5);previewRenderer.setSize(w,h,false);previewCam.aspect=w/h;previewCam.updateProjectionMatrix()}
  previewAvatar.rotation.y=t*.6;
  animateAvatar(previewAvatar,previewWalking,t);
- previewAvatar.userData.mixer?.update(1/60);
+ updateAvatarMixers(previewAvatar,1/60);
  previewRenderer.render(previewScene,previewCam);
 }
 let previewWalking=false;
@@ -257,7 +261,7 @@ fillCreator();
 for(const k of LOOK_KEYS.slice(1))creator[k].addEventListener('input',readCreator);
 function baseNotice(){
  const key=myLook.base+'-'+myLook.team;
- if(myLook.base!=='boneco'&&baseStatus.get(key)==='faltando')creator.info.textContent='O modelo "'+key+'.glb" ainda não está em public/assets/bases. Rode scripts/baixar-modelos.sh; até lá aparece o boneco.';
+ if(myLook.base!=='boneco'&&baseStatus.get(key)==='faltando')creator.info.textContent='Não consegui carregar o modelo "'+key+'" (nem local nem do Higgsfield). Rode scripts/baixar-modelos.sh; até lá aparece o boneco.';
 }
 creator.file.addEventListener('change',async()=>{
  const file=creator.file.files[0];if(!file)return;
@@ -389,11 +393,11 @@ function animate(){
  }
  const t=clock.elapsedTime,now=performance.now();
  animateAvatar(player,entered&&playerMoving,t);
- player.userData.mixer?.update(dt);
+ updateAvatarMixers(player,dt);
  for(const p of peers.values()){
   const tg=p.userData.target;
   if(tg){p.position.x+=(tg.x-p.position.x)*Math.min(1,dt*10);p.position.z+=(tg.z-p.position.z)*Math.min(1,dt*10)}
-  animateAvatar(p,now-p.userData.lastMove<260,t);
+  animateAvatar(p,now-p.userData.lastMove<260,t);updateAvatarMixers(p,dt);
  }
  renderPreview(t);
  controls.update();renderer.render(scene,camera);

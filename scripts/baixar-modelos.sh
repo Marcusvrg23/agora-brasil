@@ -20,7 +20,7 @@ baixar public/assets/jogadores/terno-faixa-vermelho.glb hf_20261020_195224_d0959
 baixar public/assets/jogadores/terno-faixa-amarelo.glb  hf_20261020_195227_99d2310c-5303-4a56-8af1-7add6f9a1ac0.glb
 
 # Corpos base semi-realistas (modelo 3D + foto do cartão no criador)
-baixar public/assets/bases/homem-vermelho.glb hf_20261020_214722_7957caec-0a62-4603-86b0-ae525c27bcce.glb
+baixar public/assets/bases/homem-vermelho.glb hf_20261020_215339_5b3afe7f-0a9f-4ddb-8aa1-741495549426.glb  # com esqueleto e caminhada
 baixar public/assets/bases/homem-vermelho.png hf_20261020_214605_fadcc2c8-ed85-4ee7-8d46-5a6c03cd4abd.png
 baixar public/assets/bases/mulher-vermelho.glb hf_20261020_214725_e26abeb8-f753-486d-b0c5-8fb9fc9058f1.glb
 baixar public/assets/bases/mulher-vermelho.png hf_20261020_214605_df98cea5-b40e-4991-8e9b-30abdb82df67.png

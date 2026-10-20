@@ -1,5 +1,6 @@
 import * as THREE from 'three';
 import {GLTFLoader} from 'https://cdn.jsdelivr.net/npm/three@0.169.0/examples/jsm/loaders/GLTFLoader.js';
+import {clone as cloneSkinned} from 'https://cdn.jsdelivr.net/npm/three@0.169.0/examples/jsm/utils/SkeletonUtils.js';
 
 // Times e trajes: cores genéricas, sem nome, sigla ou símbolo de partido.
 export const TEAM_COLORS={vermelho:'#d32f2f',amarelo:'#f4c20d'};
@@ -10,7 +11,7 @@ export const BASES=[
  {id:'boneco',nome:'Boneco'},{id:'homem',nome:'Homem'},{id:'mulher',nome:'Mulher'},
  {id:'idoso',nome:'Idoso'},{id:'idosa',nome:'Idosa'}
 ];
-export const DEFAULT_LOOK={base:'boneco',team:'vermelho',outfit:'camisa',pele:'#c99a74',cabelo:'#2b1d14',calca:'#28324a',terno:'#2b2f36',acessorio:'nenhum'};
+export const DEFAULT_LOOK={base:'homem',team:'vermelho',outfit:'camisa',cabeloEstilo:'auto',pele:'#c99a74',cabelo:'#2b1d14',calca:'#28324a',terno:'#2b2f36',acessorio:'nenhum'};
 const HEX=/^#[0-9a-f]{6}$/i;
 
 export function sanitizeLook(look={}){
@@ -20,72 +21,189 @@ export function sanitizeLook(look={}){
  for(const k of ['pele','cabelo','calca','terno'])if(HEX.test(look[k]||''))out[k]=look[k].toLowerCase();
  if(ACESSORIOS.includes(look.acessorio))out.acessorio=look.acessorio;
  if(BASES.some(b=>b.id===look.base))out.base=look.base;
+ if(ESTILOS_CABELO.includes(look.cabeloEstilo))out.cabeloEstilo=look.cabeloEstilo;
  return out;
 }
 
 const mat=(color,rough=.7)=>new THREE.MeshStandardMaterial({color,roughness:rough});
+const skinMat=(color)=>new THREE.MeshPhysicalMaterial({color,roughness:.62,sheen:.35,sheenColor:new THREE.Color('#ffd7c2'),clearcoat:.04});
 function part(geo,material,x,y,z,parent){const m=new THREE.Mesh(geo,material);m.position.set(x,y,z);parent.add(m);return m}
+// Sólido de revolução a partir de um perfil [raio, altura] (em metros).
+function lathe(profile,segs=36){return new THREE.LatheGeometry(profile.map(([r,y])=>new THREE.Vector2(Math.max(r,0.0001),y)),segs)}
+// Membro afunilado de comprimento len, saindo do pivô para baixo.
+function limb(r1,r2,len,segs=14){
+ const g=lathe([[0,0],[r1*.85,-r1*.25],[r1,-r1*.7],[r1*.97,-len*.35],[(r1+r2)/2,-len*.65],[r2,-len+r2*.6],[r2*.8,-len+r2*.15],[0,-len]],segs);
+ return g;
+}
 
-// Monta (ou remonta) o boneco dentro do grupo. Medidas em metros, altura ~2,2.
+// Proporções por tipo de corpo (o "Boneco" usa as do homem).
+const CORPOS={
+ homem:{H:2.15,ombro:1,quadril:1,peito:1,barriga:0,curva:0,cabelo:'ondulado'},
+ mulher:{H:2.05,ombro:.86,quadril:1.12,peito:1.06,barriga:0,curva:0,cabelo:'cacheado'},
+ idoso:{H:2.03,ombro:.95,quadril:1.04,peito:.98,barriga:.025,curva:.13,cabelo:'grisalho'},
+ idosa:{H:1.96,ombro:.86,quadril:1.12,peito:1.02,barriga:.02,curva:.12,cabelo:'cacheado-curto'}
+};
+export const ESTILOS_CABELO=['auto','curto','ondulado','longo','cacheado','cacheado-curto','coque','grisalho','careca'];
+
+// Rosto pintado num canvas (olhos, sobrancelhas, boca, bochechas). Fica em cache por combinação.
+const faceCache=new Map();
+function shade(hex,f){const c=new THREE.Color(hex);c.multiplyScalar(f);return '#'+c.getHexString()}
+function faceTexture(pele,cabelo,tipo){
+ const key=pele+cabelo+tipo;
+ if(faceCache.has(key))return faceCache.get(key);
+ const cv=document.createElement('canvas');cv.width=512;cv.height=256;const c=cv.getContext('2d');
+ c.fillStyle=pele;c.fillRect(0,0,512,256);
+ // A frente da esfera (eixo +z) fica em u=0,25 → x=128.
+ const cx=128,ey=118;
+ const idade=tipo.startsWith('idos');
+ // bochechas
+ const blush=c.createRadialGradient(0,0,0,0,0,26);blush.addColorStop(0,'rgba(214,110,96,.28)');blush.addColorStop(1,'rgba(214,110,96,0)');
+ for(const dx of [-30,30]){c.save();c.translate(cx+dx,ey+30);c.fillStyle=blush;c.fillRect(-26,-26,52,52);c.restore()}
+ // olhos
+ for(const dx of [-19,19]){
+  c.fillStyle='#fbf7f2';c.beginPath();c.ellipse(cx+dx,ey,10.5,6.2,0,0,Math.PI*2);c.fill();
+  c.fillStyle='#4a2f1d';c.beginPath();c.arc(cx+dx,ey+.5,5.2,0,Math.PI*2);c.fill();
+  c.fillStyle='#120b07';c.beginPath();c.arc(cx+dx,ey+.5,2.6,0,Math.PI*2);c.fill();
+  c.fillStyle='rgba(255,255,255,.9)';c.beginPath();c.arc(cx+dx+1.8,ey-1.6,1.3,0,Math.PI*2);c.fill();
+  c.strokeStyle=shade(pele,.55);c.lineWidth=2.2;c.beginPath();c.ellipse(cx+dx,ey,10.5,6.2,0,Math.PI*1.05,Math.PI*1.95);c.stroke();
+  if(idade){c.strokeStyle=shade(pele,.78);c.lineWidth=1.2;for(const k of [0,4])c.beginPath(),c.moveTo(cx+dx+(dx>0?11:-11),ey+2+k),c.lineTo(cx+dx+(dx>0?17:-17),ey+k),c.stroke()}
+ }
+ // sobrancelhas
+ c.strokeStyle=idade?'#d9d6d0':shade(cabelo,.9);c.lineWidth=tipo==='mulher'||tipo==='idosa'?3:4.2;c.lineCap='round';
+ for(const dx of [-19,19]){c.beginPath();c.moveTo(cx+dx-(dx>0?-10:10)*-1,ey-12);c.quadraticCurveTo(cx+dx,ey-17,cx+dx+(dx>0?11:-11),ey-11);c.stroke()}
+ // sombra do nariz
+ c.strokeStyle=shade(pele,.72);c.lineWidth=1.6;c.beginPath();c.moveTo(cx-5,ey+24);c.quadraticCurveTo(cx,ey+28,cx+5,ey+24);c.stroke();
+ // boca
+ c.fillStyle=tipo==='mulher'?'#b9544f':shade(pele,.62);
+ c.beginPath();c.moveTo(cx-13,ey+40);c.quadraticCurveTo(cx,ey+48,cx+13,ey+40);c.quadraticCurveTo(cx,ey+43,cx-13,ey+40);c.fill();
+ if(idade){c.strokeStyle=shade(pele,.8);c.lineWidth=1.2;for(const dx of [-22,22]){c.beginPath();c.moveTo(cx+dx*.75,ey+30);c.quadraticCurveTo(cx+dx,ey+38,cx+dx*.85,ey+46);c.stroke()}}
+ const tex=new THREE.CanvasTexture(cv);tex.colorSpace=THREE.SRGBColorSpace;
+ faceCache.set(key,tex);return tex;
+}
+
+function buildHair(head,estilo,cor,R,tipo){
+ const m=mat(cor,.95);
+ const cap=(scale=1.07,y=.06,thetaLen=.37)=>{const h=part(new THREE.SphereGeometry(R*scale,24,14,0,Math.PI*2,0,Math.PI*thetaLen),m,0,y*R,-.04*R,head);h.scale.set(1,.98,1.03);return h};
+ if(estilo==='careca'){return}
+ if(estilo==='grisalho'){ // laterais e nuca brancas, topo ralo
+  const h=part(new THREE.SphereGeometry(R*1.06,24,14,Math.PI/2+1.25,Math.PI*2-2.5,Math.PI*.2,Math.PI*.36),m,0,.02*R,-.04*R,head);h.scale.set(.92,1.12,1);
+  part(new THREE.SphereGeometry(R*1.03,20,10,0,Math.PI*2,0,Math.PI*.2),mat(shade(cor,.9),.95),0,.04*R,-.02*R,head);
+  return;
+ }
+ cap();
+ if(estilo==='curto')return;
+ if(estilo==='ondulado'){for(let i=0;i<7;i++){const a=-1.1+i*.37;part(new THREE.SphereGeometry(R*.32,10,8),m,Math.sin(a)*R*.62,R*.86,Math.cos(a)*R*.42-.05*R,head)}return}
+ if(estilo==='longo'){
+  const back=part(lathe([[R*1.02,0],[R*1.0,-R*.8],[R*.9,-R*1.9],[R*.6,-R*2.25],[0,-R*2.3]],18),m,0,R*.35,-R*.12,head);back.scale.set(1,1,.62);
+  return;
+ }
+ if(estilo==='coque'){part(new THREE.SphereGeometry(R*.42,14,10),m,0,R*.75,-R*.85,head);return}
+ // cacheado / cacheado-curto: volume de cachos
+ const n=estilo==='cacheado'?34:22,raio=estilo==='cacheado'?1.12:1.02,cair=estilo==='cacheado'?1.25:.62;
+ for(let i=0;i<n;i++){
+  const a=i*2.399,yy=1-(i/(n-1))*cair; const rr=Math.sqrt(Math.max(0,1-yy*yy));
+  const x=Math.cos(a)*rr*R*raio,z=Math.sin(a)*rr*R*raio*1.02-.04*R;
+  if(z>R*.3&&yy<.66)continue; // não cobre o rosto
+  part(new THREE.SphereGeometry(R*(estilo==='cacheado'?.3:.26),9,7),m,x,yy*R*1.05,z,head);
+ }
+ if(estilo==='cacheado'){const b=part(new THREE.SphereGeometry(R*1.05,18,12),m,0,-R*.25,-R*.42,head);b.scale.set(1.15,1.1,.75)}
+}
+
+// Monta (ou remonta) o personagem semi-realista dentro do grupo. Medidas em metros.
 export function dressAvatar(group,lookIn){
  const look=sanitizeLook(lookIn);
  const keep=new Set([group.userData.imported,group.userData.baseModel].filter(Boolean));
  for(const child of [...group.children])if(!keep.has(child))group.remove(child);
+ const tipo=look.base==='boneco'?'homem':look.base;
+ const C=CORPOS[tipo],H=C.H,k=H/2.15;
  const rig=new THREE.Group();rig.name='rig';group.add(rig);
  const team=TEAM_COLORS[look.team];
  const suit=look.outfit==='terno-faixa';
- const top=suit?look.terno:team;
- const pele=mat(look.pele,.8),cabelo=mat(look.cabelo,.9),calca=mat(suit?look.terno:look.calca),camisa=mat(top),sapato=mat('#1a1a1a',.5);
+ const pele=skinMat(look.pele),camisa=mat(suit?look.terno:team,suit?.55:.8),calca=mat(suit?look.terno:look.calca,.8),sapato=mat(suit?'#141414':'#f2f2f2',.45);
+ const sola=mat('#2a2a2a',.6);
 
- // Pernas com pivô no quadril (para balançar ao andar).
- const legs=[];
+ const hipY=1.06*k,shoulderY=1.74*k;
+ // Pernas: quadril → joelho → tornozelo, com sapato.
+ const legs=[],knees=[];
  for(const side of [-1,1]){
-  const hip=new THREE.Group();hip.position.set(side*.17,1.0,0);rig.add(hip);
-  part(new THREE.CapsuleGeometry(.13,.62,4,8),calca,0,-.45,0,hip);
-  part(new THREE.BoxGeometry(.24,.12,.36),sapato,0,-.93,.06,hip);
-  legs.push(hip);
+  const hip=new THREE.Group();hip.position.set(side*.1*k*C.quadril,hipY,0);rig.add(hip);
+  part(limb(.098*k*C.quadril,.066*k,.52*k),calca,0,0,0,hip);
+  const knee=new THREE.Group();knee.position.y=-.49*k;hip.add(knee);
+  part(limb(.068*k,.046*k,.48*k),calca,0,0,0,knee);
+  const shoe=part(new THREE.SphereGeometry(.066*k,16,10),sapato,0,-.5*k,.045*k,knee);shoe.scale.set(1,.6,1.85);
+  const sole=part(new THREE.CylinderGeometry(.064*k,.064*k,.018*k,16),sola,0,-.53*k,.045*k,knee);sole.scale.set(1,1,1.85);
+  legs.push(hip);knees.push(knee);
  }
- // Tronco
- part(new THREE.CapsuleGeometry(.34,.55,4,10),camisa,0,1.38,0,rig);
+ // Tronco: pélvis (calça) + abdômen/peito (camisa), perfil torneado e achatado na profundidade.
+ const torso=new THREE.Group();torso.position.y=hipY-.06*k;rig.add(torso);
+ const L=shoulderY-hipY+.12*k;
+ const q=C.quadril,pe=C.peito,b=C.barriga;
+ const perfil=[[0,-.02],[.148*q,0],[.168*q,.07],[.158*q+b,.16],[.136+b*1.6,.27],[.148*pe+b,.37],[.162*pe,.48],[.172*C.ombro,.58],[.182*C.ombro,.67],[.176*C.ombro,.72],[.13*C.ombro,.765],[.065,.79],[0,.8]].map(([r,y])=>[r*k,y*L/.8]);
+ const corte=.2*L/.815;
+ const pelvis=part(lathe(perfil.filter(([,y])=>y<=corte+.02).concat([[.0001,corte+.02]]),24),calca,0,0,0,torso);
+ const peito=part(lathe([[0,corte-.03]].concat(perfil.filter(([,y])=>y>=corte-.03)),24),camisa,0,0,0,torso);
+ for(const m of [pelvis,peito])m.scale.set(1.26,1,.62);
  if(suit){
-  part(new THREE.BoxGeometry(.2,.32,.05),mat('#f2f2f2'),0,1.62,.31,rig); // camisa branca no colarinho
-  const sash=part(new THREE.BoxGeometry(.15,1.0,.72),mat(team,.45),0,1.4,0,rig);sash.rotation.z=-.62;
+  // camisa branca em V e gravata discreta na cor do terno
+  const v=new THREE.Shape();v.moveTo(-.07*k,0);v.lineTo(.07*k,0);v.lineTo(0,-.2*k);v.closePath();
+  const vm=part(new THREE.ShapeGeometry(v),mat('#f4f4f2',.7),0,L*.97,.152*k,torso);vm.rotation.x=-.18;
+  // faixa diagonal na cor do time
+  const sash=new THREE.Mesh(new THREE.TorusGeometry(.27*k,.026*k,6,40),mat(team,.45));
+  sash.scale.set(1,.56,1.6);sash.rotation.order='ZYX';sash.rotation.set(Math.PI/2,0,-.78);
+  sash.position.set(0,L*.6,0);torso.add(sash);
  }
- // Braços com pivô no ombro.
- const arms=[];
- for(const side of [-1,1]){
-  const shoulder=new THREE.Group();shoulder.position.set(side*.45,1.66,0);rig.add(shoulder);
-  part(new THREE.CapsuleGeometry(.1,.5,4,8),camisa,0,-.3,0,shoulder);
-  part(new THREE.SphereGeometry(.1,10,8),pele,0,-.64,0,shoulder);
-  shoulder.rotation.z=side*.12;
-  arms.push(shoulder);
- }
- // Cabeça e cabelo
- const headY=2.02;
- part(new THREE.SphereGeometry(.27,16,12),pele,0,headY,0,rig);
- const hair=part(new THREE.SphereGeometry(.285,16,10,0,Math.PI*2,0,Math.PI*.5),cabelo,0,headY+.02,-.01,rig);hair.scale.y=.85;
- for(const side of [-1,1])part(new THREE.SphereGeometry(.035,8,6),mat('#1b1b1b'),side*.09,headY+.03,.25,rig);
+ if(C.curva)torso.rotation.x=C.curva;
+ // Pescoço e cabeça
+ const neckTop=new THREE.Group();neckTop.position.set(0,L*.99,0);torso.add(neckTop);
+ part(new THREE.CylinderGeometry(.052*k,.06*k,.13*k,14),pele,0,.03*k,0,neckTop);
+ const R=.128*k;
+ const head=new THREE.Group();head.position.set(0,.1*k+R*1.05,.01*k);neckTop.add(head);
+ if(C.curva)head.rotation.x=-C.curva*1.3;
+ const headMat=new THREE.MeshPhysicalMaterial({map:faceTexture(look.pele,look.cabelo,tipo),roughness:.6,sheen:.3,sheenColor:new THREE.Color('#ffd7c2')});
+ const cranio=part(new THREE.SphereGeometry(R,40,30),headMat,0,0,0,head);cranio.scale.set(.88,1.16,.98);
+ const nariz=part(new THREE.SphereGeometry(R*.13,10,8),pele,0,-R*.08,R*.98,head);nariz.scale.set(.9,1.25,1);
+ for(const side of [-1,1]){const o=part(new THREE.SphereGeometry(R*.2,10,8),pele,side*R*.9,0,-R*.05,head);o.scale.set(.45,1,.75)}
+ const estilo=look.cabeloEstilo==='auto'?C.cabelo:look.cabeloEstilo;
+ const corCabelo=tipo.startsWith('idos')&&look.cabeloEstilo==='auto'?'#e7e4de':look.cabelo;
+ buildHair(head,estilo,corCabelo,R,tipo);
+ if(tipo==='idoso'){const bg=part(new THREE.CapsuleGeometry(R*.07,R*.42,4,8),mat(corCabelo,.95),0,-R*.33,R*.9,head);bg.rotation.z=Math.PI/2}
 
- // Acessórios
+ // Braços: ombro → cotovelo → mão. Manga curta (camisa) ou longa (terno).
+ const arms=[],elbows=[];
+ for(const side of [-1,1]){
+  const sh=new THREE.Group();sh.position.set(side*.198*k*C.ombro*1.12,L*.86,0);torso.add(sh);
+  part(limb(.058*k,.046*k,.33*k),suit?camisa:pele,0,0,0,sh);
+  if(!suit){part(limb(.064*k,.058*k,.15*k),camisa,0,.025*k,0,sh)}
+  if(suit)part(new THREE.SphereGeometry(.058*k,14,10),camisa,0,-.01*k,0,sh);
+  const el=new THREE.Group();el.position.y=-.31*k;sh.add(el);
+  part(limb(.046*k,.034*k,.29*k),suit?camisa:pele,0,0,0,el);
+  const mao=part(new THREE.SphereGeometry(.045*k,12,10),pele,0,-.31*k,0,el);mao.scale.set(.75,1.35,.5);
+  const pol=part(new THREE.CapsuleGeometry(.012*k,.04*k,3,6),pele,side*-.02*k,-.29*k,.02*k,el);pol.rotation.z=side*.5;
+  sh.rotation.z=side*.1;el.rotation.x=-.12;
+  arms.push(sh);elbows.push(el);
+ }
+
+ // Acessórios presos à cabeça ou à mão.
  if(look.acessorio==='bone'){
-  part(new THREE.SphereGeometry(.29,16,10,0,Math.PI*2,0,Math.PI*.5),mat(team,.6),0,headY+.06,0,rig);
-  part(new THREE.BoxGeometry(.32,.03,.24),mat(team,.6),0,headY+.08,.27,rig);
+  const c=part(new THREE.SphereGeometry(R*1.12,22,12,0,Math.PI*2,0,Math.PI*.5),mat(team,.6),0,R*.18,-.02*R,head);c.scale.set(.96,.92,1.02);
+  const aba=part(new THREE.CylinderGeometry(R*.7,R*.7,R*.06,20,1,false,0,Math.PI),mat(team,.6),0,R*.2,R*.75,head);aba.rotation.y=-Math.PI/2;aba.scale.set(1,1,.85);
  }
  if(look.acessorio==='chapeu'){
-  part(new THREE.CylinderGeometry(.46,.46,.03,24),mat('#e8dcb5',.8),0,headY+.19,0,rig);
-  part(new THREE.CylinderGeometry(.24,.27,.22,20),mat('#e8dcb5',.8),0,headY+.3,0,rig);
-  part(new THREE.CylinderGeometry(.272,.272,.06,20),mat('#3b2b1d'),0,headY+.22,0,rig);
+  part(new THREE.CylinderGeometry(R*2.1,R*2.1,R*.07,28),mat('#e8dcb5',.8),0,R*.62,0,head);
+  part(new THREE.CylinderGeometry(R*.95,R*1.08,R*.7,24),mat('#e8dcb5',.8),0,R*.98,0,head);
+  part(new THREE.CylinderGeometry(R*1.09,R*1.09,R*.18,24),mat('#3b2b1d'),0,R*.72,0,head);
  }
  if(look.acessorio==='oculos'){
-  for(const side of [-1,1])part(new THREE.TorusGeometry(.07,.018,6,16),mat('#111',.3),side*.1,headY+.04,.26,rig);
-  part(new THREE.BoxGeometry(.06,.015,.015),mat('#111',.3),0,headY+.05,.27,rig);
+  for(const side of [-1,1])part(new THREE.TorusGeometry(R*.24,R*.035,6,18),mat('#111',.3),side*R*.33,R*.08,R*.95,head);
+  part(new THREE.BoxGeometry(R*.2,R*.04,R*.04),mat('#111',.3),0,R*.1,R*1.0,head);
  }
  if(look.acessorio==='megafone'){
-  const mega=part(new THREE.CylinderGeometry(.14,.05,.38,14,1,true),new THREE.MeshStandardMaterial({color:'#f5f5f5',roughness:.5,side:THREE.DoubleSide}),0,-.7,.18,arms[1]);
+  const mega=part(new THREE.CylinderGeometry(.13*k,.045*k,.34*k,16,1,true),new THREE.MeshStandardMaterial({color:'#f5f5f5',roughness:.5,side:THREE.DoubleSide}),0,-.33*k,.17*k,elbows[1]);
   mega.rotation.x=Math.PI/2;
  }
+ rig.traverse(o=>{if(o.isMesh)o.castShadow=false});
  group.userData.look=look;
- group.userData.legs=legs;group.userData.arms=arms;group.userData.rig=rig;
+ Object.assign(group.userData,{legs,knees,arms,elbows,rig,torso,curva:C.curva||0});
  applyBase(group,look);
  refreshVisibility(group);
  return group;
@@ -106,12 +224,33 @@ function normalize(model,altura){
  const c=box2.getCenter(new THREE.Vector3());
  model.position.set(-c.x,-box2.min.y,-c.z);
 }
+// Se o arquivo não estiver em /assets/bases, busca direto no Higgsfield.
+// homem-vermelho já vem com esqueleto e caminhada (rig do Higgsfield).
+const HF='https://d8j0ntlcm91z4.cloudfront.net/user_3KLobL96cAs3bokj0G7CRMHMham/hf_20261020_';
+export const BASE_CDN={
+ 'homem-vermelho':HF+'215339_5b3afe7f-0a9f-4ddb-8aa1-741495549426.glb',
+ 'mulher-vermelho':HF+'214725_e26abeb8-f753-486d-b0c5-8fb9fc9058f1.glb',
+ 'idoso-vermelho':HF+'214729_ccc3dcc4-8e88-4b39-bc9c-c46e7c124ed1.glb',
+ 'idosa-vermelho':HF+'214733_74f0e632-63cf-4dcb-9bad-0a20cbaa38af.glb',
+ 'homem-amarelo':HF+'214736_5b82cd6a-18be-47b3-a74f-d8c82ae66381.glb',
+ 'mulher-amarelo':HF+'214739_82a57d11-7d0f-43c2-8a9c-11feadf2b3cd.glb',
+ 'idoso-amarelo':HF+'214742_b215eb66-6146-4afe-9de2-be150a9f2101.glb',
+ 'idosa-amarelo':HF+'214745_86472ca7-ab1c-45b1-80f7-cea8a0d52e3a.glb'
+};
+export const THUMB_CDN={
+ 'homem-vermelho':HF+'214605_fadcc2c8-ed85-4ee7-8d46-5a6c03cd4abd.png','mulher-vermelho':HF+'214605_df98cea5-b40e-4991-8e9b-30abdb82df67.png',
+ 'idoso-vermelho':HF+'214604_06344de0-261c-47fa-9072-21746ae89e10.png','idosa-vermelho':HF+'214605_2272ba5a-4ea6-4f7c-9223-26f6a424a5a9.png',
+ 'homem-amarelo':HF+'214628_05ab2456-ae6b-4f7d-8728-0d6c289324d5.png','mulher-amarelo':HF+'214630_98eccc5e-adca-41bd-996e-a02757bc89a5.png',
+ 'idoso-amarelo':HF+'214629_a81ece7f-f013-4f5c-acf4-4e064cb6bdf2.png','idosa-amarelo':HF+'214629_fca271b7-5500-4711-a45f-4a66a544a863.png'
+};
 const baseCache=new Map();
 export const baseStatus=new Map(); // chave -> 'ok' | 'faltando'
 function loadBase(key){
  if(!baseCache.has(key)){
-  baseCache.set(key,new GLTFLoader().loadAsync('/assets/bases/'+key+'.glb')
-   .then(g=>{baseStatus.set(key,'ok');return g.scene})
+  const loader=new GLTFLoader();
+  baseCache.set(key,loader.loadAsync('/assets/bases/'+key+'.glb')
+   .catch(()=>BASE_CDN[key]?loader.loadAsync(BASE_CDN[key]):Promise.reject(new Error('sem arquivo')))
+   .then(g=>{baseStatus.set(key,'ok');return g})
    .catch(()=>{baseStatus.set(key,'faltando');return null}));
  }
  return baseCache.get(key);
@@ -121,12 +260,19 @@ async function applyBase(group,look){
  group.userData.baseKey=key;
  if(group.userData.baseModel&&group.userData.baseModel.userData.key!==key){group.remove(group.userData.baseModel);group.userData.baseModel=null}
  if(!key||group.userData.baseModel){refreshVisibility(group);return}
- const scene=await loadBase(key);
- if(!scene||group.userData.baseKey!==key){refreshVisibility(group);return}
- const model=scene.clone(true);
+ const gltf=await loadBase(key);
+ if(!gltf||group.userData.baseKey!==key){refreshVisibility(group);return}
+ const model=cloneSkinned(gltf.scene);
  try{normalize(model,look.base.startsWith('idos')?2.0:2.15)}catch{return}
  const holder=new THREE.Group();holder.add(model);holder.name='base';holder.userData.key=key;
  group.add(holder);group.userData.baseModel=holder;
+ // Modelos com esqueleto (rig do Higgsfield): a caminhada toca só enquanto anda.
+ if(gltf.animations.length){
+  const mixer=new THREE.AnimationMixer(model);
+  const clip=gltf.animations.find(c=>/walk|andar|run/i.test(c.name))||gltf.animations[0];
+  const action=mixer.clipAction(clip);action.play();action.paused=true;
+  holder.userData.mixer=mixer;holder.userData.walk=action;
+ }
  refreshVisibility(group);
 }
 
@@ -134,7 +280,13 @@ async function applyBase(group,look){
 export function animateAvatar(group,moving,t){
  const {legs,arms,rig,imported,baseModel,mixer,clips}=group.userData;
  if(!imported&&baseModel){
-  // Modelos base ainda sem esqueleto: passo com leve balanço.
+  const walk=baseModel.userData.walk;
+  if(walk){ // com esqueleto: anima de verdade; parado volta à pose inicial
+   if(moving&&walk.paused){walk.paused=false}
+   if(!moving&&!walk.paused){walk.paused=true;walk.time=0}
+   return;
+  }
+  // Sem esqueleto: passo com leve balanço.
   baseModel.position.y=moving?Math.abs(Math.sin(t*9))*.06:0;
   baseModel.rotation.z=moving?Math.sin(t*9)*.04:0;
   return;
@@ -148,10 +300,18 @@ export function animateAvatar(group,moving,t){
   return;
  }
  if(!legs)return;
- const swing=moving?Math.sin(t*9)*.6:0;
- legs[0].rotation.x=swing;legs[1].rotation.x=-swing;
- arms[0].rotation.x=-swing*.8;arms[1].rotation.x=swing*.8;
- rig.position.y=moving?Math.abs(Math.sin(t*9))*.05:Math.sin(t*2)*.012;
+ const {knees,elbows,torso,curva}=group.userData;
+ const f=t*8.5,sw=moving?Math.sin(f):0;
+ legs[0].rotation.x=sw*.55;legs[1].rotation.x=-sw*.55;
+ // joelho dobra quando a perna volta
+ knees[0].rotation.x=moving?Math.max(0,-Math.sin(f-.9))*.9+.05:0;
+ knees[1].rotation.x=moving?Math.max(0,Math.sin(f-.9))*.9+.05:0;
+ arms[0].rotation.x=-sw*.5;arms[1].rotation.x=sw*.5;
+ elbows[0].rotation.x=-.18-(moving?Math.max(0,sw)*.35:0);elbows[1].rotation.x=-.18-(moving?Math.max(0,-sw)*.35:0);
+ torso.rotation.y=sw*.07;torso.rotation.x=curva+(moving?.04:0);
+ const breath=Math.sin(t*1.8)*.006;
+ rig.position.y=moving?Math.abs(Math.cos(f))*.035:breath;
+ torso.scale.set(1+breath*.6,1,1+breath*1.2);
 }
 
 // Importa um .glb/.gltf do próprio usuário. Fica só no navegador dele.
@@ -183,4 +343,10 @@ export function removeImported(group){
  if(old)group.remove(old);
  group.userData.imported=null;group.userData.mixer=null;group.userData.clips=null;group.userData.current=null;
  refreshVisibility(group);
+}
+
+// Avança as animações do avatar (modelo importado ou corpo base com esqueleto).
+export function updateAvatarMixers(group,dt){
+ group.userData.mixer?.update(dt);
+ group.userData.baseModel?.userData.mixer?.update(dt);
 }
