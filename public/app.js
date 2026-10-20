@@ -1,6 +1,7 @@
 import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.169.0/build/three.module.js';
 import {GLTFLoader} from 'https://cdn.jsdelivr.net/npm/three@0.169.0/examples/jsm/loaders/GLTFLoader.js';
 import {OrbitControls} from 'https://cdn.jsdelivr.net/npm/three@0.169.0/examples/jsm/controls/OrbitControls.js';
+import {dressAvatar,animateAvatar,importModel,removeImported,sanitizeLook,TEAM_COLORS} from './avatar.js';
 
 const canvas=document.querySelector('#world');
 const scene=new THREE.Scene();
@@ -72,38 +73,58 @@ new ResizeObserver(resize).observe(canvas);
 let socket=null,myId=null,entered=false,name='Visitante',room='5300108';
 const live=document.querySelector('#status-dot'),status=document.querySelector('#status-label');
 const peers=new Map();
-// Times e trajes: cores genéricas, sem nome, sigla ou símbolo de partido.
-const TEAM_COLORS={vermelho:'#d32f2f',amarelo:'#f4c20d'};
-const SUIT_COLOR='#2b2f36';
-let myTeam='vermelho',myOutfit='camisa';
-// Monta o corpo do avatar dentro do grupo: camisa na cor do time, ou terno escuro com faixa diagonal.
-function dressAvatar(group,team,outfit,scale=1){
- for(const child of [...group.children])group.remove(child);
- const teamColor=TEAM_COLORS[team]||TEAM_COLORS.vermelho;
- const suit=outfit==='terno-faixa';
- const body=new THREE.Mesh(new THREE.CapsuleGeometry(.35*scale,1.0*scale,4,8),new THREE.MeshStandardMaterial({color:suit?SUIT_COLOR:teamColor,roughness:.7}));
- body.position.y=1.22;group.add(body);
- if(suit){
-  const sash=new THREE.Mesh(new THREE.BoxGeometry(.16,1.05,.74),new THREE.MeshStandardMaterial({color:teamColor,roughness:.5}));
-  sash.position.y=1.32;sash.rotation.z=-.62;group.add(sash);
- }
- const head=new THREE.Mesh(new THREE.SphereGeometry(.25*scale,12,10),new THREE.MeshStandardMaterial({color:'#c99a74'}));
- head.position.y=2.08;group.add(head);
- group.userData.team=team;group.userData.outfit=outfit;
-}
+// Visual do jogador: salvo só neste navegador.
+function loadLook(){try{return sanitizeLook(JSON.parse(localStorage.getItem('agora-look')||'{}'))}catch{return sanitizeLook()}}
+function saveLook(){try{localStorage.setItem('agora-look',JSON.stringify(myLook))}catch{}}
+let myLook=loadLook();
 const player=new THREE.Group();
 scene.add(player);
-dressAvatar(player,myTeam,myOutfit);
+dressAvatar(player,myLook);
 player.position.set(0,0,-70);
 player.visible=false;
-function remoteAvatar(id,x,z,label,team,outfit) {
+let playerMoving=false;
+function remoteAvatar(id,x,z,label,look) {
  if(peers.has(id))return peers.get(id);
  const mesh=new THREE.Group();
- dressAvatar(mesh,team||'vermelho',outfit||'camisa',.97);
- mesh.userData.name=label||'';
+ dressAvatar(mesh,look);
+ mesh.userData.name=label||'';mesh.userData.lastMove=0;
  mesh.position.set(x||0,0,z||-75);scene.add(mesh);
  peers.set(id,mesh);return mesh;
 }
+
+// Telão da tribuna: desenha o estado do debate num canvas.
+const telaoCanvas=document.createElement('canvas');telaoCanvas.width=1024;telaoCanvas.height=384;
+const telaoTexture=new THREE.CanvasTexture(telaoCanvas);telaoTexture.colorSpace=THREE.SRGBColorSpace;
+let telaoKey='';
+function drawTelao(st,segundos){
+ const key=JSON.stringify([st?.fase,st?.orador,st?.a?.name,st?.b?.name,st?.a?.team,st?.b?.team,segundos,st?.vencedor]);
+ if(key===telaoKey)return;telaoKey=key;
+ const c=telaoCanvas.getContext('2d');
+ const g=c.createLinearGradient(0,0,0,384);g.addColorStop(0,'#0c2533');g.addColorStop(1,'#071219');
+ c.fillStyle=g;c.fillRect(0,0,1024,384);
+ c.fillStyle='#53d6b1';c.font='700 34px Inter,system-ui,sans-serif';c.textAlign='center';
+ c.fillText('TRIBUNA DA ESPLANADA',512,58);
+ if(!st||!st.a){
+  c.fillStyle='#e6f2f0';c.font='600 46px Inter,system-ui,sans-serif';c.fillText('Debate aberto · entre na fila',512,190);
+  c.fillStyle='#8fb3bd';c.font='400 30px Inter,system-ui,sans-serif';c.fillText(st?.fila?.length?st.fila.length+' na fila':'Painel "Modo debate" ao lado',512,250);
+ }else{
+  for(const [lado,x] of [['a',256],['b',768]]){
+   const p=st[lado],ativo=st.orador===lado;
+   c.fillStyle=ativo?'#173f3b':'#0f1d26';c.fillRect(x-220,92,440,170);
+   c.fillStyle=TEAM_COLORS[p.team]||'#888';c.fillRect(x-220,92,14,170);
+   if(ativo){c.strokeStyle='#43d5a8';c.lineWidth=6;c.strokeRect(x-217,95,434,164)}
+   c.fillStyle='#8fb3bd';c.font='600 24px Inter,system-ui,sans-serif';c.fillText('LADO '+lado.toUpperCase()+(ativo?' · FALANDO':''),x,135);
+   c.fillStyle='#ffffff';c.font='700 50px Inter,system-ui,sans-serif';c.fillText(p.name.slice(0,16),x,205);
+  }
+  c.fillStyle='#ffffff';c.font='800 40px Inter,system-ui,sans-serif';c.fillText('x',512,195);
+  let rodape=(FASES_TELAO[st.fase]||st.fase)+(segundos!=null?' · '+Math.floor(segundos/60)+':'+String(segundos%60).padStart(2,'0'):'');
+  if(st.fase==='resultado'){const v=st.votos||{a:0,b:0};rodape=st.vencedor==='empate'?'Empate':'Venceu '+st[st.vencedor].name+(st.motivo==='wo'?' por W.O.':' · '+v.a+' x '+v.b)}
+  c.fillStyle='#f4c20d';c.font='700 38px Inter,system-ui,sans-serif';c.fillText(rodape,512,335);
+ }
+ telaoTexture.needsUpdate=true;
+}
+const FASES_TELAO={abertura:'Abertura',replica:'Réplica',treplica:'Tréplica',votacao:'Votação da plateia',resultado:'Resultado'};
+drawTelao(null,null);
 
 // Tribuna do debate no gramado, à frente do espelho d'água.
 const TRIBUNA={x:42,z:-62};
@@ -118,8 +139,11 @@ const PULPITO={a:{x:TRIBUNA.x-6,z:TRIBUNA.z},b:{x:TRIBUNA.x+6,z:TRIBUNA.z}};
   const placa=new THREE.Mesh(new THREE.BoxGeometry(1.2,.3,.05),new THREE.MeshStandardMaterial({color:cor}));
   placa.position.set(pos.x,1.15,pos.z+1.53);scene.add(placa);
  }
- const telao=new THREE.Mesh(new THREE.BoxGeometry(10,4,.3),new THREE.MeshStandardMaterial({color:'#101820',emissive:'#0d2a33',roughness:.4}));
+ const telao=new THREE.Mesh(new THREE.BoxGeometry(10,4,.3),new THREE.MeshStandardMaterial({color:'#101820',roughness:.4}));
  telao.position.set(TRIBUNA.x,4.2,TRIBUNA.z-3.2);scene.add(telao);
+ const tela=new THREE.Mesh(new THREE.PlaneGeometry(9.6,3.6),new THREE.MeshBasicMaterial({map:telaoTexture}));
+ tela.position.set(TRIBUNA.x,4.2,TRIBUNA.z-3.04);scene.add(tela);
+ for(const x of [-4.4,4.4]){const pe=new THREE.Mesh(new THREE.BoxGeometry(.25,2.4,.25),new THREE.MeshStandardMaterial({color:'#3a4048'}));pe.position.set(TRIBUNA.x+x,1.2,TRIBUNA.z-3.2);scene.add(pe)}
 })();
 function log(msg,nick,time){
  const pane=document.querySelector('#messages');
@@ -140,7 +164,7 @@ function connect(){
  socket=new WebSocket(scheme+'//'+location.host);
  socket.onopen=()=>{
   live.classList.add('connected');status.textContent='Conectado';
-  send({type:'join',room,name,team:myTeam,outfit:myOutfit});
+  send({type:'join',room,name,look:myLook});
  };
  socket.onmessage=(event)=>{
   let data;try{data=JSON.parse(event.data)}catch{return}
@@ -148,18 +172,23 @@ function connect(){
   if(data.type==='joined'){
    entered=true;player.visible=true;
    for(const mesh of peers.values())scene.remove(mesh);peers.clear();
-   for(const other of data.peers||[])remoteAvatar(other.id,other.position?.x,other.position?.z,other.name,other.team,other.outfit);
+   for(const other of data.peers||[])remoteAvatar(other.id,other.position?.x,other.position?.z,other.name,other.look);
    log('Você entrou na praça. Participação gratuita e plural.');
    count.textContent=data.count+' online';
   }
   if(data.type==='presence')count.textContent=data.count+' online';
   if(data.type==='chat')log(data.text,data.name,data.time);
-  if(data.type==='enter'&&data.id!==myId)remoteAvatar(data.id,data.position?.x,data.position?.z,data.name,data.team,data.outfit);
-  if(data.type==='look'&&data.id!==myId){const p=peers.get(data.id);if(p)dressAvatar(p,data.team,data.outfit,.97)}
+  if(data.type==='enter'&&data.id!==myId)remoteAvatar(data.id,data.position?.x,data.position?.z,data.name,data.look);
+  if(data.type==='look'&&data.id!==myId){const p=peers.get(data.id);if(p)dressAvatar(p,data.look)}
   if(data.type==='debate')renderDebate(data.state);
   if(data.type==='debate-fala')debateLog(data);
   if(data.type==='leave'){const p=peers.get(data.id);if(p){scene.remove(p);peers.delete(data.id)}}
-  if(data.type==='move'){const p=remoteAvatar(data.id,data.x,data.z,'');p.position.set(data.x,0,data.z)}
+  if(data.type==='move'){
+   const p=remoteAvatar(data.id,data.x,data.z,'');
+   const dx=data.x-p.position.x,dz=data.z-p.position.z;
+   if(dx||dz)p.rotation.y=Math.atan2(dx,dz);
+   p.userData.target={x:data.x,z:data.z};p.userData.lastMove=performance.now();
+  }
  };
  socket.onclose=()=>{
   entered=false;renderDebate(null);live.classList.remove('connected');status.textContent='Desconectado';count.textContent='0 online';
@@ -172,13 +201,54 @@ document.querySelector('#enter').addEventListener('click',()=>{
  const sel=document.querySelector('#city');document.querySelector('#room-label').textContent=sel.selectedOptions[0].textContent.split('·')[0].trim();
  connect();
 });
-for(const id of ['team','outfit']){
- document.querySelector('#'+id).addEventListener('change',()=>{
-  myTeam=document.querySelector('#team').value;myOutfit=document.querySelector('#outfit').value;
-  dressAvatar(player,myTeam,myOutfit);
-  if(entered)send({type:'look',team:myTeam,outfit:myOutfit});
- });
+// ---------- Criador de personagem ----------
+const creator={
+ team:document.querySelector('#team'),outfit:document.querySelector('#outfit'),
+ pele:document.querySelector('#cor-pele'),cabelo:document.querySelector('#cor-cabelo'),
+ calca:document.querySelector('#cor-calca'),terno:document.querySelector('#cor-terno'),
+ acessorio:document.querySelector('#acessorio'),file:document.querySelector('#import-model'),
+ remove:document.querySelector('#remove-model'),info:document.querySelector('#import-info'),
+ preview:document.querySelector('#avatar-preview')
+};
+function fillCreator(){for(const k of ['team','outfit','pele','cabelo','calca','terno','acessorio'])creator[k].value=myLook[k]}
+function readCreator(){
+ myLook=sanitizeLook(Object.fromEntries(['team','outfit','pele','cabelo','calca','terno','acessorio'].map(k=>[k,creator[k].value])));
+ dressAvatar(player,myLook);dressAvatar(previewAvatar,myLook);saveLook();
+ if(entered)send({type:'look',look:myLook});
 }
+// Prévia giratória do personagem no painel.
+const previewRenderer=new THREE.WebGLRenderer({canvas:creator.preview,antialias:true,alpha:true});
+previewRenderer.outputColorSpace=THREE.SRGBColorSpace;
+const previewScene=new THREE.Scene();
+previewScene.add(new THREE.HemisphereLight('#ffffff','#556b4f',2.4));
+const previewSun=new THREE.DirectionalLight('#fff3df',2);previewSun.position.set(2,4,3);previewScene.add(previewSun);
+const previewCam=new THREE.PerspectiveCamera(30,1,.1,50);previewCam.position.set(0,1.5,6.2);previewCam.lookAt(0,1.15,0);
+const previewAvatar=new THREE.Group();previewScene.add(previewAvatar);dressAvatar(previewAvatar,myLook);
+const floor=new THREE.Mesh(new THREE.CircleGeometry(.9,32),new THREE.MeshStandardMaterial({color:'#1e403e'}));floor.rotation.x=-Math.PI/2;previewScene.add(floor);
+function renderPreview(t){
+ const w=creator.preview.clientWidth,h=creator.preview.clientHeight;
+ if(!w||!h)return;
+ if(creator.preview.width!==Math.round(w*1.5)){previewRenderer.setPixelRatio(1.5);previewRenderer.setSize(w,h,false);previewCam.aspect=w/h;previewCam.updateProjectionMatrix()}
+ previewAvatar.rotation.y=t*.6;
+ animateAvatar(previewAvatar,previewWalking,t);
+ previewAvatar.userData.mixer?.update(1/60);
+ previewRenderer.render(previewScene,previewCam);
+}
+let previewWalking=false;
+document.querySelector('#preview-walk').addEventListener('click',e=>{previewWalking=!previewWalking;e.currentTarget.textContent=previewWalking?'Parar':'Ver andando'});
+fillCreator();
+for(const k of ['team','outfit','pele','cabelo','calca','terno','acessorio'])creator[k].addEventListener('input',readCreator);
+creator.file.addEventListener('change',async()=>{
+ const file=creator.file.files[0];if(!file)return;
+ creator.info.textContent='Carregando '+file.name+'…';
+ try{
+  const [r]=await Promise.all([importModel(player,file),importModel(previewAvatar,file)]);
+  creator.info.textContent='Modelo importado: '+r.nome+(r.animacoes.length?' · animações: '+r.animacoes.slice(0,4).join(', '):' · sem animações (vai pular ao andar)')+'. Só você vê este modelo; os outros veem seu boneco personalizado.';
+  creator.remove.hidden=false;
+ }catch(err){creator.info.textContent='Não foi possível importar: '+(err.message||err)}
+ creator.file.value='';
+});
+creator.remove.addEventListener('click',()=>{removeImported(player);removeImported(previewAvatar);creator.remove.hidden=true;creator.info.textContent='Modelo removido. Voltou ao boneco personalizado.'});
 
 // ---------- Modo debate ----------
 const FASES={aguardando:'Aguardando',abertura:'Abertura',replica:'Réplica',treplica:'Tréplica',votacao:'Votação',resultado:'Resultado'};
@@ -239,8 +309,9 @@ function renderDebate(st){
 }
 function debateClock(){
  const st=debateState;
- if(!st||!st.terminaEm||st.fase==='aguardando'){dbg.timer.textContent='vs';return}
+ if(!st||!st.terminaEm||st.fase==='aguardando'){dbg.timer.textContent='vs';drawTelao(st,null);return}
  const s=Math.max(0,Math.ceil((st.terminaEm-Date.now())/1000));
+ drawTelao(st,s);
  dbg.timer.textContent=Math.floor(s/60)+':'+String(s%60).padStart(2,'0');
 }
 setInterval(debateClock,250);
@@ -286,13 +357,24 @@ function animate(){
   if(pressed.has('s')||pressed.has('arrowdown'))z=speed;
   if(pressed.has('a')||pressed.has('arrowleft'))x=-speed;
   if(pressed.has('d')||pressed.has('arrowright'))x=speed;
+  playerMoving=!!(x||z);
   if(x||z){
+   player.rotation.y=Math.atan2(x,z);
    const nx=THREE.MathUtils.clamp(player.position.x+x,-300,300);
    const nz=THREE.MathUtils.clamp(player.position.z+z,-950,200);
    player.position.set(nx,0,nz);
    netTick+=dt;if(netTick>.13){send({type:'move',x:nx,z:nz});netTick=0}
   }
  }
+ const t=clock.elapsedTime,now=performance.now();
+ animateAvatar(player,entered&&playerMoving,t);
+ player.userData.mixer?.update(dt);
+ for(const p of peers.values()){
+  const tg=p.userData.target;
+  if(tg){p.position.x+=(tg.x-p.position.x)*Math.min(1,dt*10);p.position.z+=(tg.z-p.position.z)*Math.min(1,dt*10)}
+  animateAvatar(p,now-p.userData.lastMove<260,t);
+ }
+ renderPreview(t);
  controls.update();renderer.render(scene,camera);
 }
 resize();animate();

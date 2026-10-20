@@ -22,3 +22,17 @@
 .message .tag-a,.message .tag-b{font-size:9px;font-weight:800;border-radius:4px;padding:2px 5px;margin-right:6px;color:#071e1b}
 .message .tag-a{background:#9fd8c6}.message .tag-b{background:#c5b8f0}
 @media(max-width:900px){.debate{grid-column:1/-1}}
+
+.creator label{display:block;font-size:11px;color:#b9ccd5;font-weight:650;margin:10px 0 5px}
+.creator select{width:100%;background:#091925;color:#f3faf9;border:1px solid #304858;border-radius:7px;padding:9px;font:inherit;font-size:12px}
+.creator-grid{display:grid;grid-template-columns:120px 1fr;gap:12px;margin-top:8px}
+.preview-box{display:flex;flex-direction:column;gap:6px}
+#avatar-preview{width:120px;height:170px;border-radius:10px;background:radial-gradient(circle at 50% 35%,#24485a,#0a1824);display:block}
+.mini{background:#1e403e;color:#a1dfc5;border:0;border-radius:6px;font-size:11px;padding:6px;cursor:pointer}
+.colors{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:4px}
+.colors label{display:flex;flex-direction:column;align-items:center;gap:4px;font-size:10px;margin:8px 0 0}
+.colors input{width:100%;height:30px;border:1px solid #304858;border-radius:6px;background:#091925;padding:2px;cursor:pointer}
+.creator .import{margin:12px 0 0;border:1px dashed #43d5a8;border-radius:8px;padding:10px;color:#a1dfc5;cursor:pointer}
+.creator .import input{display:block;margin-top:6px;font-size:11px;color:#b9ccd5;width:100%}
+.creator .secondary{margin-top:8px}
+@media(max-width:900px){.creator{grid-column:1/-1}}

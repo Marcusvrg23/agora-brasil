@@ -10,7 +10,7 @@
 </head>
 <body>
 <header class="topbar">
- <div class="brand"><div class="brandicon">A</div><div><strong>ÁGORA <span>BRASIL</span></strong><small>PRAÇA CÍVICA VIRTUAL · VERSÃO 0.4</small></div></div>
+ <div class="brand"><div class="brandicon">A</div><div><strong>ÁGORA <span>BRASIL</span></strong><small>PRAÇA CÍVICA VIRTUAL · VERSÃO 0.5</small></div></div>
  <div class="status"><span class="dot" id="status-dot"></span><span id="status-label">Conectando…</span><b id="live-count">0 online</b></div>
 </header>
 <main>
@@ -29,12 +29,28 @@
    <label for="nickname">Seu apelido</label><input id="nickname" maxlength="24" placeholder="Como quer aparecer?" value="Visitante">
    <label for="city">Sala</label>
    <select id="city"><option value="5300108">Brasília · DF</option><option value="3550308">São Paulo · SP (cenário Brasília)</option><option value="3304557">Rio de Janeiro · RJ (cenário Brasília)</option><option value="3106200">Belo Horizonte · MG (cenário Brasília)</option></select>
-   <div class="look-row">
-    <div><label for="team">Time</label><select id="team"><option value="vermelho">Vermelho</option><option value="amarelo">Amarelo</option></select></div>
-    <div><label for="outfit">Traje</label><select id="outfit"><option value="camisa">Camisa do time</option><option value="terno-faixa">Terno com faixa</option></select></div>
-   </div>
    <button id="enter" class="primary">Entrar na manifestação gratuita</button>
    <div class="fineprint">Todas as salas usam, por enquanto, o mesmo cenário de Brasília. Outras cidades ainda não foram modeladas.</div>
+  </div>
+  <div class="panel creator" id="creator-panel">
+   <div class="eyebrow">CRIE SEU PERSONAGEM</div>
+   <div class="creator-grid">
+    <div class="preview-box"><canvas id="avatar-preview" aria-label="Prévia do personagem"></canvas><button id="preview-walk" type="button" class="mini">Ver andando</button></div>
+    <div class="creator-fields">
+     <label for="team">Time</label><select id="team"><option value="vermelho">Vermelho</option><option value="amarelo">Amarelo</option></select>
+     <label for="outfit">Traje</label><select id="outfit"><option value="camisa">Camisa do time</option><option value="terno-faixa">Terno com faixa</option></select>
+     <label for="acessorio">Acessório</label><select id="acessorio"><option value="nenhum">Nenhum</option><option value="bone">Boné do time</option><option value="chapeu">Chapéu panamá</option><option value="oculos">Óculos</option><option value="megafone">Megafone</option></select>
+    </div>
+   </div>
+   <div class="colors">
+    <label>Pele<input type="color" id="cor-pele"></label>
+    <label>Cabelo<input type="color" id="cor-cabelo"></label>
+    <label>Calça<input type="color" id="cor-calca"></label>
+    <label>Terno<input type="color" id="cor-terno"></label>
+   </div>
+   <label class="import"><span>Importar meu modelo 3D (.glb)</span><input type="file" id="import-model" accept=".glb,.gltf,model/gltf-binary"></label>
+   <button id="remove-model" type="button" class="secondary" hidden>Remover modelo importado</button>
+   <div id="import-info" class="fineprint">Seu modelo importado aparece só para você. Para os outros jogadores, vale o personagem personalizado acima.</div>
   </div>
   <div class="panel debate" id="debate-panel">
    <div class="chat-head"><div><div class="eyebrow">MODO DEBATE</div><h2>Tribuna da Esplanada</h2></div><span id="debate-phase" class="pill">Aguardando</span></div>

@@ -28,6 +28,20 @@ function roomCode(value) {
 }
 function team(value) { return TEAMS.has(value) ? value : 'vermelho'; }
 function outfit(value) { return OUTFITS.has(value) ? value : 'camisa'; }
+const ACESSORIOS = new Set(['nenhum','bone','chapeu','oculos','megafone']);
+const HEX = /^#[0-9a-f]{6}$/i;
+// Visual completo do personagem; qualquer campo inválido cai no padrão.
+function lookOf(input) {
+  const src = input && typeof input === 'object' ? input : {};
+  const cor = (v, padrao) => HEX.test(String(v || '')) ? String(v).toLowerCase() : padrao;
+  return {
+    team: team(src.team), outfit: outfit(src.outfit),
+    pele: cor(src.pele, '#c99a74'), cabelo: cor(src.cabelo, '#2b1d14'),
+    calca: cor(src.calca, '#28324a'), terno: cor(src.terno, '#2b2f36'),
+    acessorio: ACESSORIOS.has(src.acessorio) ? src.acessorio : 'nenhum',
+  };
+}
+function setLook(ws, input) { ws.look = lookOf(input); ws.team = ws.look.team; ws.outfit = ws.look.outfit; }
 function player(ws) { return { id: ws.playerId, name: ws.name, team: ws.team }; }
 function debateOf(code) {
   if (!debates.has(code)) debates.set(code, new Debate({ emit: packet => broadcast(code, packet) }));
@@ -85,7 +99,7 @@ const server=http.createServer((req,res)=>{
 const wss=new WebSocketServer({server,maxPayload:LIMIT_BYTES});
 wss.on('connection',(ws)=>{
   ws.playerId='p'+nextId++;
-  ws.room=null;ws.name='Visitante';ws.lastChat=0;ws.lastMove=0;ws.team='vermelho';ws.outfit='camisa';
+  ws.room=null;ws.name='Visitante';ws.lastChat=0;ws.lastMove=0;setLook(ws,null);
   send(ws,{type:'hello',id:ws.playerId});
   ws.on('message',(raw)=>{
     let msg;try { msg=JSON.parse(String(raw)); }catch{return;}
@@ -94,22 +108,22 @@ wss.on('connection',(ws)=>{
       leave(ws);
       ws.room=roomCode(msg.room);
       ws.name=clean(msg.name,24)||'Visitante';
-      ws.team=team(msg.team);ws.outfit=outfit(msg.outfit);
+      setLook(ws,msg.look||msg);
       if(!rooms.has(ws.room)) rooms.set(ws.room,new Set());
       const occupants=peers(ws.room).map(p=>({
-        id:p.playerId,name:p.name,team:p.team,outfit:p.outfit,position:p.position||{x:0,z:-75}
+        id:p.playerId,name:p.name,look:p.look,position:p.position||{x:0,z:-75}
       }));
       rooms.get(ws.room).add(ws);
       send(ws,{type:'joined',room:ws.room,peers:occupants,count:peers(ws.room).length});
-      broadcast(ws.room,{type:'enter',id:ws.playerId,name:ws.name,team:ws.team,outfit:ws.outfit,position:ws.position||{x:0,z:-75}},ws);
+      broadcast(ws.room,{type:'enter',id:ws.playerId,name:ws.name,look:ws.look,position:ws.position||{x:0,z:-75}},ws);
       publishCount(ws.room);
       send(ws,{type:'debate',state:debateOf(ws.room).estado()});
       return;
     }
     if(!ws.room) return;
     if(msg.type==='look') {
-      ws.team=team(msg.team);ws.outfit=outfit(msg.outfit);
-      broadcast(ws.room,{type:'look',id:ws.playerId,team:ws.team,outfit:ws.outfit});
+      setLook(ws,msg.look||msg);
+      broadcast(ws.room,{type:'look',id:ws.playerId,look:ws.look});
       return;
     }
     if(typeof msg.type==='string'&&msg.type.startsWith('debate-')) {
@@ -145,4 +159,4 @@ if(require.main===module) {
   setInterval(tickDebates,500).unref();
   server.listen(PORT,HOST,()=>console.log('Ágora Brasil em http://localhost:'+PORT));
 }
-module.exports={server,clean,roomCode,team,outfit,tickDebates};
+module.exports={server,clean,roomCode,team,outfit,lookOf,tickDebates};

@@ -41,6 +41,9 @@ A primeira execução do GitHub Actions deve baixar os assets da [versão 4 do H
 
 - **Times por cor:** Vermelho ou Amarelo, com traje "Camisa do time" ou "Terno com faixa". A escolha aparece para todos e pode mudar a qualquer momento. Os times não têm nome, sigla ou símbolo de partido.
 - **Modo debate** (`debate.js`): fila aberta na Tribuna da Esplanada. Com dois inscritos, o debate começa com abertura (60 s), réplica (45 s) e tréplica (30 s) para cada lado. Depois vem a votação da plateia (30 s, um voto por pessoa, debatedores não votam) e o resultado. Quem sai da sala perde por W.O.
+- **Criador de personagem** (`public/avatar.js`): time, traje, acessório (boné, chapéu panamá, óculos, megafone) e cores de pele, cabelo, calça e terno, com prévia giratória e botão "Ver andando". O visual fica salvo no navegador e é validado no servidor.
+- **Importar modelo 3D:** o jogador pode carregar um `.glb`/`.gltf` (até 15 MB). O modelo é ajustado para 2,2 m e usa animações com nome "walk"/"idle" se existirem. Ele aparece **só para quem importou**; os outros jogadores veem o boneco personalizado. Compartilhar modelos com todos exige upload e moderação, que ainda não existem.
+- **Animações:** os bonecos andam com braços e pernas balançando, viram para a direção do movimento e respiram parados. O telão da tribuna mostra o debate ao vivo.
 - **Catálogo:** `public/catalogo.json` lista personagens, times, trajes, itens, veículos, espaços de anúncio e regras.
 - **Modelos 3D:** `bash scripts/baixar-modelos.sh` baixa os GLB gerados no Higgsfield para `public/assets/`.
 

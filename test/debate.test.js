@@ -87,3 +87,11 @@ test('depois do resultado, próximo par da fila entra', () => {
   assert.equal(s.fase, 'abertura');
   assert.deepEqual([s.a.id, s.b.id], ['p3', 'p4']);
 });
+
+test('visual do personagem: cores hex e acessórios validados', () => {
+  const { lookOf } = require('../server');
+  const l = lookOf({ team: 'amarelo', outfit: 'terno-faixa', pele: '#AABBCC', cabelo: 'red', acessorio: 'chapeu', extra: 'x' });
+  assert.deepEqual(l, { team: 'amarelo', outfit: 'terno-faixa', pele: '#aabbcc', cabelo: '#2b1d14', calca: '#28324a', terno: '#2b2f36', acessorio: 'chapeu' });
+  assert.equal(lookOf({ acessorio: '<script>' }).acessorio, 'nenhum');
+  assert.equal(lookOf(null).team, 'vermelho');
+});
