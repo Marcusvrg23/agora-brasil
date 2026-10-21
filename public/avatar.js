@@ -453,6 +453,15 @@ const P={
  sentadoD:[V(-.12,-.12,1),V(0,-1,.12)],sentadoE:[V(.12,-.12,1),V(0,-1,.12)],
  guidaoD:[V(-.15,-.5,.85),V(.05,-.15,1)],guidaoE:[V(.15,-.5,.85),V(-.05,-.15,1)],
  montadoD:[V(-.55,-.55,.6),V(-.1,-1,.1)],montadoE:[V(.55,-.55,.6),V(.1,-1,.1)],
+ // Key poses intermediárias: joelhos, mãos e guidão se movem com o veículo.
+ carroD:[[0,[V(-.13,-.18,.98),V(.08,-.45,.9)]],[.5,[V(-.3,-.14,.94),V(.22,-.42,.88)]],[1,[V(-.08,-.18,.98),V(.02,-.42,.9)]]],
+ carroE:[[0,[V(.13,-.18,.98),V(-.08,-.45,.9)]],[.5,[V(.08,-.18,.98),V(-.03,-.48,.88)]],[1,[V(.3,-.14,.94),V(-.22,-.42,.88)]]],
+ motoD:[[0,[V(-.38,-.23,.89),V(.04,-.12,.99)]],[.5,[V(-.39,-.33,.86),V(.02,-.2,.98)]],[1,[V(-.37,-.21,.9),V(.04,-.10,.99)]]],
+ motoE:[[0,[V(.38,-.23,.89),V(-.04,-.12,.99)]],[.5,[V(.39,-.33,.86),V(-.02,-.2,.98)]],[1,[V(.37,-.21,.9),V(-.04,-.10,.99)]]],
+ heliD:[V(-.12,-.48,.87),V(.04,-.86,.50)],heliE:[V(.28,-.52,.81),V(-.15,-.65,.74)],
+ cacaD:[V(-.10,-.36,.93),V(.03,-.84,.53)],cacaE:[V(.18,-.38,.90),V(-.14,-.76,.64)],
+ dinoD:[[0,[V(-.47,-.43,.77),V(.06,-.72,.69)]],[.5,[V(-.52,-.55,.67),V(.02,-.78,.62)]],[1,[V(-.47,-.43,.77),V(.06,-.72,.69)]]],
+ dinoE:[[0,[V(.47,-.43,.77),V(-.06,-.72,.69)]],[.5,[V(.52,-.55,.67),V(-.02,-.78,.62)]],[1,[V(.47,-.43,.77),V(-.06,-.72,.69)]]],
 };
 function alvos(nome,k){
  switch(nome){
@@ -463,7 +472,11 @@ function alvos(nome,k){
   case 'bomba':return {bracoD:P.bomba};
   case 'arremesso':return {bracoD:chaves(P.arremesso,k)};
   case 'sentado':return {pernaD:P.sentadoD,pernaE:P.sentadoE,bracoD:P.guidaoD,bracoE:P.guidaoE};
-  case 'montado':return {pernaD:P.montadoD,pernaE:P.montadoE,bracoD:P.guidaoD,bracoE:P.guidaoE};
+  case 'montado':return {pernaD:P.montadoD,pernaE:P.montadoE,bracoD:chaves(P.dinoD,k),bracoE:chaves(P.dinoE,k)};
+  case 'dirigindo-carro':return {pernaD:P.sentadoD,pernaE:P.sentadoE,bracoD:chaves(P.carroD,k),bracoE:chaves(P.carroE,k)};
+  case 'pilotando-moto':return {pernaD:P.montadoD,pernaE:P.montadoE,bracoD:chaves(P.motoD,k),bracoE:chaves(P.motoE,k)};
+  case 'pilotando-helicoptero':return {pernaD:P.sentadoD,pernaE:P.sentadoE,bracoD:P.heliD,bracoE:P.heliE};
+  case 'pilotando-caca':return {pernaD:P.sentadoD,pernaE:P.sentadoE,bracoD:P.cacaD,bracoE:P.cacaE};
  }
  return null;
 }
