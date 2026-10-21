@@ -253,17 +253,31 @@ function loadBase(tipo){
  }
  return baseCache.get(tipo);
 }
-// Caminhada única para todos: vem do homem (rig com animação). Sem trilhas de posição,
-// para servir em esqueletos de alturas diferentes; o balanço vertical é feito em código.
-let walkClip=null;
+// Caminhada única para todos: a "Casual_Walk" do rig do homem. Os quatro corpos têm o mesmo esqueleto
+// (24 ossos com os mesmos nomes). Os rigs sem animação trazem um "clip0" de um quadro só (pose parada),
+// que é ignorado. Na cópia, fica só a rotação dos ossos e o movimento do quadril, ajustado à altura de cada corpo.
+let walkBase=null;
 function sharedWalk(){
- if(!walkClip)walkClip=loadBase('homem').then(g=>{
-  const c=g&&(g.animations.find(a=>/walk|andar/i.test(a.name))||g.animations[0]);
-  if(!c)return null;
-  const so=c.clone();so.tracks=so.tracks.filter(t=>!t.name.endsWith('.position')&&!t.name.endsWith('.scale'));so.name='caminhada';
-  return so;
+ if(!walkBase)walkBase=loadBase('homem').then(g=>{
+  const clip=g&&g.animations.find(a=>/walk|andar/i.test(a.name));
+  const hips=g?.scene.getObjectByName('Hips');
+  return clip?{clip,hipsRest:hips?hips.position.clone():new THREE.Vector3()}:null;
  });
- return walkClip;
+ return walkBase;
+}
+function walkPara(base,hipsAlvo){
+ const tracks=[];
+ for(const t of base.clip.tracks){
+  if(t.name.endsWith('.scale'))continue;
+  if(t.name.endsWith('.position')){
+   if(t.name!=='Hips.position'||!hipsAlvo)continue;
+   const v=t.values.slice(),r=base.hipsRest;
+   for(let i=0;i<v.length;i+=3){v[i]+=hipsAlvo.x-r.x;v[i+1]+=hipsAlvo.y-r.y;v[i+2]+=hipsAlvo.z-r.z}
+   tracks.push(new THREE.VectorKeyframeTrack(t.name,t.times,v));continue;
+  }
+  tracks.push(t);
+ }
+ return new THREE.AnimationClip('caminhada',base.clip.duration,tracks);
 }
 // Troca o vermelho saturado da textura por amarelo (camisa do time amarelo). Pele e cabelo não mudam.
 const recolorCache=new Map();
@@ -305,14 +319,15 @@ async function applyBase(group,look){
  const holder=new THREE.Group();holder.add(model);holder.name='base';holder.userData.key=key;
  group.add(holder);group.userData.baseModel=holder;
  refreshVisibility(group);
- // Com esqueleto: usa a caminhada do próprio modelo (homem) ou a compartilhada (demais).
+ // Com esqueleto: todos usam a mesma caminhada, ajustada ao quadril de cada corpo.
  let skinned=false;model.traverse(o=>{if(o.isSkinnedMesh)skinned=true});
  if(!skinned)return;
- const clip=gltf.animations.length?(gltf.animations.find(c=>/walk|andar|run/i.test(c.name))||gltf.animations[0]):await sharedWalk();
- if(!clip||group.userData.baseModel!==holder)return;
+ const base=await sharedWalk();
+ if(!base||group.userData.baseModel!==holder)return;
+ const hips=model.getObjectByName('Hips');
  const mixer=new THREE.AnimationMixer(model);
- const action=mixer.clipAction(clip);
- holder.userData.mixer=mixer;holder.userData.walk=action;holder.userData.semPosicao=!gltf.animations.length;holder.userData.andando=false;
+ const action=mixer.clipAction(walkPara(base,hips?hips.position:null));
+ holder.userData.mixer=mixer;holder.userData.walk=action;holder.userData.andando=false;
 }
 
 // Caminhada procedural: balança pernas e braços; parado, respira de leve.
@@ -325,7 +340,6 @@ export function animateAvatar(group,moving,t,ritmo=1){
    // andando: entra a caminhada; parado: a caminhada some aos poucos e o boneco volta à pose em pé
    if(moving&&!baseModel.userData.andando){baseModel.userData.andando=true;walk.reset();walk.paused=false;walk.setEffectiveWeight(1);walk.fadeIn(.2).play()}
    if(!moving&&baseModel.userData.andando){baseModel.userData.andando=false;walk.fadeOut(.3)}
-   if(baseModel.userData.semPosicao)baseModel.position.y=moving?Math.abs(Math.sin(walk.time*Math.PI*2/walk.getClip().duration*2))*.04:0;
    return;
   }
   // Sem esqueleto: passo com leve balanço.
