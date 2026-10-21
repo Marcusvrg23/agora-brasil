@@ -21,8 +21,8 @@ function texFumaca(){
 
 // Sistema de partículas com pontos: posição, velocidade, vida, tamanho e cor por partícula.
 class Particulas{
- constructor(scene,{max=2000,mapa,aditivo=false,gravidade=0,arrasto=0,crescer=1,profundidade=true}){
-  this.max=max;this.g=gravidade;this.arrasto=arrasto;this.crescer=crescer;
+ constructor(scene,{max=2000,mapa,aditivo=false,gravidade=0,arrasto=0,crescer=1,profundidade=true,esfriar=false}){
+  this.max=max;this.esfriar=esfriar;this.g=gravidade;this.arrasto=arrasto;this.crescer=crescer;
   const geo=new THREE.BufferGeometry();
   this.pos=new Float32Array(max*3);this.cor=new Float32Array(max*4);this.tam=new Float32Array(max);
   this.vel=new Float32Array(max*3);this.vida=new Float32Array(max);this.vidaMax=new Float32Array(max);this.tam0=new Float32Array(max);this.cor0=new Float32Array(max*4);this.rot=new Float32Array(max);
@@ -57,7 +57,8 @@ class Particulas{
    if(pos[i*3+1]<.05){pos[i*3+1]=.05;vel[i*3+1]*=-.3}
    tam[i]=tam0[i]*(1+k*this.crescer);
    const fade=k<.1?k/.1:1-(k-.1)/.9;
-   cor[i*4]=cor0[i*4];cor[i*4+1]=cor0[i*4+1]*(1-k*.5);cor[i*4+2]=cor0[i*4+2]*(1-k*.7);cor[i*4+3]=cor0[i*4+3]*Math.max(0,fade);
+   const e=this.esfriar?k:0; // fogo esfria: perde verde e azul (amarelo → laranja → vermelho)
+   cor[i*4]=cor0[i*4];cor[i*4+1]=cor0[i*4+1]*(1-e*.5);cor[i*4+2]=cor0[i*4+2]*(1-e*.7);cor[i*4+3]=cor0[i*4+3]*Math.max(0,fade);
    this.rot[i]+=dt*.4;
   }
   const g=this.pts.geometry;g.attributes.position.needsUpdate=true;g.attributes.cor.needsUpdate=true;g.attributes.tam.needsUpdate=true;g.attributes.rot.needsUpdate=true;
@@ -65,9 +66,9 @@ class Particulas{
 }
 
 export function criarEfeitos(scene,camera,renderer){
- const fogo=new Particulas(scene,{max:2600,mapa:texRadial([[0,'rgba(255,255,255,1)'],[.3,'rgba(255,220,150,.9)'],[1,'rgba(255,120,20,0)']]),aditivo:true,arrasto:2.2,crescer:1.6,gravidade:-2});
+ const fogo=new Particulas(scene,{max:2600,mapa:texRadial([[0,'rgba(255,255,255,1)'],[.3,'rgba(255,220,150,.9)'],[1,'rgba(255,120,20,0)']]),aditivo:true,arrasto:2.2,crescer:1.6,gravidade:-2,esfriar:true});
  const fumaca=new Particulas(scene,{max:2600,mapa:texFumaca(),arrasto:1.1,crescer:3,gravidade:-1.2});
- const faisca=new Particulas(scene,{max:1500,mapa:texRadial([[0,'rgba(255,255,255,1)'],[.4,'rgba(255,230,160,.8)'],[1,'rgba(255,160,40,0)']]),aditivo:true,gravidade:9.8,arrasto:.6,crescer:-.6});
+ const faisca=new Particulas(scene,{max:1500,mapa:texRadial([[0,'rgba(255,255,255,1)'],[.4,'rgba(255,230,160,.8)'],[1,'rgba(255,160,40,0)']]),aditivo:true,gravidade:9.8,arrasto:.6,crescer:-.6,esfriar:true});
  const poeira=new Particulas(scene,{max:1200,mapa:texFumaca(),arrasto:1.8,crescer:2.5,gravidade:-.3});
  const ajustar=()=>{const h=renderer.domElement.clientHeight||600;for(const p of [fogo,fumaca,faisca,poeira])p.mat.uniforms.escala.value=h/(2*Math.tan(THREE.MathUtils.degToRad(camera.fov/2)))};
  ajustar();window.addEventListener('resize',ajustar);
@@ -114,9 +115,9 @@ export function criarEfeitos(scene,camera,renderer){
   chama(x,y,z,vx,vy,vz,tam=.5){fogo.emitir(x,y,z,vx,vy,vz,.12+Math.random()*.08,tam,1,.6+Math.random()*.2,.25)},
   escapamento(x,y,z,vx,vz,forca=1){if(Math.random()>.35*forca+.15)return;const c=.35+Math.random()*.15;fumaca.emitir(x,y,z,vx+R(.4),.4+Math.random()*.3,vz+R(.4),.8+Math.random()*.6,.18+.12*forca,c,c,c,.35)},
   poeira(x,z,raio,forca=1){for(let i=0;i<3*forca;i++){const a=Math.random()*6.28,r=raio*(.6+Math.random()*.5);
-   poeira.emitir(x+Math.cos(a)*r,.3,z+Math.sin(a)*r,Math.cos(a)*6*forca,.6,Math.sin(a)*6*forca,1.2,1.4,.72,.66,.55,.45)}},
+   poeira.emitir(x+Math.cos(a)*r,.3,z+Math.sin(a)*r,Math.cos(a)*6*forca,.6,Math.sin(a)*6*forca,1.2,1.4,.78,.74,.66,.3)}},
   faiscas(x,y,z,n=2){for(let i=0;i<n;i++)faisca.emitir(x,y,z,R(2.5),1+Math.random()*2.5,R(2.5),.25+Math.random()*.25,.07+Math.random()*.05,1,.8,.4)},
-  pegadas(x,z){for(let i=0;i<10;i++)poeira.emitir(x+R(1.5),.2,z+R(1.5),R(3),1+Math.random(),R(3),1,.9,.62,.58,.5,.5)},
+  pegadas(x,z){for(let i=0;i<10;i++)poeira.emitir(x+R(1.5),.2,z+R(1.5),R(3),1+Math.random(),R(3),1,.9,.7,.66,.58,.35)},
   // Traçante da metralhadora: linha brilhante que some rápido.
   tracante(a,b){const g=new THREE.BufferGeometry().setFromPoints([a,b]);
    const l=new THREE.Line(g,new THREE.LineBasicMaterial({color:'#ffe69a',transparent:true,opacity:1,blending:THREE.AdditiveBlending,depthWrite:false}));

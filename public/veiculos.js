@@ -118,8 +118,9 @@ const chamaMat=new THREE.ShaderMaterial({
  uniforms:{uT:{value:0},uForca:{value:1}},
  vertexShader:`varying vec2 vUv;void main(){vUv=uv;gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.);}`,
  fragmentShader:`uniform float uT,uForca;varying vec2 vUv;
-  void main(){float l=vUv.y;float n=sin(l*40.-uT*60.)*.5+.5;float a=pow(l,1.6)*(.6+.4*n)*uForca;
-   vec3 c=mix(vec3(1.,.35,.05),vec3(.55,.75,1.),pow(l,3.));gl_FragColor=vec4(c*1.6,a);}`,
+  void main(){float l=vUv.y;float n=sin(l*30.-uT*55.+vUv.x*12.)*.5+.5;float a=pow(l,1.3)*(.45+.35*n)*uForca;
+   // perto do bocal: núcleo azulado; na ponta: laranja que some
+   vec3 c=mix(vec3(1.,.42,.08),vec3(.75,.85,1.),smoothstep(.75,1.,l));gl_FragColor=vec4(c,a*.9);}`,
  transparent:true,depthWrite:false,blending:THREE.AdditiveBlending,side:THREE.DoubleSide
 });
 function chama(raio,comp){const g=new THREE.ConeGeometry(raio,comp,16,1,true);g.rotateX(-Math.PI/2);g.translate(0,0,-comp/2);return new THREE.Mesh(g,chamaMat)}
@@ -179,10 +180,10 @@ export class Veiculo{
   if(C.rotor){const [x,y,z,r]=C.rotor;this.rotor=add(rotorPrincipal(r*this.escala));this.rotor.position.copy(P(x,y,z));this.rotor.position.y+=.15}
   if(C.rotorCauda){const [x,y,z,r]=C.rotorCauda;this.rotorC=add(rotorCauda(r*this.escala));this.rotorC.position.copy(P(x,y,z))}
   if(C.bocais){this.chamas=C.bocais.map(([x,y,z])=>{const g=new THREE.Group();g.position.copy(P(x,y,z));add(g);
-   const f=chama(.42,5);g.add(f);const b=brilho('#ffb070',2.6);b.position.z=-.3;g.add(b);g.userData={f,b};return g})}
+   const f=chama(.5,6);g.add(f);const b=brilho('#ff9a4a',3.2);b.position.z=-.3;g.add(b);g.userData={f,b};return g})}
   if(C.pilones){this.misseis=C.pilones.map(([x,y,z])=>{const m=geoMissil();m.position.copy(P(x,y,z));if(this.tipo==='helicoptero')m.scale.setScalar(.8);add(m);return m})}
-  if(C.luzes){this.farois=C.luzes.frente.map(([x,y,z])=>{const b=brilho('#fff6dc',.9);b.position.copy(P(x,y,z));return add(b)});
-   this.lanternas=C.luzes.tras.map(([x,y,z])=>{const b=brilho('#ff2a1a',.6);b.position.copy(P(x,y,z));return add(b)})}
+  if(C.luzes){this.farois=C.luzes.frente.map(([x,y,z])=>{const b=brilho('#fff6dc',.45);b.position.copy(P(x,y,z));return add(b)});
+   this.lanternas=C.luzes.tras.map(([x,y,z])=>{const b=brilho('#ff2a1a',.4);b.position.copy(P(x,y,z));return add(b)})}
   if(C.luzesPisca)this.piscas=C.luzesPisca.map(([x,y,z,cor])=>{const b=brilho(cor,1.4);b.position.copy(P(x,y,z));return add(b)});
   if(C.escape)this.escapes=C.escape.map(([x,y,z])=>P(x,y,z));
   if(C.assento){const [x,y,z]=C.assento;this.assento=P(x,y,z)}
