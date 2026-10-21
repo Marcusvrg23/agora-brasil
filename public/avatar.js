@@ -124,13 +124,14 @@ export function dressAvatar(group,lookIn){
 
  const hipY=1.06*k,shoulderY=1.74*k;
  // Pernas: quadril → joelho → tornozelo, com sapato.
- const legs=[],knees=[];
+ const legs=[],knees=[],pes=[],maos=[];
  for(const side of [-1,1]){
   const hip=new THREE.Group();hip.position.set(side*.1*k*C.quadril,hipY,0);rig.add(hip);
   part(limb(.098*k*C.quadril,.066*k,.52*k),calca,0,0,0,hip);
   const knee=new THREE.Group();knee.position.y=-.49*k;hip.add(knee);
   part(limb(.068*k,.046*k,.48*k),calca,0,0,0,knee);
   const shoe=part(new THREE.SphereGeometry(.066*k,16,10),sapato,0,-.5*k,.045*k,knee);shoe.scale.set(1,.6,1.85);
+  const pe=new THREE.Object3D();pe.position.y=-.5*k;knee.add(pe);pes.push(pe);
   const sole=part(new THREE.CylinderGeometry(.064*k,.064*k,.018*k,16),sola,0,-.53*k,.045*k,knee);sole.scale.set(1,1,1.85);
   legs.push(hip);knees.push(knee);
  }
@@ -179,6 +180,7 @@ export function dressAvatar(group,lookIn){
   part(limb(.046*k,.034*k,.29*k),suit?camisa:pele,0,0,0,el);
   const mao=part(new THREE.SphereGeometry(.045*k,12,10),pele,0,-.31*k,0,el);mao.scale.set(.75,1.35,.5);
   const pol=part(new THREE.CapsuleGeometry(.012*k,.04*k,3,6),pele,side*-.02*k,-.29*k,.02*k,el);pol.rotation.z=side*.5;
+  const ponta=new THREE.Object3D();ponta.position.y=-.31*k;el.add(ponta);maos.push(ponta);
   sh.rotation.z=side*.1;el.rotation.x=-.12;
   arms.push(sh);elbows.push(el);
  }
@@ -203,7 +205,7 @@ export function dressAvatar(group,lookIn){
  }
  rig.traverse(o=>{if(o.isMesh){o.castShadow=true;o.receiveShadow=true}});
  group.userData.look=look;
- Object.assign(group.userData,{legs,knees,arms,elbows,rig,torso,curva:C.curva||0});
+ Object.assign(group.userData,{legs,knees,arms,elbows,pes,maos,rig,torso,curva:C.curva||0});
  applyBase(group,look);
  refreshVisibility(group);
  return group;
@@ -336,6 +338,7 @@ async function applyBase(group,look){
 
 // Caminhada procedural: balança pernas e braços; parado, respira de leve.
 export function animateAvatar(group,moving,t,ritmo=1){
+ desfazerPose(group);
  const {legs,arms,rig,imported,baseModel,mixer,clips}=group.userData;
  if(!imported&&baseModel){
   const walk=baseModel.userData.walk;
@@ -410,4 +413,89 @@ export function removeImported(group){
 export function updateAvatarMixers(group,dt){
  group.userData.mixer?.update(dt);
  group.userData.baseModel?.userData.mixer?.update(dt);
+ aplicarPose(group);
+}
+
+// ---------- Poses de ação ----------
+// Segurar espada, golpear, mirar com o arco, arremessar a bomba e sentar no veículo.
+// Cada segmento do braço/perna é apontado para uma direção no referencial do personagem
+// (X = esquerda, Y = cima, Z = frente), por cima da caminhada. Funciona no boneco e nos corpos com esqueleto.
+export function poseAvatar(group,nome,k=0){group.userData.pose=nome?{nome,k}:null}
+const OSSOS={bracoD:['RightArm','RightForeArm','RightHand'],bracoE:['LeftArm','LeftForeArm','LeftHand'],
+ pernaD:['RightUpLeg','RightLeg','RightFoot'],pernaE:['LeftUpLeg','LeftLeg','LeftFoot']};
+function corpoAtivo(group){
+ const {imported,baseModel,rig}=group.userData;
+ const fonte=imported||baseModel;
+ if(fonte&&fonte.getObjectByName('RightArm')){
+  if(group.userData._cadDe!==fonte){group.userData._cadDe=fonte;group.userData._cad=Object.fromEntries(Object.entries(OSSOS).map(([k,n])=>[k,n.map(x=>fonte.getObjectByName(x))]).filter(([,v])=>v.every(Boolean)))}
+  return group.userData._cad;
+ }
+ if(imported||baseModel||!rig)return null;
+ const {arms,elbows,maos,legs,knees,pes}=group.userData;
+ if(!maos?.length)return null;
+ return {bracoD:[arms[0],elbows[0],maos[0]],bracoE:[arms[1],elbows[1],maos[1]],pernaD:[legs[0],knees[0],pes[0]],pernaE:[legs[1],knees[1],pes[1]]};
+}
+const V=(x,y,z)=>new THREE.Vector3(x,y,z).normalize();
+const mix=(a,b,t)=>a.clone().lerp(b,t).normalize();
+const ease=t=>t<0?0:t>1?1:t*t*(3-2*t);
+function chaves(lista,k){ // [[k, [d1,d2]], ...] → interpolação suave
+ for(let i=1;i<lista.length;i++)if(k<=lista[i][0]){const [k0,a]=lista[i-1],[k1,b]=lista[i];const u=ease((k-k0)/(k1-k0||1));return [mix(a[0],b[0],u),mix(a[1],b[1],u)]}
+ return lista[lista.length-1][1];
+}
+const P={
+ espada:[V(-.25,-.85,.45),V(-.05,-.1,1)],
+ golpe:[[0,[V(-.25,-.85,.45),V(-.05,-.1,1)]],[.3,[V(-.35,.85,-.35),V(-.15,.9,.4)]],[.55,[V(.2,-.3,.95),V(.6,-.35,.7)]],[1,[V(-.25,-.85,.45),V(-.05,-.1,1)]]],
+ arcoE:[V(.15,-.75,.6),V(0,-.2,1)],
+ mirarE:[V(.08,.06,1),V(.02,.06,1)],
+ mirarD:[[0,[V(-.2,-.2,.95),V(.25,.1,.95)]],[1,[V(-.75,.12,-.6),V(.78,.12,.6)]]],
+ bomba:[V(-.3,-.75,.55),V(-.05,.25,1)],
+ arremesso:[[0,[V(-.3,-.75,.55),V(-.05,.25,1)]],[.4,[V(-.35,.45,-.8),V(-.1,.95,-.25)]],[.65,[V(-.1,.7,.7),V(0,.3,1)]],[1,[V(-.3,-.75,.55),V(-.05,.25,1)]]],
+ sentadoD:[V(-.12,-.12,1),V(0,-1,.12)],sentadoE:[V(.12,-.12,1),V(0,-1,.12)],
+ guidaoD:[V(-.15,-.5,.85),V(.05,-.15,1)],guidaoE:[V(.15,-.5,.85),V(-.05,-.15,1)],
+ montadoD:[V(-.55,-.55,.6),V(-.1,-1,.1)],montadoE:[V(.55,-.55,.6),V(.1,-1,.1)],
+};
+function alvos(nome,k){
+ switch(nome){
+  case 'espada':return {bracoD:P.espada};
+  case 'golpe':return {bracoD:chaves(P.golpe,k)};
+  case 'arco':return {bracoE:P.arcoE};
+  case 'mirar':return {bracoE:P.mirarE,bracoD:chaves(P.mirarD,k)};
+  case 'bomba':return {bracoD:P.bomba};
+  case 'arremesso':return {bracoD:chaves(P.arremesso,k)};
+  case 'sentado':return {pernaD:P.sentadoD,pernaE:P.sentadoE,bracoD:P.guidaoD,bracoE:P.guidaoE};
+  case 'montado':return {pernaD:P.montadoD,pernaE:P.montadoE,bracoD:P.guidaoD,bracoE:P.guidaoE};
+ }
+ return null;
+}
+const _a=new THREE.Vector3(),_b=new THREE.Vector3(),_q=new THREE.Quaternion(),_p=new THREE.Quaternion(),_g=new THREE.Quaternion(),_d=new THREE.Vector3();
+function apontar(osso,filho,dirMundo){
+ osso.getWorldPosition(_a);filho.getWorldPosition(_b);
+ const atual=_b.sub(_a);if(atual.lengthSq()<1e-10)return;atual.normalize();
+ _q.setFromUnitVectors(atual,dirMundo);
+ osso.parent.getWorldQuaternion(_p);
+ const local=_p.clone().invert().multiply(_q).multiply(_p);
+ osso.quaternion.premultiply(local);osso.updateMatrixWorld(true);
+}
+function aplicarPose(group){
+ const pose=group.userData.pose;if(!pose)return;
+ const cad=corpoAtivo(group);if(!cad)return;
+ const a=alvos(pose.nome,pose.k);if(!a)return;
+ group.updateMatrixWorld(true);group.getWorldQuaternion(_g);
+ const tocados=group.userData._tocados=[];
+ for(const [membro,dirs] of Object.entries(a)){
+  const c=cad[membro];if(!c)continue;
+  tocados.push([c[0],c[0].quaternion.clone()],[c[1],c[1].quaternion.clone()]);
+  apontar(c[0],c[1],_d.copy(dirs[0]).applyQuaternion(_g));
+  apontar(c[1],c[2],_d.copy(dirs[1]).applyQuaternion(_g));
+ }
+}
+function desfazerPose(group){
+ const t=group.userData._tocados;if(!t)return;
+ for(let i=t.length-1;i>=0;i--)t[i][0].quaternion.copy(t[i][1]);
+ group.userData._tocados=null;
+}
+// Mão para prender itens: o osso da mão (com esqueleto) ou a ponta do antebraço (boneco).
+export function maoDoAvatar(group,lado='D'){
+ const cad=corpoAtivo(group);const m=cad?.['braco'+lado];
+ return m?{mao:m[2],antebraco:m[1]}:null;
 }

@@ -2,6 +2,7 @@ import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.169.0/build/three.m
 import {OrbitControls} from 'https://cdn.jsdelivr.net/npm/three@0.169.0/examples/jsm/controls/OrbitControls.js';
 import {buildCity,resolveCollision} from './cidade.js';
 import {iniciarTeloes,iniciarFormulario} from './teloes.js';
+import {iniciarPvP} from './pvp.js';
 import {dressAvatar,animateAvatar,importModel,removeImported,sanitizeLook,TEAM_COLORS,BASES,baseStatus,updateAvatarMixers,ESTILOS_CABELO,THUMB_CDN} from './avatar.js';
 
 const canvas=document.querySelector('#world');
@@ -136,6 +137,7 @@ function connect(){
  };
  socket.onmessage=(event)=>{
   let data;try{data=JSON.parse(event.data)}catch{return}
+  if(pvp.mensagem(data))return;
   if(data.type==='hello')myId=data.id;
   if(data.type==='joined'){
    entered=true;player.visible=true;seguirJogador(true);
@@ -162,7 +164,7 @@ function connect(){
   }
  };
  socket.onclose=()=>{
-  entered=false;renderDebate(null);live.classList.remove('connected');status.textContent='Desconectado';count.textContent='0 online';
+  entered=false;renderDebate(null);pvp.reset();live.classList.remove('connected');status.textContent='Desconectado';count.textContent='0 online';
  };
  socket.onerror=()=>{status.textContent='Sem conexão'};
 }
@@ -338,6 +340,9 @@ window.addEventListener('keydown',e=>{
 window.addEventListener('keyup',e=>pressed.delete(e.key.toLowerCase()));
 window.addEventListener('keydown',e=>{if(e.key==='Shift')pressed.add('shift')});
 window.addEventListener('blur',()=>pressed.clear());
+// Modo PvP: itens, veículos e combate (pvp.js). O servidor valida tudo.
+const pvp=iniciarPvP({scene,camera,renderer,controls,canvas,city,player,peers,send,colisao:resolveCollision,
+ meuId:()=>myId,meuNome:()=>name,teclas:()=>pressed,wrap:document.querySelector('.world-wrap'),aoTeleporte:()=>seguirJogador(false)});
 for(const [id,key] of [['up','w'],['down','s'],['left','a'],['right','d']]){
  const button=document.querySelector('#'+id);
  for(const eventName of ['pointerdown','pointerup','pointercancel','pointerleave']){
@@ -348,14 +353,14 @@ let netTick=0;
 const fwd=new THREE.Vector3(),right=new THREE.Vector3(),UP=new THREE.Vector3(0,1,0),lastPlayer=new THREE.Vector3();
 // Câmera em terceira pessoa: acompanha o jogador mantendo o ângulo escolhido com o mouse.
 function seguirJogador(snap){
- const alvo=new THREE.Vector3(player.position.x,1.55,player.position.z);
+ const alvo=pvp.alvoCamera()||new THREE.Vector3(player.position.x,player.position.y+1.55,player.position.z);
  if(snap){controls.target.copy(alvo);camera.position.set(alvo.x+2.5,alvo.y+3.2,alvo.z+8.5);lastPlayer.copy(alvo);controls.update();return}
  const d=alvo.clone().sub(lastPlayer);camera.position.add(d);controls.target.add(d);lastPlayer.copy(alvo);
 }
 function animate(){
  requestAnimationFrame(animate);
  const dt=Math.min(clock.getDelta(),.05);
- if(entered){
+ if(entered&&!pvp.dirigindo()&&!pvp.morto()){
   // Movimento relativo à câmera; Shift corre. Colisão simples com prédios e espelhos d'água.
   let f=0,r=0;
   if(pressed.has('w')||pressed.has('arrowup'))f+=1;
@@ -377,7 +382,7 @@ function animate(){
    netTick+=dt;if(netTick>.13){send({type:'move',x:nx,z:nz});netTick=0}
   }
   seguirJogador(false);
- }
+ } else {playerMoving=false;if(entered)seguirJogador(false)}
  const t=clock.elapsedTime,now=performance.now();
  animateAvatar(player,entered&&playerMoving,t,correndo?2.3:1.35);
  updateAvatarMixers(player,dt);
@@ -386,6 +391,7 @@ function animate(){
   if(tg){p.position.x+=(tg.x-p.position.x)*Math.min(1,dt*10);p.position.z+=(tg.z-p.position.z)*Math.min(1,dt*10)}
   animateAvatar(p,now-p.userData.lastMove<260,t,p.userData.ritmo||1.35);updateAvatarMixers(p,dt);
  }
+ pvp.update(dt,t);
  renderPreview(t);
  controls.update();
  if(camera.position.y<.45)camera.position.y=.45; // câmera nunca entra no chão

@@ -274,7 +274,8 @@ export function buildCity(scene,renderer,camera,{qualidade='alto'}={}){
  const alto=qualidade==='alto';
  const root=new THREE.Group();root.name='cidade';scene.add(root);
  const colliders=[];
- const solid=(x0,x1,z0,z1)=>colliders.push({x0:Math.min(x0,x1),x1:Math.max(x0,x1),z0:Math.min(z0,z1),z1:Math.max(z0,z1)});
+ // h = altura do obstáculo (usada por projéteis; prédios não sofrem dano)
+ const solid=(x0,x1,z0,z1,h=25)=>colliders.push({x0:Math.min(x0,x1),x1:Math.max(x0,x1),z0:Math.min(z0,z1),z1:Math.max(z0,z1),h});
  const updaters=[];
 
  // Renderização: tons de filme, sombras suaves.
@@ -376,7 +377,7 @@ export function buildCity(scene,renderer,camera,{qualidade='alto'}={}){
   for(let k=0;k<3;k++){const a=boxMesh(.25,4+R()*6,.25,steel,s*(190+R()*60),40+2,z+(R()-.5)*12,root);a.position.y=38+a.geometry.parameters.height/2}
   // marquise de entrada voltada para o gramado
   boxMesh(4,.4,10,white,s*170.5,4,z,root);
-  solid(s*172,s*272,z-9,z+9);
+  solid(s*172,s*272,z-9,z+9,40);
  });
 
  // ---------- Congresso Nacional ----------
@@ -394,7 +395,7 @@ export function buildCity(scene,renderer,camera,{qualidade='alto'}={}){
   xs.forEach((x,i)=>{m.makeTranslation(x,4.3,C.z1-.9);fins.setMatrixAt(i,m);m.makeTranslation(x,4.3,C.z0+.9);fins.setMatrixAt(i+xs.length,m)});
   fins.castShadow=fins.receiveShadow=true;congresso.add(fins);
  }
- solid(C.x0,C.x1,C.z0,C.z1);
+ solid(C.x0,C.x1,C.z0,C.z1,C.h+1);
  // torres (Anexo I): 28 andares, 100 m, faces longas voltadas para o vão entre elas
  const towerMats=[towerFace,towerFace,roofMat,roofMat,marble,marble];
  for(const x of [-18.5,-1.5]){
@@ -403,7 +404,7 @@ export function buildCity(scene,renderer,camera,{qualidade='alto'}={}){
  }
  boxMesh(5.2,15,12,darkGlass,-10,40,-232,congresso); // ligação entre as torres
  boxMesh(5.2,2,12,white,-10,33,-232,congresso);
- solid(-24.5,4.5,-254.5,-209.5);
+ solid(-24.5,4.5,-254.5,-209.5,101);
  // cúpula do Senado (convexa)
  const domeMat=new THREE.MeshStandardMaterial({map:concreteTex(),roughness:.6,side:THREE.DoubleSide});
  const dome=new THREE.Mesh(new THREE.SphereGeometry(20,72,36,0,Math.PI*2,0,Math.PI/2),domeMat);
@@ -419,7 +420,7 @@ export function buildCity(scene,renderer,camera,{qualidade='alto'}={}){
   const ramp=new THREE.Group();ramp.position.set(-10,C.h/2,-125);ramp.rotation.x=ang;congresso.add(ramp);
   boxMesh(10,.6,L,concrete,0,0,0,ramp);
   for(const sx of [-5.15,5.15])boxMesh(.3,1.1,L,white,sx,.8,0,ramp);
-  solid(-17,-3,-150,-100);
+  solid(-17,-3,-150,-100,2);
  }
  // espelho d'água em frente ao Congresso
  const poolZ0=-147,poolZ1=-104;
@@ -432,7 +433,7 @@ export function buildCity(scene,renderer,camera,{qualidade='alto'}={}){
  for(const [x0,x1] of [[-108.5,-17],[-3,108.5]]){
   const w=x1-x0,cx=(x0+x1)/2;
   boxMesh(w,.5,.6,concrete,cx,.25,poolZ1+.3,congresso);boxMesh(w,.5,.6,concrete,cx,.25,poolZ0-.3,congresso);
-  solid(x0,x1,poolZ0,poolZ1+1.5);
+  solid(x0,x1,poolZ0,poolZ1+1.5,.4);
  }
  boxMesh(.6,.5,poolZ1-poolZ0,concrete,-108.5,.25,(poolZ0+poolZ1)/2,congresso);boxMesh(.6,.5,poolZ1-poolZ0,concrete,108.5,.25,(poolZ0+poolZ1)/2,congresso);
  // grade metálica baixa diante do espelho d'água
@@ -521,7 +522,7 @@ export function buildCity(scene,renderer,camera,{qualidade='alto'}={}){
   boxMesh(3.2,1.2,3.2,concreteDark,0,.6,0,mastro);
   const bandeira=new THREE.Mesh(new THREE.PlaneGeometry(20,14,40,24).translate(10,0,0),flagMaterial(flagBrasilTex()));
   bandeira.position.set(1,92,0);bandeira.castShadow=true;mastro.add(bandeira);
-  solid(-3,3,-473,-467);
+  solid(-3,3,-473,-467,100);
   // Pombal (duas lâminas de concreto) e Panteão da Pátria (volume branco alongado)
   boxMesh(3,16,1.2,concrete,-70,8,-610,root);boxMesh(3,16,1.2,concrete,-70,8,-603,root);boxMesh(3,1.4,8.2,concrete,-70,15.3,-606.5,root);
   const pant=new THREE.Mesh(new THREE.CapsuleGeometry(6,44,8,24),white);pant.rotation.x=Math.PI/2;pant.scale.set(1.6,1,.9);pant.position.set(0,5.4,-628);

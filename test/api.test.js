@@ -45,3 +45,39 @@ test('API dos telões: pedido, consulta do dono, moderação e publicação', as
   const pol = await post('/api/anuncios', { slot: 'telao-praca', dias: 1, titulo: 'Vote 22', texto: '', contato: 'x@exemplo.com' });
   assert.equal(pol.status, 400);
 });
+
+test('PvP pela rede: estado ao entrar, pegar item e ataque validado no servidor', async () => {
+  const { WebSocket } = require('ws');
+  const { combates } = require('../server');
+  const url = base.replace('http', 'ws');
+  function cliente(nome, team) {
+    const ws = new WebSocket(url), msgs = [];
+    ws.on('message', (m) => msgs.push(JSON.parse(String(m))));
+    const espera = (fn, ms = 2000) => new Promise((ok, erro) => {
+      const t0 = Date.now();
+      (function v() { const m = msgs.find(fn); if (m) return ok(m); if (Date.now() - t0 > ms) return erro(new Error('sem mensagem')); setTimeout(v, 10); })();
+    });
+    return new Promise((ok) => ws.on('open', () => { ws.send(JSON.stringify({ type: 'join', room: '5300108', name: nome, look: { team } })); ok({ ws, msgs, espera, send: (d) => ws.send(JSON.stringify(d)) }); }));
+  }
+  const a = await cliente('Ana', 'vermelho'), b = await cliente('Beto', 'amarelo');
+  const { estado } = await a.espera((m) => m.type === 'pvp');
+  assert.ok(estado.veiculos.some((v) => v.tipo === 'caca'));
+  assert.ok(estado.pickups.some((p) => p.item === 'arco'));
+  const p = estado.pickups.find((q) => q.item === 'espada');
+  a.send({ type: 'move', x: p.x, z: p.z });
+  await new Promise((r) => setTimeout(r, 120));
+  a.send({ type: 'pvp-pegar', pickup: p.id });
+  await b.espera((m) => m.type === 'pickup' && m.id === p.id && m.disponivel === false);
+  const c = combates.get('5300108');
+  const idA = [...c.jogadores.values()].find((j) => j.team === 'vermelho').id;
+  const idB = [...c.jogadores.values()].find((j) => j.team === 'amarelo').id;
+  assert.equal(c.jogadores.get(idA).item, 'espada');
+  for (const j of c.jogadores.values()) j.protegidoAte = 0;
+  b.send({ type: 'move', x: p.x + 1, z: p.z });
+  await new Promise((r) => setTimeout(r, 120));
+  a.send({ type: 'pvp-ataque', arma: 'espada', alvo: idB });
+  const dano = await b.espera((m) => m.type === 'dano');
+  assert.equal(dano.alvo, idB);
+  assert.equal(dano.vida, 66);
+  a.ws.close(); b.ws.close();
+});

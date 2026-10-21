@@ -4,6 +4,7 @@ const fs = require('node:fs');
 const path = require('node:path');
 const { WebSocketServer, WebSocket } = require('ws');
 const { Debate } = require('./debate');
+const { Combate } = require('./combate');
 const { Anuncios, Erro } = require('./anuncios');
 const pagamentos = require('./pagamentos');
 
@@ -13,6 +14,7 @@ const PUBLIC = path.join(__dirname, 'public');
 const LIMIT_BYTES = 8 * 1024;
 const rooms = new Map();
 const debates = new Map();
+const combates = new Map();
 const TEAMS = new Set(['vermelho','amarelo']);
 const OUTFITS = new Set(['terno-faixa','camisa']);
 let nextId = 1;
@@ -57,6 +59,10 @@ function debateOf(code) {
   if (!debates.has(code)) debates.set(code, new Debate({ emit: packet => broadcast(code, packet) }));
   return debates.get(code);
 }
+function combateOf(code) {
+  if (!combates.has(code)) combates.set(code, new Combate({ emit: packet => broadcast(code, packet) }));
+  return combates.get(code);
+}
 function send(ws, packet) {
   if(ws.readyState===WebSocket.OPEN) ws.send(JSON.stringify(packet));
 }
@@ -73,8 +79,9 @@ function leave(ws) {
   if(group) {
     group.delete(ws);
     debates.get(ws.room)?.saiu(ws.playerId, Date.now());
+    combates.get(ws.room)?.sair(ws.playerId);
     broadcast(ws.room,{type:'leave',id:ws.playerId});
-    if(group.size===0) { rooms.delete(ws.room); debates.delete(ws.room); }
+    if(group.size===0) { rooms.delete(ws.room); debates.delete(ws.room); combates.delete(ws.room); }
     else publishCount(ws.room);
   }
   ws.room=null;
@@ -224,12 +231,15 @@ wss.on('connection',(ws)=>{
       publishCount(ws.room);
       send(ws,{type:'debate',state:debateOf(ws.room).estado()});
       send(ws,{type:'teloes',slots:anuncios.publico()});
+      combateOf(ws.room).entrar(ws.playerId,ws.team,ws.position||{x:0,z:-30});
+      send(ws,{type:'pvp',estado:combateOf(ws.room).estado()});
       return;
     }
     if(!ws.room) return;
     if(msg.type==='look') {
       setLook(ws,msg.look||msg);
       broadcast(ws.room,{type:'look',id:ws.playerId,look:ws.look});
+      combateOf(ws.room).trocarTime(ws.playerId,ws.team);
       return;
     }
     if(typeof msg.type==='string'&&msg.type.startsWith('debate-')) {
@@ -241,6 +251,7 @@ wss.on('connection',(ws)=>{
       if(msg.type==='debate-vote') debate.votar(ws.playerId,msg.side);
       return;
     }
+    if(typeof msg.type==='string'&&msg.type.startsWith('pvp-')) { pvp(ws,msg); return; }
     if(msg.type==='chat') {
       const now=Date.now();
       if(now-ws.lastChat<1200) return;
@@ -253,6 +264,8 @@ wss.on('connection',(ws)=>{
       if(now-ws.lastMove<70) return;ws.lastMove=now;
       const x=Number(msg.x),z=Number(msg.z);
       if(!Number.isFinite(x)||!Number.isFinite(z)||Math.abs(x)>350||Math.abs(z)>950) return;
+      const c=combateOf(ws.room);
+      if(!c.mover(ws.playerId,x,z)&&c.jogadores.has(ws.playerId)) return; // morto ou dirigindo
       ws.position={x,z};
       broadcast(ws.room,{type:'move',id:ws.playerId,x,z},ws);
     }
@@ -260,10 +273,46 @@ wss.on('connection',(ws)=>{
   ws.on('close',()=>leave(ws));
   ws.on('error',()=>leave(ws));
 });
+// Mensagens do modo PvP. O servidor decide vida, dano, itens e veículos.
+const ID = (v) => (typeof v === 'string' ? v.slice(0, 16) : '');
+function pvp(ws, msg) {
+  const c = combateOf(ws.room), id = ws.playerId, now = Date.now();
+  ws.pvpN = (now - (ws.pvpT || 0) > 1000) ? 0 : (ws.pvpN || 0); if (!ws.pvpN) ws.pvpT = now;
+  if (++ws.pvpN > 40) return; // no máximo 40 mensagens de combate por segundo
+  switch (msg.type) {
+    case 'pvp-pegar': c.pegar(id, ID(msg.pickup)); break;
+    case 'pvp-largar': c.largar(id); break;
+    case 'pvp-entrar': c.entrarVeiculo(id, ID(msg.veiculo)); break;
+    case 'pvp-sair': {
+      if (c.sairVeiculo(id)) { const j = c.jogadores.get(id); ws.position = { x: j.pos.x, z: j.pos.z }; }
+      break;
+    }
+    case 'pvp-veiculo': {
+      if (now - (ws.lastVeh || 0) < 45) return; ws.lastVeh = now;
+      const v = c.moverVeiculo(id, msg);
+      if (v) { ws.position = { x: v.x, z: v.z }; broadcast(ws.room, { type: 'veiculo-mov', id: v.id, x: v.x, y: v.y, z: v.z, ry: v.ry, rx: v.rx, rz: v.rz, vel: v.vel }, ws); }
+      break;
+    }
+    case 'pvp-disparo': {
+      const r = c.disparar(id, ID(msg.arma), { o: msg.o, d: msg.d });
+      send(ws, { type: 'pvp-bilhete', ref: Number(msg.ref) || 0, ok: r.ok, tiro: r.tiro, motivo: r.motivo });
+      break;
+    }
+    case 'pvp-acerto': c.acertar(id, ID(msg.tiro), { alvo: msg.alvo, alvoVeiculo: msg.alvoVeiculo, ponto: msg.ponto }); break;
+    case 'pvp-ataque': c.atacar(id, ID(msg.arma), { alvo: msg.alvo, alvoVeiculo: msg.alvoVeiculo }); break;
+    case 'pvp-golpe-visual': {
+      if (now - (ws.lastGolpe || 0) < 300 || !c.vivo(id)) return; ws.lastGolpe = now;
+      broadcast(ws.room, { type: 'golpe-visual', de: id, rugido: !!msg.rugido }, ws);
+      break;
+    }
+  }
+}
+function tickCombates() { for (const c of combates.values()) c.tick(); }
 function tickDebates(now=Date.now()) { for(const debate of debates.values()) debate.tick(now); }
 if(require.main===module) {
   setInterval(tickDebates,500).unref();
+  setInterval(tickCombates,250).unref();
   setInterval(()=>{ if(anuncios.expirar()) publicarTeloes(); },60e3).unref();
   server.listen(PORT,HOST,()=>console.log('Ágora Brasil em http://localhost:'+PORT));
 }
-module.exports={server,clean,roomCode,team,outfit,lookOf,tickDebates,anuncios};
+module.exports={server,clean,roomCode,team,outfit,lookOf,tickDebates,tickCombates,anuncios,combates};
