@@ -11,19 +11,19 @@ import {GLTFLoader} from 'https://cdn.jsdelivr.net/npm/three@0.169.0/examples/js
 const HF='https://d8j0ntlcm91z4.cloudfront.net/user_3KLobL96cAs3bokj0G7CRMHMham/hf_20261021_';
 export const TIPOS={
  carro:{nome:'Carro esportivo',comp:4.6,cdn:HF+'054039_72ddea93-584e-4119-8d16-b263c8105194.glb',raio:2.3,alcance:4.5,
-  rodas:[[-.312,-.06,.105,.15,0],[.26,-.06,.105,.15,1]],cam:9,motoristaVisivel:false,
-  luzes:{frente:[[.19,-.01,.49],[-.19,-.01,.49]],tras:[[.2,.03,-.5],[-.2,.03,-.5]]},escape:[[.11,-.1,-.5],[-.11,-.1,-.5]]},
+  rodas:[[-.311,-.088,.078,.175,0,0],[.261,-.086,.076,.175,1,0]],cam:9,motoristaVisivel:false,
+  luzes:{frente:[[.19,-.045,.49],[-.19,-.045,.49]],tras:[[.2,.04,-.49],[-.2,.04,-.49]]},escape:[[.11,-.105,-.49],[-.11,-.105,-.49]]},
  moto:{nome:'Moto chopper',comp:2.5,cdn:HF+'054042_70284ae2-93ad-4cce-91ef-73ffeac65aec.glb',raio:1.2,alcance:3.5,
-  rodas:[[-.38,-.125,.165,0,0],[.36,-.125,.145,0,1]],cam:6.5,motoristaVisivel:true,assento:[0,-.02,-.2],
-  luzes:{frente:[[0,.07,.42]],tras:[[0,-.02,-.47]]},escape:[[-.1,-.13,-.47]]},
+  rodas:[[-.38,-.15,.132,0,0,.45],[.361,-.144,.139,0,1,.45]],cam:6.5,motoristaVisivel:true,assento:[0,.03,-.17],
+  luzes:{frente:[[0,.16,.16]],tras:[[0,0,-.445]]},escape:[[-.09,-.19,-.4]]},
  helicoptero:{nome:'Helicóptero',comp:14,cdn:HF+'054045_47f8d46a-b148-48de-a2a0-8c308403abe2.glb',raio:5,alcance:8,voa:true,
-  rotor:[0,.195,.12,.44],rotorCauda:[.035,.115,-.47,.075],cam:22,motoristaVisivel:false,
-  pilones:[[.13,-.07,.08],[-.13,-.07,.08]],canhao:[0,-.13,.42],luzesPisca:[[.0,.19,-.1,'#ff3b30'],[0,-.19,.0,'#ff3b30']]},
+  rotor:[0,.185,.117,.44],rotorCauda:[.035,.05,-.47,.062],cam:22,motoristaVisivel:false,
+  pilones:[[.16,-.08,.05],[-.16,-.08,.05]],canhao:[0,-.1,.4],luzesPisca:[[0,.21,-.42,'#ff3b30'],[0,-.12,.05,'#ff3b30']]},
  caca:{nome:'Caça',comp:19,cdn:HF+'054048_1c7c5a8a-8be6-447a-b4c7-26963ec14352.glb',raio:7,alcance:10,voa:true,jato:true,
-  bocais:[[.035,-.01,-.49],[-.035,-.01,-.49]],cam:34,motoristaVisivel:false,
-  pilones:[[.2,-.07,-.05],[-.2,-.07,-.05]],luzesPisca:[[.45,0,-.25,'#ff3b30'],[-.45,0,-.25,'#3bff6a']]},
- trex:{nome:'T-rex',comp:12,cdn:HF+'054051_adf5bcf8-7b4b-4ff9-9397-fde6b58754e4.glb',raio:3,alcance:6,dino:true,cam:20,motoristaVisivel:true,assento:[0,.205,.02],
-  dino_:{quadrilZ:.07,quadrilY:.0,caudaZ:-.1,pescocoZ:.25,pescocoY:.12,bocaZ:.34,bocaY:.105}},
+  bocais:[[.061,-.068,-.462],[-.061,-.068,-.462]],cam:34,motoristaVisivel:false,
+  pilones:[[.2,-.085,-.08],[-.2,-.085,-.08]],luzesPisca:[[.44,-.06,-.2,'#ff3b30'],[-.44,-.06,-.2,'#3bff6a']]},
+ trex:{nome:'T-rex',comp:12,cdn:HF+'054051_adf5bcf8-7b4b-4ff9-9397-fde6b58754e4.glb',raio:3,alcance:6,dino:true,cam:20,motoristaVisivel:true,assento:[0,.19,.08],
+  dino_:{quadrilZ:.03,quadrilY:-.01,caudaZ:-.1,pescocoZ:.25,pescocoY:.12,bocaZ:.37,bocaY:.085}},
 };
 export const ARMAS_VEICULO={helicoptero:['metralhadora','missil-heli'],caca:['missil-caca'],trex:['mordida'],carro:['atropelar'],moto:['atropelar']};
 
@@ -45,19 +45,20 @@ export function preCarregar(){for(const t of Object.keys(TIPOS))carregar(t)}
 // ---------- Deformação no vertex shader (rodas e T-rex) ----------
 const DEFORMAR=`
 uniform float uGiro,uEsterco,uFase,uAndar,uCabeca,uBoca,uCauda;
-uniform vec4 uRodas[2];uniform float uDianteira[2];uniform vec4 uDino0;uniform vec4 uDino1;
+uniform vec4 uRodas[2];uniform float uDianteira[2];uniform float uRodaMin[2];uniform vec4 uDino0;uniform vec4 uDino1;
 void girarZY(inout vec3 p,inout vec3 n,vec2 piv,float a){float c=cos(a),s=sin(a);vec2 d=p.zy-piv;p.zy=piv+vec2(c*d.x-s*d.y,s*d.x+c*d.y);n.zy=vec2(c*n.z-s*n.y,s*n.z+c*n.y);}
 void girarXZ(inout vec3 p,inout vec3 n,vec2 piv,float a){float c=cos(a),s=sin(a);vec2 d=p.xz-piv;p.xz=piv+vec2(c*d.x+s*d.y,-s*d.x+c*d.y);n.xz=vec2(c*n.x+s*n.z,-s*n.x+c*n.z);}
 void deformar(inout vec3 p,inout vec3 n){
 #ifdef RODAS
  for(int i=0;i<2;i++){vec4 w=uRodas[i];vec2 d=p.zy-w.xy;
-  if(dot(d,d)<w.z*w.z&&abs(p.x)>w.w){girarZY(p,n,w.xy,-uGiro);
-   if(uDianteira[i]>.5){float lx=sign(p.x)*max(w.w+.04,.0);girarXZ(p,n,vec2(lx,w.x),uEsterco);}}}
+  float r2=dot(d,d);
+  if(r2<w.z*w.z&&r2>uRodaMin[i]*uRodaMin[i]&&abs(p.x)>w.w){girarZY(p,n,w.xy,-uGiro);
+   if(uDianteira[i]>.5){float lx=w.w>0.?sign(p.x)*(w.w+.04):0.;girarXZ(p,n,vec2(lx,w.x),uEsterco);}}}
 #endif
 #ifdef DINO
  float qz=uDino0.x,qy=uDino0.y,cz=uDino0.z,pz=uDino0.w,py=uDino1.x,bz=uDino1.y,by=uDino1.z;
  // pernas: cada lado balança em oposição, com o pé subindo no avanço
- if(p.y<qy+.03){float lado=p.x>0.?0.:3.14159;float w=smoothstep(qy+.03,qy-.06,p.y);
+ if(p.y<qy+.03&&(p.z<.19||p.y<-.12)){float lado=p.x>0.?0.:3.14159;float w=smoothstep(qy+.03,qy-.06,p.y);
   float a=sin(uFase+lado)*.42*uAndar*w;girarZY(p,n,vec2(qz,qy),a);
   p.y+=max(0.,cos(uFase+lado))*.03*uAndar*smoothstep(qy-.08,qy-.18,p.y);}
  // cauda: onda que cresce até a ponta
@@ -146,8 +147,8 @@ export class Veiculo{
   this.s={x:dados.x,y:dados.y||0,z:dados.z,ry:dados.ry||0,rx:0,rz:0,vel:0,vy:0,esterco:0,giro:0,fase:0,motor:0,acel:0,lat:0,cabeca:0,boca:0,cauda:0,golpe:0};
   this.alvo=null;this.ativo=true;this.vida=dados.vida;this.max=dados.max;this.motorista=dados.motorista||null;
   this.uni={uGiro:{value:0},uEsterco:{value:0},uFase:{value:0},uAndar:{value:0},uCabeca:{value:0},uBoca:{value:0},uCauda:{value:0},
-   uRodas:{value:[new THREE.Vector4(),new THREE.Vector4()]},uDianteira:{value:[0,0]},uDino0:{value:new THREE.Vector4()},uDino1:{value:new THREE.Vector4()}};
-  if(this.cfg.rodas)this.cfg.rodas.forEach((r,i)=>{this.uni.uRodas.value[i].set(r[0],r[1],r[2],r[3]);this.uni.uDianteira.value[i]=r[4]});
+   uRodas:{value:[new THREE.Vector4(),new THREE.Vector4()]},uDianteira:{value:[0,0]},uRodaMin:{value:[0,0]},uDino0:{value:new THREE.Vector4()},uDino1:{value:new THREE.Vector4()}};
+  if(this.cfg.rodas)this.cfg.rodas.forEach((r,i)=>{this.uni.uRodas.value[i].set(r[0],r[1],r[2],r[3]);this.uni.uDianteira.value[i]=r[4];this.uni.uRodaMin.value[i]=r[2]*(r[5]||0)});
   if(this.cfg.dino){const d=this.cfg.dino_;this.uni.uDino0.value.set(d.quadrilZ,d.quadrilY,d.caudaZ,d.pescocoZ);this.uni.uDino1.value.set(d.pescocoY,d.bocaZ,d.bocaY,0)}
   this.montar(procedural(this.tipo),true);
   carregar(this.tipo).then(m=>{if(m&&!this.removido)this.montar(m.clone(true),false)});
