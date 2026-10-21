@@ -3,6 +3,7 @@ import {criarEfeitos} from './efeitos.js';
 import {Veiculo,TIPOS,ARMAS_VEICULO,geoMissil,preCarregar} from './veiculos.js';
 import {ITENS,Rastro,animarArco,soltarArco,criarFlecha,animarBomba} from './itens.js';
 import {poseAvatar,maoDoAvatar,TEAM_COLORS} from './avatar.js';
+import {deveExibirPiloto,poseParaVeiculo,progressoDeEmbarque,ritmoDeVeiculo} from './montaria.mjs';
 import {som,motorVeiculo,alternarSom,somLigado} from './som.js';
 
 // Modo PvP da praça: itens no gramado, veículos, combate entre os times vermelho e amarelo.
@@ -22,6 +23,7 @@ export function iniciarPvP(o){
  preCarregar();
  const mundo={colliders:city.colliders,limites:city.limites,colisao};
  const est={jogadores:new Map(),veiculos:new Map(),pickups:new Map(),placar:{vermelho:0,amarelo:0},vitoria:25,ativo:false};
+ const embarques=new Map(); // entrada independente por jogador, sem modificar a cidade
  const proj=[]; // projéteis em voo
  const meusTiros=new Map();let ref=0;
  const eu=()=>est.jogadores.get(meuId());
@@ -404,12 +406,16 @@ export function iniciarPvP(o){
   // entrou/saiu do veículo
   if(antes?.veiculo!==j.veiculo){
    const av=avatarDe(d.id);
-   if(antes?.veiculo){const v=est.veiculos.get(antes.veiculo);if(v){if(souEu){v.local=false;motorVeiculo(null)}}
+   if(antes?.veiculo){embarques.delete(d.id);const v=est.veiculos.get(antes.veiculo);if(v){if(souEu){v.local=false;motorVeiculo(null)}}
     if(av){av.visible=true;poseAvatar(av,null);av.rotation.x=0;av.rotation.z=0;if(pos){av.position.set(pos.x,0,pos.z);av.userData.target={x:pos.x,z:pos.z}}}
     if(souEu&&pos){player.position.set(pos.x,0,pos.z);send({type:'move',x:pos.x,z:pos.z});controls.minDistance=2.5;afastarCamera(7)}}
    if(j.veiculo){const v=est.veiculos.get(j.veiculo);
     if(v){v.motorista=d.id;
-     if(av)av.visible=TIPOS[v.tipo].motoristaVisivel;
+     if(av){
+      embarques.set(d.id,{inicio:performance.now(),origem:av.position.clone()});
+      av.userData.target=null; // desliga a interpolação de caminhada durante a montaria
+      av.visible=deveExibirPiloto(v.tipo);
+     }
      if(souEu){v.local=true;v.alvo=null;afastarCamera(TIPOS[v.tipo].cam);controls.minDistance=TIPOS[v.tipo].comp*.6;feed(`${ICONE[v.tipo]} ${TIPOS[v.tipo].nome}: ${DICAS_VEIC[v.tipo]}`)}}}
   }
   if(souEu){pintarVida();pintarSlot()}
@@ -526,12 +532,28 @@ export function iniciarPvP(o){
   } else motorVeiculo(null);
   // veículos
   for(const v of est.veiculos.values())v.animar(dt,t,camera);
-  // quem está dentro de veículo acompanha o assento
+  // Interação em Three.js, sem serviços pagos: embarque suave e poses individuais.
   for(const [id,jj] of est.jogadores){
    if(!jj.veiculo)continue;const v=est.veiculos.get(jj.veiculo),av=avatarDe(id);if(!v||!av)continue;
-   const sp=v.seatWorld();av.position.copy(sp);if(!TIPOS[v.tipo].assento)av.position.y=v.raiz.position.y;
-   av.rotation.y=v.s.ry;av.userData.target={x:sp.x,z:sp.z};av.userData.lastMove=0;
-   if(TIPOS[v.tipo].motoristaVisivel){poseAvatar(av,v.tipo==='trex'?'montado':'sentado');av.rotation.z=v.corpo.rotation.z;av.position.y-=.62*av.scale.y}
+   const visivel=deveExibirPiloto(v.tipo);
+   av.visible=visivel;
+   const sp=v.seatWorld();
+   if(!TIPOS[v.tipo].assento)sp.y=v.raiz.position.y;
+   av.userData.target=null; // impede que a rede puxe a montaria de volta à caminhada
+   av.userData.lastMove=0;
+   av.rotation.y=v.s.ry;
+   if(!visivel){av.position.copy(sp);continue} // cabine fechada: motorista não flutua fora do modelo
+   const fase=ritmoDeVeiculo(v.tipo,t,v.s.vel);
+   sp.y-=.62*av.scale.y; // quadril no assento; modelo local fica independente
+   sp.y+=Math.sin(fase)*(v.tipo==='trex'?.055:.018); // balanço de montaria ou vibração da moto
+   const transicao=embarques.get(id);
+   if(transicao){
+    const k=progressoDeEmbarque(transicao.inicio,performance.now());
+    av.position.copy(transicao.origem).lerp(sp,k);
+    if(k>=1)embarques.delete(id);
+   }else av.position.copy(sp);
+   av.rotation.z=v.corpo.rotation.z;
+   poseAvatar(av,poseParaVeiculo(v.tipo),(.5+.5*Math.sin(fase)));
   }
   // ações locais (golpe, mira, arremesso)
   if(j?.vivo&&!j.veiculo)acaoLocal(dt);
