@@ -4,6 +4,8 @@ const fs = require('node:fs');
 const path = require('node:path');
 const { WebSocketServer, WebSocket } = require('ws');
 const { Debate } = require('./debate');
+const { Anuncios, Erro } = require('./anuncios');
+const pagamentos = require('./pagamentos');
 
 const PORT = Number(process.env.PORT || 3000);
 const HOST = process.env.HOST || '0.0.0.0';
@@ -14,6 +16,10 @@ const debates = new Map();
 const TEAMS = new Set(['vermelho','amarelo']);
 const OUTFITS = new Set(['terno-faixa','camisa']);
 let nextId = 1;
+const DATA = process.env.DATA_DIR || path.join(__dirname, 'data');
+const anuncios = new Anuncios({ arquivo: path.join(DATA, 'anuncios.json'), pastaImagens: path.join(DATA, 'imagens') });
+const ADMIN_TOKEN = process.env.ADMIN_TOKEN || '';
+const PUBLIC_URL = (process.env.PUBLIC_URL || '').replace(/\/$/, '');
 const MIME = { '.html':'text/html; charset=utf-8', '.css':'text/css; charset=utf-8',
  '.js':'text/javascript; charset=utf-8', '.json':'application/json; charset=utf-8',
  '.glb':'model/gltf-binary', '.png':'image/png', '.jpg':'image/jpeg',
@@ -73,10 +79,105 @@ function leave(ws) {
   }
   ws.room=null;
 }
+function json(res, status, body) {
+  res.writeHead(status, { 'content-type': 'application/json; charset=utf-8', 'cache-control': 'no-store', 'x-content-type-options': 'nosniff' });
+  res.end(JSON.stringify(body));
+}
+function lerCorpo(req, limite = 700 * 1024) {
+  return new Promise((resolve, reject) => {
+    let n = 0; const partes = [];
+    req.on('data', (c) => { n += c.length; if (n > limite) { reject(new Erro('Envio muito grande.', 413)); req.destroy(); } else partes.push(c); });
+    req.on('end', () => { try { resolve(partes.length ? JSON.parse(Buffer.concat(partes).toString('utf8')) : {}); } catch { reject(new Erro('JSON inválido.')); } });
+    req.on('error', reject);
+  });
+}
+function ipDe(req) { return String(req.headers['x-forwarded-for'] || req.socket.remoteAddress || '').split(',')[0].trim(); }
+function adminOk(req) {
+  const t = String(req.headers['x-admin-token'] || '');
+  return ADMIN_TOKEN && t.length === ADMIN_TOKEN.length && require('node:crypto').timingSafeEqual(Buffer.from(t), Buffer.from(ADMIN_TOKEN));
+}
+// Todos os jogadores, em todas as salas, recebem a grade de telões atualizada.
+function publicarTeloes() { const pkt = { type: 'teloes', slots: anuncios.publico() }; for (const code of rooms.keys()) broadcast(code, pkt); }
+
+async function confirmarPagamento(ad) {
+  if (!ad?.pagamento || ad.status !== 'aguardando_pagamento' || !pagamentos.configurado()) return ad;
+  const p = await pagamentos.consultar(ad.pagamento.id);
+  if (p.status === 'approved' && p.referencia === ad.id && Math.abs(p.valor - ad.valor) < 0.01) anuncios.marcarPago(ad.id, 'mercadopago');
+  return anuncios.buscar(ad.id);
+}
+
+async function api(req, res, url) {
+  const p = url.pathname, m = req.method;
+  if (p === '/api/teloes' && m === 'GET') return json(res, 200, { slots: anuncios.publico(), pagamentoOnline: pagamentos.configurado() });
+  if (p === '/api/anuncios' && m === 'POST') {
+    const corpo = await lerCorpo(req);
+    const ad = anuncios.criar(corpo, ipDe(req));
+    let aviso = null;
+    if (pagamentos.configurado()) {
+      try {
+        const cobranca = await pagamentos.criarPix({
+          valor: ad.valor, descricao: `Anúncio Ágora Brasil · ${ad.slot} · ${ad.dias} dia(s)`, email: ad.contato, referencia: ad.id,
+          notificacao: PUBLIC_URL ? `${PUBLIC_URL}/api/pagamentos/webhook` : null,
+        });
+        anuncios.registrarCobranca(ad.id, cobranca);
+      } catch (e) { aviso = 'Não foi possível gerar o Pix agora. Seu pedido foi salvo; tente consultar de novo em instantes.'; console.error(e.message); }
+    } else aviso = 'Pagamento online ainda não está ativo neste servidor. Seu pedido foi salvo e a equipe entra em contato pelo e-mail.';
+    return json(res, 201, { ...anuncios.status(anuncios.buscar(ad.id)), chave: ad.chave, aviso });
+  }
+  const consulta = /^\/api\/anuncios\/([a-f0-9]{16})$/.exec(p);
+  if (consulta && m === 'GET') {
+    let ad = anuncios.doDono(consulta[1], url.searchParams.get('chave'));
+    if (!ad) return json(res, 404, { erro: 'Anúncio não encontrado.' });
+    try { ad = await confirmarPagamento(ad); } catch (e) { console.error(e.message); }
+    return json(res, 200, anuncios.status(ad));
+  }
+  if (p === '/api/pagamentos/webhook' && m === 'POST') {
+    const corpo = await lerCorpo(req, 64 * 1024).catch(() => ({}));
+    const pid = String(corpo?.data?.id || url.searchParams.get('data.id') || url.searchParams.get('id') || '');
+    if (pid && pagamentos.configurado()) {
+      try {
+        const pg = await pagamentos.consultar(pid);
+        const ad = anuncios.buscar(pg.referencia);
+        if (ad && pg.status === 'approved' && Math.abs(pg.valor - ad.valor) < 0.01) anuncios.marcarPago(ad.id, 'mercadopago');
+      } catch (e) { console.error(e.message); }
+    }
+    return json(res, 200, { ok: true });
+  }
+  if (p.startsWith('/api/admin/')) {
+    if (!ADMIN_TOKEN) return json(res, 503, { erro: 'Defina ADMIN_TOKEN no servidor para usar a moderação.' });
+    if (!adminOk(req)) return json(res, 401, { erro: 'Token de administrador inválido.' });
+    if (p === '/api/admin/anuncios' && m === 'GET') return json(res, 200, { anuncios: anuncios.admin() });
+    const acao = /^\/api\/admin\/anuncios\/([a-f0-9]{16})\/(aprovar|recusar|pago)$/.exec(p);
+    if (acao && m === 'POST') {
+      const corpo = await lerCorpo(req, 8 * 1024).catch(() => ({}));
+      const ad = acao[2] === 'aprovar' ? anuncios.aprovar(acao[1]) : acao[2] === 'recusar' ? anuncios.recusar(acao[1], corpo.motivo) : anuncios.marcarPago(acao[1], 'manual');
+      if (acao[2] !== 'pago') publicarTeloes();
+      const { chave, ...semChave } = ad;
+      return json(res, 200, semChave);
+    }
+  }
+  return json(res, 404, { erro: 'Rota não encontrada.' });
+}
+
 const server=http.createServer((req,res)=>{
   let url;
   try { url=new URL(req.url, 'http://localhost'); }
   catch { res.writeHead(400).end('Bad Request'); return; }
+  if(url.pathname.startsWith('/api/')) {
+    api(req,res,url).catch((e)=>json(res,e.status||500,{erro:e.status?e.message:'Erro interno.'}));
+    return;
+  }
+  const img=/^\/anuncios\/img\/([a-f0-9]{16}\.(png|jpg|webp))$/.exec(url.pathname);
+  if(img) {
+    const arq=path.join(DATA,'imagens',img[1]);
+    fs.stat(arq,(err,st)=>{
+      if(err||!st.isFile()){res.writeHead(404).end('Not Found');return;}
+      res.writeHead(200,{'content-type':{png:'image/png',jpg:'image/jpeg',webp:'image/webp'}[img[2]],'x-content-type-options':'nosniff','cache-control':'public, max-age=3600'});
+      fs.createReadStream(arq).pipe(res);
+    });
+    return;
+  }
+  if(url.pathname==='/admin') url.pathname='/admin.html';
   if(url.pathname==='/health') {
     res.writeHead(200,{'content-type':'application/json','cache-control':'no-store'});
     res.end(JSON.stringify({ok:true,rooms:rooms.size,players:[...rooms.values()].reduce((n,s)=>n+s.size,0)}));
@@ -115,13 +216,14 @@ wss.on('connection',(ws)=>{
       setLook(ws,msg.look||msg);
       if(!rooms.has(ws.room)) rooms.set(ws.room,new Set());
       const occupants=peers(ws.room).map(p=>({
-        id:p.playerId,name:p.name,look:p.look,position:p.position||{x:0,z:-75}
+        id:p.playerId,name:p.name,look:p.look,position:p.position||{x:0,z:-30}
       }));
       rooms.get(ws.room).add(ws);
       send(ws,{type:'joined',room:ws.room,peers:occupants,count:peers(ws.room).length});
-      broadcast(ws.room,{type:'enter',id:ws.playerId,name:ws.name,look:ws.look,position:ws.position||{x:0,z:-75}},ws);
+      broadcast(ws.room,{type:'enter',id:ws.playerId,name:ws.name,look:ws.look,position:ws.position||{x:0,z:-30}},ws);
       publishCount(ws.room);
       send(ws,{type:'debate',state:debateOf(ws.room).estado()});
+      send(ws,{type:'teloes',slots:anuncios.publico()});
       return;
     }
     if(!ws.room) return;
@@ -161,6 +263,7 @@ wss.on('connection',(ws)=>{
 function tickDebates(now=Date.now()) { for(const debate of debates.values()) debate.tick(now); }
 if(require.main===module) {
   setInterval(tickDebates,500).unref();
+  setInterval(()=>{ if(anuncios.expirar()) publicarTeloes(); },60e3).unref();
   server.listen(PORT,HOST,()=>console.log('Ágora Brasil em http://localhost:'+PORT));
 }
-module.exports={server,clean,roomCode,team,outfit,lookOf,tickDebates};
+module.exports={server,clean,roomCode,team,outfit,lookOf,tickDebates,anuncios};

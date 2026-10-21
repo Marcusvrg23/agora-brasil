@@ -49,6 +49,15 @@ A primeira execução do GitHub Actions deve baixar os assets da [versão 4 do H
 - **Catálogo:** `public/catalogo.json` lista personagens, times, trajes, itens, veículos, espaços de anúncio e regras.
 - **Modelos 3D:** `bash scripts/baixar-modelos.sh` baixa os GLB gerados no Higgsfield para `public/assets/`.
 
+## Cidade em código e telões (v0.6)
+
+- **Esplanada redesenhada em código** (`public/cidade.js`), em metros reais: Congresso (torres de 100 m e 28 andares, cúpula do Senado, bacia da Câmara com 62 m, colunata, rampa e espelho d'água com reflexo), 18 ministérios com fachada de vidro, Itamaraty e Palácio da Justiça com arcos e cascatas, anexo com mosaico dourado, Praça dos Três Poderes (Planalto, STF, mastro de 100 m com bandeira, Pombal, Panteão), Alameda das bandeiras, pistas com faixas, trânsito, estacionamentos, árvores, postes, Catedral, Museu e Torre de TV ao fundo.
+- **Visual:** céu físico com sol de fim de tarde, nuvens, sombras, tons de filme e névoa no horizonte. O modo **leve** (padrão em notebooks com 4 núcleos ou menos e no celular) desliga o reflexo real do espelho d'água e reduz sombras e detalhes. Force com `?graficos=alto` ou `?graficos=leve`.
+- **Câmera e movimento:** a câmera segue o jogador; WASD anda relativo à câmera; Shift corre; prédios e espelhos d'água bloqueiam a passagem.
+- **Telões de anúncio** em 7 pontos (2 diante do Congresso, 2 no Eixo, 2 na altura dos ministérios, 1 na Praça). Fluxo: pedido no painel "Anunciar nos telões" → Pix (Mercado Pago) → moderação em `/admin` → no ar pelos dias contratados, em rodízio. Propaganda político-eleitoral é recusada automaticamente e na moderação.
+- **Variáveis de ambiente:** `ADMIN_TOKEN` (obrigatória para moderar), `MP_ACCESS_TOKEN` (ativa o Pix automático), `PUBLIC_URL` (endereço público, para o aviso de pagamento do Mercado Pago), `DATA_DIR` (onde ficam pedidos e imagens; padrão `data/`). Sem `MP_ACCESS_TOKEN`, o pedido é salvo e o pagamento é confirmado à mão no `/admin`.
+- **Animação:** os quatro corpos (Homem, Mulher, Idoso, Idosa) têm esqueleto e usam a mesma caminhada; o time amarelo usa o mesmo modelo com a camisa recolorida.
+
 ## Como funciona
 
 A navegação é por teclado (WASD / setas), rotação e zoom por mouse/toque. É possível entrar com um apelido, selecionar sala, conversar em tempo real pelo WebSocket e visualizar uma representação simples dos demais participantes.

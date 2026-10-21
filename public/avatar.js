@@ -201,7 +201,7 @@ export function dressAvatar(group,lookIn){
   const mega=part(new THREE.CylinderGeometry(.13*k,.045*k,.34*k,16,1,true),new THREE.MeshStandardMaterial({color:'#f5f5f5',roughness:.5,side:THREE.DoubleSide}),0,-.33*k,.17*k,elbows[1]);
   mega.rotation.x=Math.PI/2;
  }
- rig.traverse(o=>{if(o.isMesh)o.castShadow=false});
+ rig.traverse(o=>{if(o.isMesh){o.castShadow=true;o.receiveShadow=true}});
  group.userData.look=look;
  Object.assign(group.userData,{legs,knees,arms,elbows,rig,torso,curva:C.curva||0});
  applyBase(group,look);
@@ -224,66 +224,108 @@ function normalize(model,altura){
  const c=box2.getCenter(new THREE.Vector3());
  model.position.set(-c.x,-box2.min.y,-c.z);
 }
+// Corpos base com esqueleto (rig do Higgsfield). Os quatro tipos usam o modelo da camisa vermelha;
+// no time amarelo a camisa é recolorida no navegador. Todos usam a mesma caminhada do homem.
 // Se o arquivo não estiver em /assets/bases, busca direto no Higgsfield.
-// homem-vermelho já vem com esqueleto e caminhada (rig do Higgsfield).
-const HF='https://d8j0ntlcm91z4.cloudfront.net/user_3KLobL96cAs3bokj0G7CRMHMham/hf_20261020_';
+const HF='https://d8j0ntlcm91z4.cloudfront.net/user_3KLobL96cAs3bokj0G7CRMHMham/hf_2026102';
 export const BASE_CDN={
- 'homem-vermelho':HF+'215339_5b3afe7f-0a9f-4ddb-8aa1-741495549426.glb',
- 'mulher-vermelho':HF+'214725_e26abeb8-f753-486d-b0c5-8fb9fc9058f1.glb',
- 'idoso-vermelho':HF+'214729_ccc3dcc4-8e88-4b39-bc9c-c46e7c124ed1.glb',
- 'idosa-vermelho':HF+'214733_74f0e632-63cf-4dcb-9bad-0a20cbaa38af.glb',
- 'homem-amarelo':HF+'214736_5b82cd6a-18be-47b3-a74f-d8c82ae66381.glb',
- 'mulher-amarelo':HF+'214739_82a57d11-7d0f-43c2-8a9c-11feadf2b3cd.glb',
- 'idoso-amarelo':HF+'214742_b215eb66-6146-4afe-9de2-be150a9f2101.glb',
- 'idosa-amarelo':HF+'214745_86472ca7-ab1c-45b1-80f7-cea8a0d52e3a.glb'
+ homem:HF+'0_215339_5b3afe7f-0a9f-4ddb-8aa1-741495549426.glb',
+ mulher:HF+'1_035345_d9a45351-2fb7-4851-a39b-d9344ccbf900.glb',
+ idoso:HF+'1_035348_ac51b268-b3d6-4f59-96e0-90d8321b8b11.glb',
+ idosa:HF+'1_035350_129869ee-bac0-4d0c-a62d-5f3ce1127f18.glb'
 };
 export const THUMB_CDN={
- 'homem-vermelho':HF+'214605_fadcc2c8-ed85-4ee7-8d46-5a6c03cd4abd.png','mulher-vermelho':HF+'214605_df98cea5-b40e-4991-8e9b-30abdb82df67.png',
- 'idoso-vermelho':HF+'214604_06344de0-261c-47fa-9072-21746ae89e10.png','idosa-vermelho':HF+'214605_2272ba5a-4ea6-4f7c-9223-26f6a424a5a9.png',
- 'homem-amarelo':HF+'214628_05ab2456-ae6b-4f7d-8728-0d6c289324d5.png','mulher-amarelo':HF+'214630_98eccc5e-adca-41bd-996e-a02757bc89a5.png',
- 'idoso-amarelo':HF+'214629_a81ece7f-f013-4f5c-acf4-4e064cb6bdf2.png','idosa-amarelo':HF+'214629_fca271b7-5500-4711-a45f-4a66a544a863.png'
+ 'homem-vermelho':HF+'0_214605_fadcc2c8-ed85-4ee7-8d46-5a6c03cd4abd.png','mulher-vermelho':HF+'0_214605_df98cea5-b40e-4991-8e9b-30abdb82df67.png',
+ 'idoso-vermelho':HF+'0_214604_06344de0-261c-47fa-9072-21746ae89e10.png','idosa-vermelho':HF+'0_214605_2272ba5a-4ea6-4f7c-9223-26f6a424a5a9.png',
+ 'homem-amarelo':HF+'0_214628_05ab2456-ae6b-4f7d-8728-0d6c289324d5.png','mulher-amarelo':HF+'0_214630_98eccc5e-adca-41bd-996e-a02757bc89a5.png',
+ 'idoso-amarelo':HF+'0_214629_a81ece7f-f013-4f5c-acf4-4e064cb6bdf2.png','idosa-amarelo':HF+'0_214629_fca271b7-5500-4711-a45f-4a66a544a863.png'
 };
+const ALTURA={homem:2.15,mulher:2.08,idoso:2.1,idosa:2.0};
 const baseCache=new Map();
 export const baseStatus=new Map(); // chave -> 'ok' | 'faltando'
-function loadBase(key){
- if(!baseCache.has(key)){
+function loadBase(tipo){
+ if(!baseCache.has(tipo)){
   const loader=new GLTFLoader();
-  baseCache.set(key,loader.loadAsync('/assets/bases/'+key+'.glb')
-   .catch(()=>BASE_CDN[key]?loader.loadAsync(BASE_CDN[key]):Promise.reject(new Error('sem arquivo')))
-   .then(g=>{baseStatus.set(key,'ok');return g})
-   .catch(()=>{baseStatus.set(key,'faltando');return null}));
+  baseCache.set(tipo,loader.loadAsync('/assets/bases/'+tipo+'.glb')
+   .catch(()=>BASE_CDN[tipo]?loader.loadAsync(BASE_CDN[tipo]):Promise.reject(new Error('sem arquivo')))
+   .then(g=>{baseStatus.set(tipo,'ok');return g})
+   .catch(()=>{baseStatus.set(tipo,'faltando');return null}));
  }
- return baseCache.get(key);
+ return baseCache.get(tipo);
+}
+// Caminhada única para todos: vem do homem (rig com animação). Sem trilhas de posição,
+// para servir em esqueletos de alturas diferentes; o balanço vertical é feito em código.
+let walkClip=null;
+function sharedWalk(){
+ if(!walkClip)walkClip=loadBase('homem').then(g=>{
+  const c=g&&(g.animations.find(a=>/walk|andar/i.test(a.name))||g.animations[0]);
+  if(!c)return null;
+  const so=c.clone();so.tracks=so.tracks.filter(t=>!t.name.endsWith('.position')&&!t.name.endsWith('.scale'));so.name='caminhada';
+  return so;
+ });
+ return walkClip;
+}
+// Troca o vermelho saturado da textura por amarelo (camisa do time amarelo). Pele e cabelo não mudam.
+const recolorCache=new Map();
+function recolorTexture(tex){
+ if(!tex?.image)return tex;
+ if(recolorCache.has(tex.uuid))return recolorCache.get(tex.uuid);
+ const img=tex.image,w=img.width,h=img.height;
+ const c=document.createElement('canvas');c.width=w;c.height=h;const g=c.getContext('2d');
+ try{if(tex.flipY===false){g.drawImage(img,0,0)}else{g.drawImage(img,0,0)}}catch{return tex}
+ const d=g.getImageData(0,0,w,h),p=d.data;
+ for(let i=0;i<p.length;i+=4){
+  const r=p[i]/255,gg=p[i+1]/255,b=p[i+2]/255,mx=Math.max(r,gg,b),mn=Math.min(r,gg,b),dl=mx-mn;
+  if(mx<.18||dl/mx<.5)continue;
+  let hh;if(mx===r)hh=((gg-b)/dl)%6;else if(mx===gg)hh=(b-r)/dl+2;else hh=(r-gg)/dl+4;hh*=60;if(hh<0)hh+=360;
+  if(!(hh<=16||hh>=344))continue;
+  // vermelho → amarelo (#f4c20d ~ 47°), clareando um pouco
+  const v=Math.min(1,mx*1.18),s=Math.min(1,dl/mx*.95),H=47/60,C=v*s,X=C*(1-Math.abs(H%2-1)),m=v-C;
+  p[i]=(C+m)*255;p[i+1]=(X+m)*255;p[i+2]=m*255;
+ }
+ g.putImageData(d,0,0);
+ const t=new THREE.CanvasTexture(c);
+ t.flipY=tex.flipY;t.colorSpace=tex.colorSpace;t.wrapS=tex.wrapS;t.wrapT=tex.wrapT;t.channel=tex.channel;t.anisotropy=tex.anisotropy;
+ recolorCache.set(tex.uuid,t);return t;
 }
 async function applyBase(group,look){
- const key=look.base==='boneco'?null:look.base+'-'+look.team;
+ const tipo=look.base==='boneco'?null:look.base;
+ const key=tipo?tipo+'-'+look.team:null;
  group.userData.baseKey=key;
  if(group.userData.baseModel&&group.userData.baseModel.userData.key!==key){group.remove(group.userData.baseModel);group.userData.baseModel=null}
  if(!key||group.userData.baseModel){refreshVisibility(group);return}
- const gltf=await loadBase(key);
+ const gltf=await loadBase(tipo);
  if(!gltf||group.userData.baseKey!==key){refreshVisibility(group);return}
  const model=cloneSkinned(gltf.scene);
- try{normalize(model,look.base.startsWith('idos')?2.0:2.15)}catch{return}
+ try{normalize(model,ALTURA[tipo]||2.15)}catch{return}
+ model.traverse(o=>{
+  if(!o.isMesh)return;o.castShadow=true;o.receiveShadow=true;
+  if(look.team==='amarelo'&&o.material?.map){o.material=o.material.clone();o.material.map=recolorTexture(o.material.map)}
+ });
  const holder=new THREE.Group();holder.add(model);holder.name='base';holder.userData.key=key;
  group.add(holder);group.userData.baseModel=holder;
- // Modelos com esqueleto (rig do Higgsfield): a caminhada toca só enquanto anda.
- if(gltf.animations.length){
-  const mixer=new THREE.AnimationMixer(model);
-  const clip=gltf.animations.find(c=>/walk|andar|run/i.test(c.name))||gltf.animations[0];
-  const action=mixer.clipAction(clip);action.play();action.paused=true;
-  holder.userData.mixer=mixer;holder.userData.walk=action;
- }
  refreshVisibility(group);
+ // Com esqueleto: usa a caminhada do próprio modelo (homem) ou a compartilhada (demais).
+ let skinned=false;model.traverse(o=>{if(o.isSkinnedMesh)skinned=true});
+ if(!skinned)return;
+ const clip=gltf.animations.length?(gltf.animations.find(c=>/walk|andar|run/i.test(c.name))||gltf.animations[0]):await sharedWalk();
+ if(!clip||group.userData.baseModel!==holder)return;
+ const mixer=new THREE.AnimationMixer(model);
+ const action=mixer.clipAction(clip);
+ holder.userData.mixer=mixer;holder.userData.walk=action;holder.userData.semPosicao=!gltf.animations.length;holder.userData.andando=false;
 }
 
 // Caminhada procedural: balança pernas e braços; parado, respira de leve.
-export function animateAvatar(group,moving,t){
+export function animateAvatar(group,moving,t,ritmo=1){
  const {legs,arms,rig,imported,baseModel,mixer,clips}=group.userData;
  if(!imported&&baseModel){
   const walk=baseModel.userData.walk;
   if(walk){ // com esqueleto: anima de verdade; parado volta à pose inicial
-   if(moving&&walk.paused){walk.paused=false}
-   if(!moving&&!walk.paused){walk.paused=true;walk.time=0}
+   walk.timeScale=ritmo;
+   // andando: entra a caminhada; parado: a caminhada some aos poucos e o boneco volta à pose em pé
+   if(moving&&!baseModel.userData.andando){baseModel.userData.andando=true;walk.reset();walk.paused=false;walk.setEffectiveWeight(1);walk.fadeIn(.2).play()}
+   if(!moving&&baseModel.userData.andando){baseModel.userData.andando=false;walk.fadeOut(.3)}
+   if(baseModel.userData.semPosicao)baseModel.position.y=moving?Math.abs(Math.sin(walk.time*Math.PI*2/walk.getClip().duration*2))*.04:0;
    return;
   }
   // Sem esqueleto: passo com leve balanço.
@@ -301,7 +343,7 @@ export function animateAvatar(group,moving,t){
  }
  if(!legs)return;
  const {knees,elbows,torso,curva}=group.userData;
- const f=t*8.5,sw=moving?Math.sin(f):0;
+ const f=t*8.5*ritmo,sw=moving?Math.sin(f):0;
  legs[0].rotation.x=sw*.55;legs[1].rotation.x=-sw*.55;
  // joelho dobra quando a perna volta
  knees[0].rotation.x=moving?Math.max(0,-Math.sin(f-.9))*.9+.05:0;
@@ -324,6 +366,7 @@ export async function importModel(group,file){
  const gltf=await new Promise((res,rej)=>new GLTFLoader().parse(buffer,'',res,rej));
  const model=gltf.scene;
  normalize(model,2.2); // altura de 2,2 m, pés no chão, centralizado
+ model.traverse(o=>{if(o.isMesh)o.castShadow=true});
  const holder=new THREE.Group();holder.add(model);holder.name='imported';
  removeImported(group);
  group.add(holder);group.userData.imported=holder;

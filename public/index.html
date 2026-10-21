@@ -10,7 +10,7 @@
 </head>
 <body>
 <header class="topbar">
- <div class="brand"><div class="brandicon">A</div><div><strong>ÁGORA <span>BRASIL</span></strong><small>PRAÇA CÍVICA VIRTUAL · VERSÃO 0.5</small></div></div>
+ <div class="brand"><div class="brandicon">A</div><div><strong>ÁGORA <span>BRASIL</span></strong><small>PRAÇA CÍVICA VIRTUAL · VERSÃO 0.6</small></div></div>
  <div class="status"><span class="dot" id="status-dot"></span><span id="status-label">Conectando…</span><b id="live-count">0 online</b></div>
 </header>
 <main>
@@ -69,6 +69,25 @@
     <button id="debate-pass" class="secondary" type="button" hidden>Passar a vez</button>
     <div id="debate-vote" class="vote" hidden><button type="button" data-side="a">Votar no Lado A</button><button type="button" data-side="b">Votar no Lado B</button></div>
    </div>
+  </div>
+  <div class="panel anuncio" id="anuncio-panel">
+   <div class="eyebrow">ANUNCIAR NOS TELÕES</div>
+   <h2>Seu anúncio na Esplanada</h2>
+   <canvas id="ad-previa" width="640" height="360" aria-label="Prévia do anúncio"></canvas>
+   <form id="ad-form">
+    <label for="ad-slot">Telão</label><select id="ad-slot" required></select>
+    <div class="ad-row"><div><label for="ad-dias">Dias</label><input id="ad-dias" type="number" min="1" max="30" value="3" required></div>
+    <div><label for="ad-cor">Cor de fundo</label><input id="ad-cor" type="color" value="#0e2a3a"></div></div>
+    <label for="ad-titulo">Título</label><input id="ad-titulo" maxlength="40" placeholder="Ex.: Pastelaria da Rodoviária" required>
+    <label for="ad-texto">Texto</label><input id="ad-texto" maxlength="90" placeholder="Uma frase curta">
+    <label for="ad-imagem">Imagem (opcional)</label><input id="ad-imagem" type="file" accept="image/png,image/jpeg,image/webp">
+    <label for="ad-email">E-mail para o recibo</label><input id="ad-email" type="email" maxlength="254" required placeholder="voce@exemplo.com">
+    <div class="ad-total">Total <b id="ad-total">—</b></div>
+    <button id="ad-enviar" class="primary" type="submit">Enviar pedido</button>
+    <div id="ad-erro" class="ad-erro" role="alert"></div>
+   </form>
+   <div id="ad-resultado" class="ad-resultado" hidden></div>
+   <div class="fineprint">Todo anúncio passa por moderação antes de ir ao ar. Propaganda político-eleitoral não é aceita.</div>
   </div>
   <div class="panel chat"><div class="chat-head"><div><div class="eyebrow">CONVERSA EM TEMPO REAL</div><h2>Chat da praça</h2></div><span id="room-label" class="pill">Brasília</span></div>
    <div id="messages" class="messages" role="log" aria-live="polite"><div class="system">Conecte-se para conversar. Sem login e sem cobrança.</div></div>

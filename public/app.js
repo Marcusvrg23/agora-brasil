@@ -1,69 +1,36 @@
 import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.169.0/build/three.module.js';
-import {GLTFLoader} from 'https://cdn.jsdelivr.net/npm/three@0.169.0/examples/jsm/loaders/GLTFLoader.js';
 import {OrbitControls} from 'https://cdn.jsdelivr.net/npm/three@0.169.0/examples/jsm/controls/OrbitControls.js';
+import {buildCity,resolveCollision} from './cidade.js';
+import {iniciarTeloes,iniciarFormulario} from './teloes.js';
 import {dressAvatar,animateAvatar,importModel,removeImported,sanitizeLook,TEAM_COLORS,BASES,baseStatus,updateAvatarMixers,ESTILOS_CABELO,THUMB_CDN} from './avatar.js';
 
 const canvas=document.querySelector('#world');
 const scene=new THREE.Scene();
-scene.background=new THREE.Color('#86b0d4');
-scene.fog=new THREE.FogExp2('#93b5ce',0.0007);
-const camera=new THREE.PerspectiveCamera(58,1,0.1,3400);
-camera.position.set(112,90,100);
-const renderer=new THREE.WebGLRenderer({canvas,antialias:true,powerPreference:'low-power'});
-renderer.setPixelRatio(Math.min(window.devicePixelRatio||1,1.5));
+// Qualidade gráfica: "alto" (sombras 2048, espelho d'água com reflexo real) ou "leve" (notebooks e celulares).
+function qualidadeInicial(){
+ const q=new URLSearchParams(location.search).get('graficos');if(q==='alto'||q==='leve')return q;
+ try{const s=localStorage.getItem('agora-graficos');if(s==='alto'||s==='leve')return s}catch{}
+ return (navigator.hardwareConcurrency||4)<=4||/Mobi|Android/i.test(navigator.userAgent)?'leve':'alto';
+}
+const QUALIDADE=qualidadeInicial();
+const camera=new THREE.PerspectiveCamera(55,1,0.35,9000);
+camera.position.set(150,62,95);
+const renderer=new THREE.WebGLRenderer({canvas,antialias:true,powerPreference:QUALIDADE==='alto'?'high-performance':'low-power'});
+renderer.setPixelRatio(Math.min(window.devicePixelRatio||1,QUALIDADE==='alto'?1.5:1));
 renderer.outputColorSpace=THREE.SRGBColorSpace;
-renderer.shadowMap.enabled=false;
-scene.add(new THREE.HemisphereLight('#edf6ff','#728557',2.1));
-const sun=new THREE.DirectionalLight('#ffeed6',2.2);
-sun.position.set(-100,280,140);scene.add(sun);
 const controls=new OrbitControls(camera,canvas);
-controls.target.set(0,30,-187);
+controls.target.set(0,28,-190);
 controls.enableDamping=true;
-controls.maxDistance=700;controls.minDistance=6;
-controls.maxPolarAngle=Math.PI/2-0.02;controls.update();
+controls.maxDistance=900;controls.minDistance=2.5;
+controls.maxPolarAngle=Math.PI*.6;controls.update(); // permite olhar para cima a partir do chão
 const modelStatus=document.querySelector('#model-status');
 const count=document.querySelector('#live-count');
-let modelRoot=null;
-let mixers=[];
 const clock=new THREE.Clock();
-function block(name, pos, dims, color) {
- const mesh=new THREE.Mesh(new THREE.BoxGeometry(...dims),new THREE.MeshStandardMaterial({color,roughness:0.75}));
- mesh.position.set(...pos);mesh.name=name;scene.add(mesh);return mesh;
-}
-function makeFallback(){
- block('Plano verde',[0,-1,-100],[800,2,1200],'#618756');
- block('Esplanada Gramado',[0,0,-140],[160,1,740],'#538446');
- block('Plataforma Congresso',[0,5,-190],[250,10,56],'#c9d5d6');
- for(const x of [-14,14]) {
-  block('Torre Congresso',[x,61,-213],[21,110,23],'#91aab9');
-  block('Vidros torre',[x,61,-201.2],[19,107,.2],'#24495a');
- }
- for(const item of [{x:-80,r:31,h:19,up:true},{x:80,r:39,h:15,up:false}]) {
-   const material=new THREE.MeshStandardMaterial({color:'#f7f5e9',roughness:.65,side:THREE.DoubleSide});
-   const shape=new THREE.SphereGeometry(item.r,50,25,0,Math.PI*2,0,Math.PI/2);
-   const bowl=new THREE.Mesh(shape,material);bowl.position.set(item.x,10,-190);
-   if(!item.up) bowl.rotation.z=Math.PI;
-   scene.add(bowl);
- }
- block('Espelho d’água',[0,0.35,-121],[229,.3,65],'#62a5c2');
- block('Passarela',[0,.8,-121],[13,.65,80],'#b2b7b1');
- for(const side of [-1,1]){
-   block('Pista',[side*99,.1,-130],[43,.15,730],'#3d464c');
-   for(let i=0;i<6;i++)block('Ministério',[side*183,16,-70+i*103],[49,32,44],'#c8d1d1');
- }
-}
-new GLTFLoader().load('/assets/brasilia-v4.glb',gltf=>{
- modelRoot=gltf.scene;
- modelRoot.traverse(obj=>{
-  if(obj.isCamera||obj.isLight) obj.visible=false;
-  if(obj.isMesh) obj.frustumCulled=true;
- });
- scene.add(modelRoot);
- if(gltf.animations.length){const mix=new THREE.AnimationMixer(modelRoot);for(const clip of gltf.animations)mix.clipAction(clip).play();mixers.push(mix)}
- modelStatus.textContent='Cenário Blender 3D carregado · '+gltf.animations.length+' animações';
-},undefined,()=>{
- makeFallback();modelStatus.textContent='Maquete 3D básica · modelo Blender em importação';
-});
+// Cidade desenhada em código (cidade.js), em metros reais.
+const city=buildCity(scene,renderer,camera,{qualidade:QUALIDADE});
+modelStatus.textContent='Esplanada em código · gráficos '+(QUALIDADE==='alto'?'altos':'leves');
+const teloes=iniciarTeloes(city);iniciarFormulario();
+const AVATAR_ESCALA=.84; // bonecos de 2,15 m → ~1,80 m na escala da cidade
 function resize(){
  const width=canvas.clientWidth,height=canvas.clientHeight;
  if(!width||!height)return;
@@ -80,13 +47,14 @@ let myLook=loadLook();
 const player=new THREE.Group();
 scene.add(player);
 dressAvatar(player,myLook);
-player.position.set(0,0,-70);
+player.scale.setScalar(AVATAR_ESCALA);
+player.position.set(city.spawn.x,0,city.spawn.z);player.rotation.y=Math.PI;
 player.visible=false;
-let playerMoving=false;
+let playerMoving=false,correndo=false;
 function remoteAvatar(id,x,z,label,look) {
  if(peers.has(id))return peers.get(id);
  const mesh=new THREE.Group();
- dressAvatar(mesh,look);
+ dressAvatar(mesh,look);mesh.scale.setScalar(AVATAR_ESCALA);
  mesh.userData.name=label||'';mesh.userData.lastMove=0;
  mesh.position.set(x||0,0,z||-75);scene.add(mesh);
  peers.set(id,mesh);return mesh;
@@ -170,7 +138,7 @@ function connect(){
   let data;try{data=JSON.parse(event.data)}catch{return}
   if(data.type==='hello')myId=data.id;
   if(data.type==='joined'){
-   entered=true;player.visible=true;
+   entered=true;player.visible=true;seguirJogador(true);
    for(const mesh of peers.values())scene.remove(mesh);peers.clear();
    for(const other of data.peers||[])remoteAvatar(other.id,other.position?.x,other.position?.z,other.name,other.look);
    log('Você entrou na praça. Participação gratuita e plural.');
@@ -181,13 +149,16 @@ function connect(){
   if(data.type==='enter'&&data.id!==myId)remoteAvatar(data.id,data.position?.x,data.position?.z,data.name,data.look);
   if(data.type==='look'&&data.id!==myId){const p=peers.get(data.id);if(p)dressAvatar(p,data.look)}
   if(data.type==='debate')renderDebate(data.state);
+  if(data.type==='teloes')teloes.atualizar(data.slots);
   if(data.type==='debate-fala')debateLog(data);
   if(data.type==='leave'){const p=peers.get(data.id);if(p){scene.remove(p);peers.delete(data.id)}}
   if(data.type==='move'){
    const p=remoteAvatar(data.id,data.x,data.z,'');
    const dx=data.x-p.position.x,dz=data.z-p.position.z;
    if(dx||dz)p.rotation.y=Math.atan2(dx,dz);
-   p.userData.target={x:data.x,z:data.z};p.userData.lastMove=performance.now();
+   const agora=performance.now(),dtm=(agora-(p.userData.lastMove||agora))/1000;
+   if(dtm>0&&dtm<1){const v=Math.hypot(data.x-(p.userData.target?.x??p.position.x),data.z-(p.userData.target?.z??p.position.z))/dtm;p.userData.ritmo=v>5?2.3:1.35}
+   p.userData.target={x:data.x,z:data.z};p.userData.lastMove=agora;
   }
  };
  socket.onclose=()=>{
@@ -260,7 +231,7 @@ document.querySelector('#preview-walk').addEventListener('click',e=>{previewWalk
 fillCreator();
 for(const k of LOOK_KEYS.slice(1))creator[k].addEventListener('input',readCreator);
 function baseNotice(){
- const key=myLook.base+'-'+myLook.team;
+ const key=myLook.base;
  if(myLook.base!=='boneco'&&baseStatus.get(key)==='faltando')creator.info.textContent='Não consegui carregar o modelo "'+key+'" (nem local nem do Higgsfield). Rode scripts/baixar-modelos.sh; até lá aparece o boneco.';
 }
 creator.file.addEventListener('change',async()=>{
@@ -365,6 +336,8 @@ window.addEventListener('keydown',e=>{
  const key=e.key.toLowerCase();if(['w','a','s','d','arrowup','arrowdown','arrowleft','arrowright'].includes(key)){pressed.add(key);if(key.startsWith('arrow'))e.preventDefault()}
 });
 window.addEventListener('keyup',e=>pressed.delete(e.key.toLowerCase()));
+window.addEventListener('keydown',e=>{if(e.key==='Shift')pressed.add('shift')});
+window.addEventListener('blur',()=>pressed.clear());
 for(const [id,key] of [['up','w'],['down','s'],['left','a'],['right','d']]){
  const button=document.querySelector('#'+id);
  for(const eventName of ['pointerdown','pointerup','pointercancel','pointerleave']){
@@ -372,34 +345,51 @@ for(const [id,key] of [['up','w'],['down','s'],['left','a'],['right','d']]){
  }
 }
 let netTick=0;
+const fwd=new THREE.Vector3(),right=new THREE.Vector3(),UP=new THREE.Vector3(0,1,0),lastPlayer=new THREE.Vector3();
+// Câmera em terceira pessoa: acompanha o jogador mantendo o ângulo escolhido com o mouse.
+function seguirJogador(snap){
+ const alvo=new THREE.Vector3(player.position.x,1.55,player.position.z);
+ if(snap){controls.target.copy(alvo);camera.position.set(alvo.x+2.5,alvo.y+3.2,alvo.z+8.5);lastPlayer.copy(alvo);controls.update();return}
+ const d=alvo.clone().sub(lastPlayer);camera.position.add(d);controls.target.add(d);lastPlayer.copy(alvo);
+}
 function animate(){
  requestAnimationFrame(animate);
  const dt=Math.min(clock.getDelta(),.05);
- for(const mixer of mixers)mixer.update(dt);
  if(entered){
-  const speed=dt*9;let x=0,z=0;
-  if(pressed.has('w')||pressed.has('arrowup'))z=-speed;
-  if(pressed.has('s')||pressed.has('arrowdown'))z=speed;
-  if(pressed.has('a')||pressed.has('arrowleft'))x=-speed;
-  if(pressed.has('d')||pressed.has('arrowright'))x=speed;
-  playerMoving=!!(x||z);
-  if(x||z){
-   player.rotation.y=Math.atan2(x,z);
-   const nx=THREE.MathUtils.clamp(player.position.x+x,-300,300);
-   const nz=THREE.MathUtils.clamp(player.position.z+z,-950,200);
+  // Movimento relativo à câmera; Shift corre. Colisão simples com prédios e espelhos d'água.
+  let f=0,r=0;
+  if(pressed.has('w')||pressed.has('arrowup'))f+=1;
+  if(pressed.has('s')||pressed.has('arrowdown'))f-=1;
+  if(pressed.has('a')||pressed.has('arrowleft'))r-=1;
+  if(pressed.has('d')||pressed.has('arrowright'))r+=1;
+  playerMoving=!!(f||r);
+  if(playerMoving){
+   camera.getWorldDirection(fwd);fwd.y=0;fwd.normalize();right.crossVectors(fwd,UP);
+   const dir=new THREE.Vector3().addScaledVector(fwd,f).addScaledVector(right,r).normalize();
+   correndo=pressed.has('shift');
+   const vel=(correndo?7.5:3.2)*dt;
+   let nx=player.position.x+dir.x*vel,nz=player.position.z+dir.z*vel;
+   [nx,nz]=resolveCollision(nx,nz,city.colliders);
+   nx=THREE.MathUtils.clamp(nx,city.limites.xMin,city.limites.xMax);
+   nz=THREE.MathUtils.clamp(nz,city.limites.zMin,city.limites.zMax);
+   player.rotation.y=Math.atan2(dir.x,dir.z);
    player.position.set(nx,0,nz);
    netTick+=dt;if(netTick>.13){send({type:'move',x:nx,z:nz});netTick=0}
   }
+  seguirJogador(false);
  }
  const t=clock.elapsedTime,now=performance.now();
- animateAvatar(player,entered&&playerMoving,t);
+ animateAvatar(player,entered&&playerMoving,t,correndo?2.3:1.35);
  updateAvatarMixers(player,dt);
  for(const p of peers.values()){
   const tg=p.userData.target;
   if(tg){p.position.x+=(tg.x-p.position.x)*Math.min(1,dt*10);p.position.z+=(tg.z-p.position.z)*Math.min(1,dt*10)}
-  animateAvatar(p,now-p.userData.lastMove<260,t);updateAvatarMixers(p,dt);
+  animateAvatar(p,now-p.userData.lastMove<260,t,p.userData.ritmo||1.35);updateAvatarMixers(p,dt);
  }
  renderPreview(t);
- controls.update();renderer.render(scene,camera);
+ controls.update();
+ if(camera.position.y<.45)camera.position.y=.45; // câmera nunca entra no chão
+ city.update(dt,t,controls.target,camera.position.distanceTo(controls.target));
+ renderer.render(scene,camera);
 }
 resize();animate();

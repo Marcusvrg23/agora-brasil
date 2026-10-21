@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Moderação dos telões</title>
+<style>
+:root{font-family:Inter,system-ui,-apple-system,"Segoe UI",sans-serif;color:#ecf4fa;background:#07111b}
+*{box-sizing:border-box}body{margin:0;padding:24px 16px;max-width:1180px;margin:auto}
+h1{font-size:22px;margin:0 0 4px}p{color:#a6b6bf;font-size:13px;margin:0 0 16px}
+.bar{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px}
+input,select{background:#091925;color:#f3faf9;border:1px solid #304858;border-radius:7px;padding:10px;font:inherit;font-size:13px}
+button{background:#43d5a8;color:#092522;border:0;border-radius:7px;padding:10px 14px;font-weight:800;cursor:pointer}
+button.sec{background:transparent;color:#a1dfc5;border:1px solid #43d5a8}button.neg{background:#e05a4f;color:#fff}
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(330px,1fr));gap:12px}
+.card{background:#122333;border:1px solid #273b49;border-radius:12px;padding:14px;display:flex;flex-direction:column;gap:8px}
+.card h3{margin:0;font-size:16px}.meta{font-size:12px;color:#8fb3bd}.txt{font-size:13px}
+.st{display:inline-block;font-size:11px;font-weight:800;padding:4px 8px;border-radius:12px;background:#1e403e;color:#a1dfc5}
+.st.aguardando_pagamento{background:#4a3b12;color:#f4c20d}.st.recusado{background:#4a1a17;color:#ff9b8f}.st.encerrado{background:#2a2f33;color:#9aa5ab}
+.card img{width:100%;aspect-ratio:16/9;object-fit:cover;border-radius:8px;background:#06121a}
+.acoes{display:flex;gap:6px;flex-wrap:wrap}.erro{color:#ff9b8f;font-size:13px}
+</style>
+</head>
+<body>
+<h1>Moderação dos telões</h1>
+<p>Confira pagamento e conteúdo antes de aprovar. Propaganda político-eleitoral, ódio, golpe e conteúdo adulto ficam de fora.</p>
+<div class="bar">
+ <input id="token" type="password" placeholder="ADMIN_TOKEN" autocomplete="off">
+ <select id="filtro"><option value="">Todos</option><option value="aguardando_pagamento">Aguardando pagamento</option><option value="em_moderacao">Em moderação</option><option value="no_ar">No ar</option><option value="recusado">Recusados</option><option value="encerrado">Encerrados</option></select>
+ <button id="carregar">Carregar</button>
+</div>
+<div id="erro" class="erro"></div>
+<div id="lista" class="cards"></div>
+<script>
+const $=s=>document.querySelector(s);
+const brl=v=>v.toLocaleString('pt-BR',{style:'currency',currency:'BRL'});
+const nomes={aguardando_pagamento:'Aguardando pagamento',em_moderacao:'Em moderação',no_ar:'No ar',encerrado:'Encerrado',recusado:'Recusado'};
+try{$('#token').value=sessionStorage.getItem('agora-admin')||''}catch{}
+async function chamar(url,opts={}){
+ const r=await fetch(url,{...opts,headers:{'content-type':'application/json','x-admin-token':$('#token').value,...(opts.headers||{})}});
+ const j=await r.json().catch(()=>({}));if(!r.ok)throw new Error(j.erro||('Erro '+r.status));return j;
+}
+async function carregar(){
+ $('#erro').textContent='';try{sessionStorage.setItem('agora-admin',$('#token').value)}catch{}
+ try{
+  const {anuncios}=await chamar('/api/admin/anuncios');const f=$('#filtro').value;
+  $('#lista').replaceChildren(...anuncios.filter(a=>!f||a.status===f).map(card));
+  if(!$('#lista').children.length)$('#lista').textContent='Nenhum anúncio.';
+ }catch(e){$('#erro').textContent=e.message}
+}
+function card(a){
+ const el=document.createElement('div');el.className='card';
+ const h=document.createElement('h3');h.textContent=a.titulo;
+ const st=document.createElement('span');st.className='st '+a.status;st.textContent=nomes[a.status]||a.status;
+ const meta=document.createElement('div');meta.className='meta';
+ meta.textContent=`${a.slot} · ${a.dias} dia(s) · ${brl(a.valor)} · ${new Date(a.criadoEm).toLocaleString('pt-BR')} · ${a.contato}`+(a.pagoPor?` · pago (${a.pagoPor})`:'')+(a.fim?` · até ${new Date(a.fim).toLocaleString('pt-BR')}`:'');
+ const txt=document.createElement('div');txt.className='txt';txt.textContent=a.texto||'(sem texto)';
+ el.append(st,h,txt,meta);
+ if(a.imagem){const img=document.createElement('img');img.alt='';img.src='/anuncios/img/'+a.imagem;el.append(img)}
+ if(a.motivo){const m=document.createElement('div');m.className='meta';m.textContent='Motivo: '+a.motivo;el.append(m)}
+ const ac=document.createElement('div');ac.className='acoes';
+ const btn=(t,cls,fn)=>{const b=document.createElement('button');b.textContent=t;if(cls)b.className=cls;b.onclick=async()=>{try{await fn();carregar()}catch(e){$('#erro').textContent=e.message}};ac.append(b)};
+ if(a.status==='aguardando_pagamento')btn('Marcar como pago','sec',()=>chamar(`/api/admin/anuncios/${a.id}/pago`,{method:'POST',body:'{}'}));
+ if(a.status==='em_moderacao')btn('Aprovar e pôr no ar','',()=>chamar(`/api/admin/anuncios/${a.id}/aprovar`,{method:'POST',body:'{}'}));
+ if(['aguardando_pagamento','em_moderacao','no_ar'].includes(a.status))btn('Recusar / tirar do ar','neg',()=>{const motivo=prompt('Motivo (o anunciante verá):','Fora das regras dos telões.');if(motivo===null)throw new Error('Cancelado.');return chamar(`/api/admin/anuncios/${a.id}/recusar`,{method:'POST',body:JSON.stringify({motivo})})});
+ el.append(ac);return el;
+}
+$('#carregar').onclick=carregar;$('#filtro').onchange=carregar;
+</script>
+</body>
+</html>

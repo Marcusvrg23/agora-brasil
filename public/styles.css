@@ -43,3 +43,18 @@
 .base-card img{width:100%;height:100%;object-fit:cover;object-position:50% 12%}
 .base-card[aria-checked="true"]{border-color:#f07a6e;color:#f5a39a}
 .base-card[aria-checked="true"]::after{content:"✓";position:absolute;right:4px;top:4px;width:18px;height:18px;border-radius:50%;background:#f07a6e;color:#2b1418;font-size:11px;display:grid;place-items:center}
+
+.anuncio label{display:block;font-size:11px;color:#b9ccd5;font-weight:650;margin:10px 0 5px}
+.anuncio input,.anuncio select,.anuncio textarea{width:100%;background:#091925;color:#f3faf9;border:1px solid #304858;border-radius:7px;padding:10px;font:inherit;font-size:12px;outline:none}
+.anuncio input:focus,.anuncio select:focus{border-color:#52d3aa}
+.anuncio input[type=color]{height:38px;padding:3px}
+#ad-previa{width:100%;aspect-ratio:16/9;height:auto;border-radius:8px;display:block;background:#06121a;margin-top:6px}
+.ad-row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.ad-total{display:flex;justify-content:space-between;align-items:center;margin-top:12px;font-size:13px;color:#b9ccd5}
+.ad-total b{font-size:18px;color:#f4c20d}
+.ad-erro{color:#ff9b8f;font-size:12px;margin-top:8px;min-height:1px}
+.ad-resultado{margin-top:12px;border-top:1px solid #2c404b;padding-top:10px;display:flex;flex-direction:column;gap:8px}
+.ad-resultado p{margin:0}
+.ad-status{font-weight:700;color:#e8f3f1}
+.ad-qr{width:180px;height:180px;align-self:center;background:#fff;border-radius:8px;padding:6px}
+@media(max-width:900px){.anuncio{grid-column:1/-1}}
