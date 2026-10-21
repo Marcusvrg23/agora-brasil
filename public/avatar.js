@@ -216,10 +216,14 @@ function refreshVisibility(group){
  if(rig)rig.visible=!imported&&!baseModel;
 }
 function normalize(model,altura){
+ // Modelos com esqueleto: atualiza ossos e calcula a caixa já com a pele aplicada, senão a medida sai errada.
+ model.updateMatrixWorld(true);
+ model.traverse(o=>{if(o.isSkinnedMesh){o.skeleton.update();o.computeBoundingBox();o.computeBoundingSphere();o.frustumCulled=false}});
  const box=new THREE.Box3().setFromObject(model);
  const size=box.getSize(new THREE.Vector3());
  if(!size.y||!Number.isFinite(size.y))throw new Error('Modelo sem geometria visível.');
  model.scale.setScalar(altura/size.y);
+ model.updateMatrixWorld(true);
  const box2=new THREE.Box3().setFromObject(model);
  const c=box2.getCenter(new THREE.Vector3());
  model.position.set(-c.x,-box2.min.y,-c.z);
