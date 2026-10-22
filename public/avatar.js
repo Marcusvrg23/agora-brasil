@@ -264,6 +264,18 @@ function loadBase(tipo){
 // (24 ossos com os mesmos nomes). Os rigs sem animação trazem um "clip0" de um quadro só (pose parada),
 // que é ignorado. Na cópia, fica só a rotação dos ossos e o movimento do quadril, ajustado à altura de cada corpo.
 let walkBase=null;
+let genuineRunBase=null;
+function sharedRun(){
+ if(!genuineRunBase)genuineRunBase=new GLTFLoader().loadAsync('/assets/anims/run-higgsfield.glb')
+  .then(g=>g.animations.find(a=>/run|corr/i.test(a.name))||g.animations[0]||null).catch(e=>{console.warn('Run GLB unavailable',e);return null});
+ return genuineRunBase;
+}
+function runPara(clip, model){
+ const bones=new Set();model.traverse(o=>{if(o.isBone)bones.add(o.name)});
+ if(!clip)return null;
+ const tracks=clip.tracks.filter(t=>t.name.endsWith('.quaternion') && bones.has(t.name.slice(0,-'.quaternion'.length))).map(t=>t.clone());
+ return tracks.length>=8?new THREE.AnimationClip('Run',clip.duration,tracks):null;
+}
 function sharedWalk(){
  if(!walkBase)walkBase=loadBase('homem').then(g=>{
   const clip=g&&g.animations.find(a=>/walk|andar/i.test(a.name));
@@ -334,7 +346,9 @@ async function applyBase(group,look){
  const hips=model.getObjectByName('Hips');
  const mixer=new THREE.AnimationMixer(model);
  const action=mixer.clipAction(walkPara(base,hips?hips.position:null));
- const run=mixer.clipAction(criarClipCorrida(base,hips?hips.position:null));
+ const runClip=runPara(await sharedRun(),model);
+  const run=runClip?mixer.clipAction(runClip):null;
+  if(!run)console.warn('Animação Run indisponível ou incompatível: mantendo caminhada normal.');
  holder.userData.mixer=mixer;holder.userData.walk=action;holder.userData.run=run;holder.userData.locomotion=null;holder.userData.andando=false;
 }
 
