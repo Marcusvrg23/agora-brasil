@@ -1,4 +1,5 @@
 import * as THREE from 'three';
+import {deslocamentoRoda,ondulacaoBandeira} from './movimento.mjs';
 import {GLTFLoader} from 'https://cdn.jsdelivr.net/npm/three@0.169.0/examples/jsm/loaders/GLTFLoader.js';
 // Veículos e montaria do modo PvP. Modelos semi-realistas gerados no Higgsfield (sam_3_3d, a partir de
 // desenhos próprios, sem marca), com todas as animações feitas em código:
@@ -170,7 +171,7 @@ export class Veiculo{
   modelo.traverse(o=>{if(o.isMesh){o.castShadow=true;o.receiveShadow=true;
    if(!provisorio&&(this.cfg.rodas||this.cfg.dino))o.material=prepararMaterial(o.material,this.cfg,this.uni);
    if(o.material.map)o.material.map.anisotropy=4}});
-     this.rodasTruck=[];if(this.cfg.truck)modelo.traverse(o=>{if(o.isMesh&&/^Pneu/i.test(o.name))this.rodasTruck.push(o)});
+     this.rodasTruck=[];this.bandeirasTruck=[];if(this.cfg.truck)modelo.traverse(o=>{if(o.isMesh&&/^Pneu/i.test(o.name))this.rodasTruck.push(o);if(o.isMesh&&/^Bandeira/i.test(o.name)){o.userData.indice=this.bandeirasTruck.length;this.bandeirasTruck.push(o)}});
    this.corpo.add(holder);this.modelo=holder;
   // ponto (x,y,z) nas coordenadas do modelo normalizado → coordenadas locais do corpo
   const off=modelo.position.clone();
@@ -293,7 +294,7 @@ export class Veiculo{
   // suspensão e inclinações por tipo
   const c=this.corpo;  if(this.tipo==='carro'||C.truck){
    if(C.rodas){s.giro+=s.vel*dt/(C.rodas[0][2]*this.escala);this.uni.uGiro.value=s.giro;this.uni.uEsterco.value=s.esterco}
-   if(C.truck)for(const roda of this.rodasTruck||[])roda.rotation.y+=s.vel*dt/.73;
+   if(C.truck){for(const roda of this.rodasTruck||[])roda.rotation.x+=deslocamentoRoda(s.vel,dt);for(const band of this.bandeirasTruck||[])band.rotation.x=ondulacaoBandeira(t,band.userData.indice,s.vel)}
    const quique=Math.sin(t*17)*.006*Math.min(1,Math.abs(s.vel)/10);
    c.rotation.x=THREE.MathUtils.lerp(c.rotation.x,THREE.MathUtils.clamp(-s.acel*.004,-.05,.05),Math.min(1,dt*5));
    c.rotation.z=THREE.MathUtils.lerp(c.rotation.z,THREE.MathUtils.clamp((s.lat||s.vel*s.esterco*.6)*.0045,-.07,.07),Math.min(1,dt*5));

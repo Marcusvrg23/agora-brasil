@@ -1,4 +1,5 @@
 import * as THREE from 'three';
+import {temposCorrida,modoLocomocao} from './movimento.mjs';
 import {GLTFLoader} from 'https://cdn.jsdelivr.net/npm/three@0.169.0/examples/jsm/loaders/GLTFLoader.js';
 import {clone as cloneSkinned} from 'https://cdn.jsdelivr.net/npm/three@0.169.0/examples/jsm/utils/SkeletonUtils.js';
 
@@ -342,7 +343,7 @@ async function applyBase(group,look){
 function criarClipCorrida(base,hipsAlvo){
  const walk=walkPara(base,hipsAlvo);
  const tracks=walk.tracks.map(tr=>{
-  if(!tr.name.endsWith('.quaternion')||!/(?:UpLeg|Leg|Arm|ForeArm)/.test(tr.name))return tr.clone();
+  if(!tr.name.endsWith('.quaternion')||!/(?:UpLeg|Leg|Arm|ForeArm)/.test(tr.name)){const copy=tr.clone();copy.times=temposCorrida(tr.times);return copy}
   const vals=Float32Array.from(tr.values);
   const start=new THREE.Quaternion().fromArray(vals,0);
   const q=new THREE.Quaternion(),delta=new THREE.Quaternion(),boost=new THREE.Quaternion(),identity=new THREE.Quaternion();
@@ -352,7 +353,7 @@ function criarClipCorrida(base,hipsAlvo){
    boost.copy(identity).slerp(delta,Math.min(1.5,strength));
    start.clone().multiply(boost).normalize().toArray(vals,i);
   }
-  return new THREE.QuaternionKeyframeTrack(tr.name,tr.times,vals);
+  return new THREE.QuaternionKeyframeTrack(tr.name,temposCorrida(tr.times),vals);
  });
  return new THREE.AnimationClip('corrida',walk.duration*.74,tracks);
 }
@@ -365,7 +366,7 @@ export function animateAvatar(group,moving,t,ritmo=1){
   const walk=baseModel.userData.walk;
   if(walk){
    const run=baseModel.userData.run;
-   const target=moving?(ritmo>=2?(run||walk):walk):null;
+   const target=modoLocomocao(moving,ritmo)==='idle'?null:(modoLocomocao(moving,ritmo)==='run'?(run||walk):walk);
    const current=baseModel.userData.locomotion||null;
    if(current!==target){
     current?.fadeOut(.18);
