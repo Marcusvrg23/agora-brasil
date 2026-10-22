@@ -18,6 +18,7 @@
   <canvas id="world"></canvas>
   <div class="scene-label"><span class="tag">CENÁRIO EM DESENVOLVIMENTO</span><h1>Esplanada dos Ministérios</h1><p>Congresso Nacional · Brasília / DF</p></div>
   <div class="npc-legend">6 NPCs simulados · pessoas reais contabilizadas separadamente</div>
+  <div id="game-hud" hidden><div class="game-toolbar"><label><input type="checkbox" id="pvp-toggle"><span id="pvp-label">Livre — sem dano entre jogadores</span></label><button id="grafite-btn">Arte virtual</button><button id="tela-cheia">Tela cheia</button><button id="sair-jogo">Sair</button></div><div id="vitorias">Vitórias no jogo · Vermelho 0 × 0 Amarelo</div><div class="eleicao-info">Apuração oficial (quando disponível): <a href="https://resultados.tse.jus.br/" target="_blank" rel="noopener noreferrer">TSE por estado ↗</a> · <a href="https://www.youtube.com/@justicaeleitoral" target="_blank" rel="noopener noreferrer">Canal da Justiça Eleitoral ↗</a> · não confundir com placar do jogo.</div><form id="jogo-chat"><input maxlength="180" placeholder="Mensagem aparece acima do personagem"><button>Enviar</button></form></div>
   <div class="world-tips" id="world-tips">Arraste para olhar · WASD anda · <b>E</b> pega item ou entra no veículo · <b>F</b>/clique usa · rolagem dá zoom</div>
   <div class="world-footer"><span id="model-status">Carregando Brasília 3D…</span><span>Modelo arquitetônico estilizado · não georreferenciado</span></div>
   <div class="mobile-controls" aria-label="Controles de movimento"><button id="up" aria-label="Avançar">↑</button><div><button id="left" aria-label="Esquerda">←</button><button id="down" aria-label="Recuar">↓</button><button id="right" aria-label="Direita">→</button></div></div>
@@ -31,6 +32,7 @@
    <label for="city">Sala</label>
    <select id="city"><option value="5300108">Brasília · DF</option><option value="3550308">São Paulo · SP (cenário Brasília)</option><option value="3304557">Rio de Janeiro · RJ (cenário Brasília)</option><option value="3106200">Belo Horizonte · MG (cenário Brasília)</option></select>
    <button id="enter" class="primary">Entrar na manifestação gratuita</button>
+   <p class="fineprint">Ao entrar, a praça se torna o foco da tela. Clique em Tela cheia para ativar a tela cheia nativa do navegador.</p>
    <div class="fineprint">Todas as salas usam, por enquanto, o mesmo cenário de Brasília. Outras cidades ainda não foram modeladas.</div>
   </div>
   <div class="panel creator" id="creator-panel">
