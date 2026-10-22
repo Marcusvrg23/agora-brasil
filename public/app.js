@@ -410,7 +410,7 @@ const actions={
  debate:()=>showToast('A tribuna fica disponível no painel antes de entrar.'),
  menu:()=>document.querySelector('.hud-top-nav').classList.toggle('open')
 };
-for(const button of document.querySelectorAll('[data-hud-action]'))button.addEventListener('click',e=>{if(button.dataset.hudAction==='run')return;e.preventDefault();actions[button.dataset.hudAction]?.()});
+for(const button of document.querySelectorAll('[data-hud-action]'))button.addEventListener('click',e=>{if(button.dataset.hudAction==='run'||button.closest('.hud-chat-heading'))return;e.preventDefault();actions[button.dataset.hudAction]?.()});
 function syncChatButton(){const b=document.querySelector('.hud-chat-heading button'),minimized=chatPanel.classList.contains('collapsed');b.textContent=minimized?'□':'−';b.setAttribute('aria-label',minimized?'Expandir chat':'Minimizar chat')}
 document.querySelector('.hud-chat-heading button').addEventListener('click',e=>{e.stopPropagation();e.preventDefault();chatPanel.classList.toggle('collapsed');chatPanel.classList.remove('expanded');syncChatButton()});
 const mapCanvas=document.querySelector('#hud-map'),mapCtx=mapCanvas.getContext('2d');let mapElapsed=0;
