@@ -1,6 +1,6 @@
 import fs from 'node:fs';
 import WebSocket from 'ws';
-const endpoint=process.env.AGORA_WSS_URL||'wss://agora-brasil-claude-3d-e39yqc9p6-marcusviniciustony-4392.vercel.app/api/ws';
+const endpoint=process.env.AGORA_WSS_URL||'wss://agora-brasil-claude-3d-14erv73o7-marcusviniciustony-4392.vercel.app/api/ws';
 const result={endpoint,checkedAt:new Date().toISOString(),steps:[],ok:false};
 let ws1,ws2;
 function mark(step,detail){result.steps.push({step,detail})}
@@ -36,7 +36,7 @@ try{
  const j1=await enter1;const state=await pvp1;
  mark('joined1',j1.count);
  const s=state.estado||{};mark('pvp-data',{pickups:s.pickups?.length,vehicles:s.veiculos?.length,players:s.jogadores?.length});
- if(!s.pickups?.length||!s.veiculos?.length)throw Error('No pickups or vehicles in pvp state');
+ if(s.pickups?.length!==15||s.veiculos?.length!==16)throw Error('Wrong item counts: '+s.pickups?.length+'/'+s.veiculos?.length);
  ws2=await create('player2');await get(ws2,'hello');
  const ent2=get(ws2,'joined');
  const seeP2=get(ws1,'enter');
