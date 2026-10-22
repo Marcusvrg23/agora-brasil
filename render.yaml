@@ -1,0 +1,22 @@
+# Ágora Brasil — versão integral desenvolvida pelo Claude + animações Three.js.
+# Prévia funcional em Node/WebSocket; não aplica mudanças em outros serviços.
+# Importante: instância free adormece por inatividade e usa disco efêmero.
+services:
+  - type: web
+    name: agora-brasil-claude-completo
+    runtime: node
+    repo: https://github.com/Marcusvrg23/agora-brasil
+    branch: feat/animacoes-gratuitas-threejs
+    plan: free
+    region: virginia
+    buildCommand: npm ci && npm test
+    startCommand: npm start
+    healthCheckPath: /health
+    autoDeployTrigger: "off"
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: ADMIN_TOKEN
+        generateValue: true
+# Intencionalmente omitido: MP_ACCESS_TOKEN (pagamentos Pix não são ativados).
+# Aviso: pedidos de anúncios e uploads em disco local não são persistentes.
