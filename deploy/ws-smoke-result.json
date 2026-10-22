@@ -1,6 +1,6 @@
 {
-  "endpoint": "wss://agora-brasil-claude-3d-e39yqc9p6-marcusviniciustony-4392.vercel.app/api/ws",
-  "checkedAt": "2026-10-22T05:20:51.332Z",
+  "endpoint": "wss://agora-brasil-claude-3d-14erv73o7-marcusviniciustony-4392.vercel.app/api/ws",
+  "checkedAt": "2026-10-22T05:28:14.082Z",
   "steps": [
     {
       "step": "player1-handshake",
@@ -8,7 +8,7 @@
     },
     {
       "step": "hello1",
-      "detail": "p4"
+      "detail": "p1"
     },
     {
       "step": "joined1",
@@ -17,8 +17,8 @@
     {
       "step": "pvp-data",
       "detail": {
-        "pickups": 12,
-        "vehicles": 11,
+        "pickups": 15,
+        "vehicles": 16,
         "players": 1
       }
     },
