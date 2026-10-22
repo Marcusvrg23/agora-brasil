@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Ágora Brasil — Laboratório de Montarias</title>
+<style>
+:root{font-family:Inter,system-ui,-apple-system,"Segoe UI",sans-serif;background:#06111d;color:#e9f5f4}
+*{box-sizing:border-box}body{margin:0}
+header{display:flex;align-items:center;justify-content:space-between;padding:22px 30px;border-bottom:1px solid #29404d;background:#0c1927}
+.brand{font-weight:900;letter-spacing:.15em;font-size:17px}.brand strong{color:#51e6b7}
+.meta{font-size:11px;letter-spacing:.12em;color:#93b5bf;text-transform:uppercase}
+a{color:#65e6bd;text-decoration:none}
+.layout{display:grid;grid-template-columns:minmax(0,1fr) 340px;min-height:calc(100vh - 72px)}
+.stage{position:relative;min-height:640px;overflow:hidden;background:radial-gradient(ellipse at 50% 40%,#153b4e,#081321 80%)}
+canvas{position:absolute;width:100%;height:100%;inset:0;touch-action:none;display:block}
+.titlebar{position:absolute;left:32px;top:32px;pointer-events:none}
+.tag{display:inline-block;font-size:10px;font-weight:900;color:#4de3b0;letter-spacing:.2em;padding:8px 12px;border:1px solid #54dbb452;background:#06232d9c;border-radius:7px}
+h1{font-size:clamp(30px,3.6vw,55px);margin:16px 0 8px;letter-spacing:-.05em}.subtitle{color:#b7d7df;margin:0;font-size:14px;max-width:480px;line-height:1.5}
+.statusbar{position:absolute;bottom:0;left:0;right:0;display:flex;justify-content:space-between;gap:12px;background:#061723e8;border-top:1px solid #335363;padding:17px 28px;color:#c3d8db;font-size:12px}
+aside{padding:25px;background:#0c1c2b;border-left:1px solid #284257;display:flex;flex-direction:column;gap:18px}
+.eyebrow{font-size:10px;font-weight:900;letter-spacing:.17em;color:#5edcb7}
+h2{font-size:22px;letter-spacing:-.03em;margin:6px 0}
+.desc{font-size:12px;color:#afc3cc;line-height:1.6}
+.choices{display:grid;gap:10px}
+.choice{border:1px solid #294558;background:#112839;color:#e6f4f7;border-radius:11px;display:flex;gap:12px;align-items:center;padding:13px 14px;text-align:left;cursor:pointer}
+.choice:hover,.choice.active{background:#144234;border-color:#4fe7b1}
+.choice .emoji{font-size:24px}.choice .name{font-weight:750;font-size:13px}.choice .hint{color:#acc2c8;font-size:10px;margin-top:4px}
+.controls{padding:15px;background:#0a2632;border-radius:11px;border:1px solid #285163}
+.toggle{display:flex;justify-content:space-between;gap:8px;align-items:center;margin:10px 0;font-size:12px}
+input[type=range]{width:100%;accent-color:#4ce1b3}
+button.secondary{background:#1b3542;color:#d9f9eb;border:1px solid #456371;border-radius:7px;padding:10px 13px;cursor:pointer;width:100%}
+small{color:#839da9}.foot{font-size:11px;color:#9eb6be;line-height:1.6;margin-top:auto}
+@media(max-width:800px){.layout{grid-template-columns:1fr}.stage{height:56vh;min-height:430px}aside{padding:18px}.choices{grid-template-columns:repeat(2,minmax(0,1fr))}.titlebar{left:17px;top:17px}.statusbar{padding:12px 16px;font-size:10px}.meta{display:none}header{padding:17px}}
+</style></head>
+<body><header><div class="brand">ÁGORA <strong>BRASIL</strong></div><div class="meta">Laboratório 3D · Three.js · custo de geração zero</div><a href="/">Voltar ao jogo ↗</a></header>
+<main class="layout">
+<section class="stage">
+<canvas id="stage" aria-label="Prévia tridimensional interativa do veículo e personagem"></canvas>
+<div class="titlebar"><span class="tag">MODELOS DO PROJETO · VISUALIZAÇÃO TÉCNICA</span><h1 id="object-title">Dinossauro T-Rex</h1><p class="subtitle" id="object-desc">O personagem monta o dinossauro e acompanha as oscilações do corpo.</p></div>
+<div class="statusbar"><span id="asset-status">Carregando malhas GLB…</span><span id="fps">Arraste para girar · role para zoom</span></div>
+</section>
+<aside>
+<div><div class="eyebrow">ESCOLHA UMA INTERAÇÃO</div><h2>5 animações distintas</h2><p class="desc">Malhas reais dos GLBs fornecidos. Animação de montaria, corpo, direção e voo feita com código, sem novos créditos de IA.</p></div>
+<div class="choices" id="choices">
+<button class="choice active" data-tipo="trex"><span class="emoji">🦖</span><span><div class="name">Dinossauro</div><div class="hint">Montaria · cauda · mandíbula</div></span></button>
+<button class="choice" data-tipo="carro"><span class="emoji">🏎️</span><span><div class="name">Carro esportivo</div><div class="hint">Direção · suspensão · rodas</div></span></button>
+<button class="choice" data-tipo="moto"><span class="emoji">🏍️</span><span><div class="name">Motocicleta</div><div class="hint">Pilotagem · inclinação</div></span></button>
+<button class="choice" data-tipo="helicoptero"><span class="emoji">🚁</span><span><div class="name">Helicóptero</div><div class="hint">Voo · rotores · hover</div></span></button>
+<button class="choice" data-tipo="caca"><span class="emoji">✈️</span><span><div class="name">Caça</div><div class="hint">Piloto · decolagem · propulsão</div></span></button>
+</div>
+<div class="controls"><div class="eyebrow">CONTROLES DA SIMULAÇÃO</div>
+<label class="toggle"><span>Mostrar piloto com raio-X</span><input type="checkbox" id="xray" checked></label>
+<label class="toggle"><span>Reproduzir animação</span><input type="checkbox" id="play" checked></label>
+<label class="toggle"><span>Velocidade</span><output id="speed-value">70%</output></label>
+<input aria-label="Velocidade" type="range" min="5" max="100" value="70" id="speed">
+<button class="secondary" id="reset" style="margin-top:12px">Reposicionar câmera</button></div>
+<p class="foot">A cidade de Brasília não foi alterada. Demonstração isolada: encaixes são aproximados, controles não incluem física definitiva e interiores fechados são mostrados em transparência apenas para inspeção.</p>
+</aside></main><script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.169.0/build/three.module.js"}}</script><script type="module" src="/preview-interacoes.js"></script></body></html>
