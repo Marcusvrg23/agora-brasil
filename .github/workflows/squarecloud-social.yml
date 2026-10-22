@@ -15,7 +15,7 @@ jobs:
       - uses: actions/setup-node@v4
         with: {node-version: '24'}
       - name: Testes
-        run: npm ci && npm test && node --check server.js && node --check combate.js && node --check public/app.js
+        run: npm ci && timeout 110s npm test && node --check server.js && node --check combate.js && node --check public/app.js
       - name: Criar ZIP pronto para Square Cloud
         run: |
           mkdir -p release
