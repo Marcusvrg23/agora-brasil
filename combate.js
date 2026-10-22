@@ -101,7 +101,7 @@ class Combate {
   definirPvP(id, ativo) {
     const j=this.jogadores.get(id);if(!j)return false;
     j.pvp=ativo===true;
-    if(!j.pvp){j.protegidoAte=this.agora()+1000;}
+    // PvP desativado impede atacar, mas não torna o jogador imune fora das zonas seguras.
     this.emit({type:'jogador',jogador:this.pub(j)});
     return true;
   }
@@ -168,6 +168,7 @@ class Combate {
   disparar(id, arma, vis = {}) {
     const agora = this.agora(), j = this.jogadores.get(id), a = ARMAS[arma];
     if (!j || !j.vivo || !a) return { ok: false, motivo: 'indisponivel' };
+    if (!j.pvp) return { ok: false, motivo: 'pvp-desligado' };
     if (this.vencedor) return { ok: false, motivo: 'fim-de-partida' };
     if (a.mao && (j.item !== arma || j.veiculo)) return { ok: false, motivo: 'sem-item' };
     if (a.veiculo) { const v = j.veiculo && this.veiculo(j.veiculo); if (!v || !a.veiculo.includes(v.tipo)) return { ok: false, motivo: 'sem-veiculo' }; }
@@ -231,8 +232,8 @@ class Combate {
   mesmoTime(v, j) { const m = v.motorista && this.jogadores.get(v.motorista); return !!m && m.team === j.team; }
 
   ferir(alvo, dano, autor, arma) {
-    if (!autor?.pvp || !alvo.pvp || this.agora() < alvo.protegidoAte || dano <= 0 || !alvo.vivo) return [];
-    if (!alvo.veiculo && naZonaSegura(alvo.pos)) return [];
+    if (!autor?.pvp || this.agora() < alvo.protegidoAte || dano <= 0 || !alvo.vivo) return [];
+    if (naZonaSegura(this.posDe(alvo))) return [];
     alvo.vida = Math.max(0, alvo.vida - dano);
     const ev = { type: 'dano', alvo: alvo.id, vida: alvo.vida, de: autor.id, arma };
     this.emit(ev);
@@ -242,7 +243,7 @@ class Combate {
   ferirVeiculo(v, dano, autor, arma) {
     if (dano <= 0 || !autor?.pvp) return [];
     const piloto=v.motorista&&this.jogadores.get(v.motorista);
-    if (!piloto?.pvp) return [];
+    if (naZonaSegura(v) || (piloto && this.agora() < piloto.protegidoAte)) return [];
     v.vida = Math.max(0, v.vida - dano);
     const ev = [{ type: 'dano-veiculo', veiculo: v.id, vida: v.vida, de: autor.id, arma }];
     this.emit(ev[0]);
@@ -254,7 +255,7 @@ class Combate {
       v.motorista = null;
       this.emit(e); ev.push(e);
       this.emit({ type: 'veiculo', veiculo: this.pubV(v) });
-      if (motorista) { motorista.protegidoAte = 0; ev.push(...this.ferir(motorista, 70, autor, arma)); }
+      if (motorista) ev.push(...this.ferir(motorista, 70, autor, arma));
     }
     return ev;
   }
