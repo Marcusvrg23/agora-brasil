@@ -1,0 +1,37 @@
+name: Smoke WebSocket real - Agora Brasil
+on:
+  push:
+    branches: [deploy/vercel-completo]
+    paths: ['scripts/ws-smoke.mjs','.github/workflows/ws-smoke.yml']
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - run: npm ci
+      - name: Smoke publico WebSocket
+        id: smoke
+        continue-on-error: true
+        run: node scripts/ws-smoke.mjs
+      - name: Commit diagnostico da conexao
+        if: always()
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add deploy/ws-smoke-result.json
+          if ! git diff --cached --quiet; then
+            git commit -m "test: resultado WebSocket externo [skip ci]"
+            git push
+          fi
+      - name: Falhar se conexao incompleta
+        if: steps.smoke.outcome == 'failure'
+        run: exit 1
