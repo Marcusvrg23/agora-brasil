@@ -70,7 +70,7 @@ function makeTag(text,color='#d9fff2',compact=false){
  return sprite;
 }
 function etiqueta(id,nome){let t=tags.get(id);if(t){scene.remove(t);t.material.map.dispose();t.material.dispose()}t=makeTag(nome,'#d9fff2',true);scene.add(t);tags.set(id,t)}
-function balao(id,mensagem){const alvo=id===myId?player:peers.get(id);if(!alvo)return;let b=alvo.userData.balao;if(b){scene.remove(b);b.material.map.dispose();b.material.dispose()}b=makeTag(mensagem,'#ffeac2');b.scale.set(5.5,1.2,1);scene.add(b);alvo.userData.balao=b;alvo.userData.balaoAte=performance.now()+5000;}
+function balao(id,mensagem){const alvo=id===myId?player:peers.get(id);if(!alvo)return;let b=alvo.userData.balao;if(b){scene.remove(b);b.material.map.dispose();b.material.dispose()}b=makeTag(mensagem,'#ffeac2',true);scene.add(b);alvo.userData.balao=b;alvo.userData.balaoAte=performance.now()+5000;}
 // Visual do jogador: salvo só neste navegador.
 function loadLook(){try{return sanitizeLook(JSON.parse(localStorage.getItem('agora-look')||'{}'))}catch{return sanitizeLook()}}
 function saveLook(){try{localStorage.setItem('agora-look',JSON.stringify(myLook))}catch{}}
@@ -400,7 +400,7 @@ const actions={
  vehicle:()=>pvp.depurar.tecla('e',true),
  attack:()=>{pvp.depurar.tecla('f',true);setTimeout(()=>pvp.depurar.tecla('f',false),160)},
  secondary:()=>{pvp.depurar.tecla('g',true);setTimeout(()=>pvp.depurar.tecla('g',false),160)},
- chat:()=>{chatPanel.classList.toggle('expanded');chatPanel.classList.remove('collapsed')},
+ chat:()=>{chatPanel.classList.remove('collapsed');chatPanel.classList.toggle('expanded');syncChatButton()},
  pvp:()=>{const el=document.querySelector('#pvp-toggle');el.checked=!el.checked;el.dispatchEvent(new Event('change'))},
  banner:()=>document.querySelector('#grafite-btn').click(),
  spray:()=>document.querySelector('#grafite-btn').click(),
@@ -411,7 +411,8 @@ const actions={
  menu:()=>document.querySelector('.hud-top-nav').classList.toggle('open')
 };
 for(const button of document.querySelectorAll('[data-hud-action]'))button.addEventListener('click',e=>{if(button.dataset.hudAction==='run')return;e.preventDefault();actions[button.dataset.hudAction]?.()});
-document.querySelector('.hud-chat-heading button').addEventListener('click',e=>{e.stopPropagation();chatPanel.classList.toggle('collapsed')});
+function syncChatButton(){const b=document.querySelector('.hud-chat-heading button'),minimized=chatPanel.classList.contains('collapsed');b.textContent=minimized?'□':'−';b.setAttribute('aria-label',minimized?'Expandir chat':'Minimizar chat')}
+document.querySelector('.hud-chat-heading button').addEventListener('click',e=>{e.stopPropagation();e.preventDefault();chatPanel.classList.toggle('collapsed');chatPanel.classList.remove('expanded');syncChatButton()});
 const mapCanvas=document.querySelector('#hud-map'),mapCtx=mapCanvas.getContext('2d');let mapElapsed=0;
 function updateNewHud(dt,now){
  if(!toast.hidden&&now>toastDeadline)toast.hidden=true;
@@ -466,7 +467,7 @@ function animate(){
   seguirJogador(false);
  } else {playerMoving=false;if(entered)seguirJogador(false)}
  const t=clock.elapsedTime,now=performance.now();
- for(const avatar of [player,...peers.values()]){const b=avatar.userData.balao;if(!b)continue;if(now>avatar.userData.balaoAte){scene.remove(b);b.material.map.dispose();b.material.dispose();avatar.userData.balao=null}else b.position.set(avatar.position.x,avatar.position.y+3.7,avatar.position.z)}
+ for(const avatar of [player,...peers.values()]){const b=avatar.userData.balao;if(!b)continue;if(now>avatar.userData.balaoAte){scene.remove(b);b.material.map.dispose();b.material.dispose();avatar.userData.balao=null}else {b.position.set(avatar.position.x,avatar.position.y+2.48,avatar.position.z);const depth=camera.position.distanceTo(b.position);const h=(canvas.clientWidth<=700?18:21)*2*Math.tan(THREE.MathUtils.degToRad(camera.fov)*.5)*depth/Math.max(1,canvas.clientHeight);b.scale.set(h*b.userData.nameplateAspect,h,1)}}
  npcs.update(dt,t);
  animateAvatar(player,entered&&playerMoving,t,correndo?2.3:1.35);
  updateAvatarMixers(player,dt);
@@ -508,7 +509,7 @@ document.querySelector('#jogo-chat').addEventListener('submit',e=>{e.preventDefa
 document.querySelector('#pvp-toggle').addEventListener('change',e=>{
  modoPvP=e.target.checked;
  send({type:'modo-pvp',ativo:modoPvP});
- document.querySelector('#pvp-label').textContent=modoPvP?'PvP ligado — combates liberados':'Livre — sem dano entre jogadores';
+ document.querySelector('#pvp-label').textContent=modoPvP?'PvP ligado — combates liberados':'PvP desligado — ataques bloqueados';
 });
 document.querySelector('#grafite-btn').addEventListener('click',()=>{
  if(!entered)return;
