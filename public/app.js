@@ -45,8 +45,31 @@ const live=document.querySelector('#status-dot'),status=document.querySelector('
 const peers=new Map();
 let modoPvP=false;
 const tags=new Map();
-const makeTag=(text,color='#d9fff2')=>{const c=document.createElement('canvas');c.width=512;c.height=128;const g=c.getContext('2d');g.fillStyle='#082634e8';g.fillRect(5,8,502,112);g.strokeStyle='#6ae5b1';g.strokeRect(5,8,502,112);g.fillStyle=color;g.textAlign='center';g.font='bold 34px system-ui';g.fillText(String(text).slice(0,38),256,78);const map=new THREE.CanvasTexture(c);const sprite=new THREE.Sprite(new THREE.SpriteMaterial({map,transparent:true,depthWrite:false}));sprite.scale.set(3.4,.85,1);return sprite};
-function etiqueta(id,nome){let t=tags.get(id);if(t){scene.remove(t);t.material.map.dispose();t.material.dispose()}t=makeTag(nome);scene.add(t);tags.set(id,t)}
+// Etiquetas dos jogadores: dimensões constantes na tela, sem placas enormes ao aplicar zoom.
+function makeTag(text,color='#d9fff2',compact=false){
+ const c=document.createElement('canvas'),g=c.getContext('2d');
+ const label=String(text||'').slice(0,compact?24:38);
+ if(compact){
+  g.font='700 28px system-ui';
+  const w=Math.max(88,Math.min(520,Math.ceil(g.measureText(label).width+32)));
+  c.width=w;c.height=64;
+  g.fillStyle='#102b26e8';g.beginPath();
+  if(g.roundRect)g.roundRect(2,3,w-4,56,13);else g.rect(2,3,w-4,56);
+  g.fill();g.lineWidth=2;g.strokeStyle='#74c7a9';g.stroke();
+  g.fillStyle=color;g.textAlign='center';g.textBaseline='middle';g.font='700 28px system-ui';
+  g.fillText(label,w/2,31,w-24);
+ }else{
+  c.width=512;c.height=128;
+  g.fillStyle='#082634e8';g.fillRect(5,8,502,112);g.strokeStyle='#6ae5b1';g.strokeRect(5,8,502,112);
+  g.fillStyle=color;g.textAlign='center';g.font='bold 34px system-ui';g.fillText(label,256,78);
+ }
+ const map=new THREE.CanvasTexture(c);map.colorSpace=THREE.SRGBColorSpace;
+ const sprite=new THREE.Sprite(new THREE.SpriteMaterial({map,transparent:true,depthWrite:false}));
+ if(compact){sprite.userData.nameplateAspect=c.width/c.height;sprite.scale.set(.6,.2,1)}
+ else sprite.scale.set(3.4,.85,1);
+ return sprite;
+}
+function etiqueta(id,nome){let t=tags.get(id);if(t){scene.remove(t);t.material.map.dispose();t.material.dispose()}t=makeTag(nome,'#d9fff2',true);scene.add(t);tags.set(id,t)}
 function balao(id,mensagem){const alvo=id===myId?player:peers.get(id);if(!alvo)return;let b=alvo.userData.balao;if(b){scene.remove(b);b.material.map.dispose();b.material.dispose()}b=makeTag(mensagem,'#ffeac2');b.scale.set(5.5,1.2,1);scene.add(b);alvo.userData.balao=b;alvo.userData.balaoAte=performance.now()+5000;}
 // Visual do jogador: salvo só neste navegador.
 function loadLook(){try{return sanitizeLook(JSON.parse(localStorage.getItem('agora-look')||'{}'))}catch{return sanitizeLook()}}
@@ -364,7 +387,7 @@ for(const [id,key] of [['up','w'],['down','s'],['left','a'],['right','d']]){
  }
 }
 let netTick=0;
-const fwd=new THREE.Vector3(),right=new THREE.Vector3(),UP=new THREE.Vector3(0,1,0),lastPlayer=new THREE.Vector3();
+const fwd=new THREE.Vector3(),right=new THREE.Vector3(),UP=new THREE.Vector3(0,1,0),lastPlayer=new THREE.Vector3(),tagView=new THREE.Vector3();
 // Câmera em terceira pessoa: acompanha o jogador mantendo o ângulo escolhido com o mouse.
 function seguirJogador(snap){
  const alvo=pvp.alvoCamera()||new THREE.Vector3(player.position.x,player.position.y+1.55,player.position.z);
@@ -398,7 +421,6 @@ function animate(){
   seguirJogador(false);
  } else {playerMoving=false;if(entered)seguirJogador(false)}
  const t=clock.elapsedTime,now=performance.now();
- for(const [id,tag] of tags){const avatar=id===myId?player:peers.get(id);if(avatar){tag.position.set(avatar.position.x,avatar.position.y+2.6,avatar.position.z)}}
  for(const avatar of [player,...peers.values()]){const b=avatar.userData.balao;if(!b)continue;if(now>avatar.userData.balaoAte){scene.remove(b);b.material.map.dispose();b.material.dispose();avatar.userData.balao=null}else b.position.set(avatar.position.x,avatar.position.y+3.7,avatar.position.z)}
  npcs.update(dt,t);
  animateAvatar(player,entered&&playerMoving,t,correndo?2.3:1.35);
@@ -412,6 +434,19 @@ function animate(){
  renderPreview(t);
  controls.update();
  if(camera.position.y<.45)camera.position.y=.45; // câmera nunca entra no chão
+ camera.updateMatrixWorld();
+ // O nome permanece com 19–22 px de altura no desktop e celular, independentemente do zoom.
+ const tagPx=canvas.clientWidth<=620?19:22;
+ const worldPerPixel=2*Math.tan(THREE.MathUtils.degToRad(camera.fov)*.5)/Math.max(1,canvas.clientHeight);
+ for(const [id,tag] of tags){
+  const avatar=id===myId?player:peers.get(id);
+  if(!avatar||!avatar.visible||!entered){tag.visible=false;continue}
+  tag.position.set(avatar.position.x,avatar.position.y+2.12,avatar.position.z);
+  tagView.copy(tag.position).applyMatrix4(camera.matrixWorldInverse);
+  const depth=-tagView.z;
+  tag.visible=depth>=camera.near&&depth<=camera.far;
+  if(tag.visible){const h=tagPx*worldPerPixel*depth;tag.scale.set(h*tag.userData.nameplateAspect,h,1)}
+ }
  city.update(dt,t,controls.target,camera.position.distanceTo(controls.target));
  renderer.render(scene,camera);
 }
