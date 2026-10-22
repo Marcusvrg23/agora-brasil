@@ -4,6 +4,7 @@ on:
     branches: [deploy/vercel-completo]
     paths:
       - ".github/workflows/prepare-vercel-upload.yml"
+      - "combate.js"
   workflow_dispatch:
 permissions:
   contents: write
