@@ -182,7 +182,7 @@ function connect(){
   if(data.type==='vitorias'){document.querySelector('#vitorias').textContent='Vitórias no jogo · Vermelho '+data.placar.vermelho+' × '+data.placar.amarelo+' Amarelo'}
   if(data.type==='grafite')mostrarGrafite(data.item);
   if(data.type==='graffitis'){for(const g of data.items||[])mostrarGrafite(g)}
-  if(data.type==='chat'){log(data.text,data.name,data.time);balao(data.id,data.text)}
+  if(data.type==='chat'){log(data.text,data.name,data.time);balao(data.id,data.text);const pane=document.querySelector('#hud-chat-messages'),el=document.createElement('div'),b=document.createElement('b');el.className='message';b.textContent=data.name||'Jogador';el.append(b,document.createTextNode(' '+data.text));pane.append(el);pane.scrollTop=pane.scrollHeight;while(pane.children.length>30)pane.firstChild.remove()}
   if(data.type==='enter'&&data.id!==myId)remoteAvatar(data.id,data.position?.x,data.position?.z,data.name,data.look);
   if(data.type==='look'&&data.id!==myId){const p=peers.get(data.id);if(p)dressAvatar(p,data.look)}
   if(data.type==='debate')renderDebate(data.state);
@@ -199,7 +199,7 @@ function connect(){
   }
  };
  socket.onclose=()=>{
-  entered=false;document.body.classList.remove('jogando');document.querySelector('#game-hud').hidden=true;renderDebate(null);pvp.reset();live.classList.remove('connected');status.textContent='Desconectado';count.textContent='0 online';
+  entered=false;joystickReset();pressed.delete('shift');document.body.classList.remove('jogando');document.querySelector('#game-hud').hidden=true;renderDebate(null);pvp.reset();live.classList.remove('connected');status.textContent='Desconectado';count.textContent='0 online';
  };
  socket.onerror=()=>{status.textContent='Sem conexão'};
 }
@@ -380,11 +380,55 @@ window.addEventListener('blur',()=>pressed.clear());
 // Modo PvP: itens, veículos e combate (pvp.js). O servidor valida tudo.
 const pvp=iniciarPvP({scene,camera,renderer,controls,canvas,city,player,peers,send,colisao:resolveCollision,
  meuId:()=>myId,meuNome:()=>name,teclas:()=>pressed,wrap:document.querySelector('.world-wrap'),aoTeleporte:()=>seguirJogador(false)});
-for(const [id,key] of [['up','w'],['down','s'],['left','a'],['right','d']]){
- const button=document.querySelector('#'+id);
- for(const eventName of ['pointerdown','pointerup','pointercancel','pointerleave']){
-  button.addEventListener(eventName,e=>{e.preventDefault();if(eventName==='pointerdown')pressed.add(key);else pressed.delete(key)})
- }
+// Analógico circular com pointer capture e deslocamento proporcional.
+const joystick=document.querySelector('#hud-joystick'),knob=document.querySelector('#hud-joystick-knob'), pressedTouch=new Set();
+let analogX=0,analogY=0,stickId=null,travelled=0,previousPosition=null;
+function joystickMove(e){const box=joystick.getBoundingClientRect(),radius=box.width*.34,dx=e.clientX-box.left-box.width/2,dy=e.clientY-box.top-box.height/2,len=Math.hypot(dx,dy),ratio=Math.min(1,radius/(len||1));analogX=dx*ratio/radius;analogY=dy*ratio/radius;knob.style.transform='translate('+analogX*radius+'px,'+analogY*radius+'px)';for(const k of ['w','a','s','d'])pressed.delete(k);if(analogY<-.25)pressed.add('w');if(analogY>.25)pressed.add('s');if(analogX<-.25)pressed.add('a');if(analogX>.25)pressed.add('d');}
+function joystickReset(){stickId=null;analogX=0;analogY=0;knob.style.transform='';for(const k of ['w','a','s','d'])pressed.delete(k)}
+joystick.addEventListener('pointerdown',e=>{if(stickId!==null||!entered)return;stickId=e.pointerId;joystick.setPointerCapture(e.pointerId);joystickMove(e);e.preventDefault()});
+joystick.addEventListener('pointermove',e=>{if(e.pointerId===stickId){joystickMove(e);e.preventDefault()}});
+for(const name of ['pointerup','pointercancel','lostpointercapture'])joystick.addEventListener(name,e=>{if(e.pointerId===stickId)joystickReset()});
+window.addEventListener('blur',joystickReset);
+const runner=document.querySelector('#hud-run');
+runner.addEventListener('pointerdown',e=>{e.preventDefault();runner.setPointerCapture(e.pointerId);pressed.add('shift')});
+for(const name of ['pointerup','pointercancel','lostpointercapture'])runner.addEventListener(name,()=>pressed.delete('shift'));
+const toast=document.querySelector('#hud-toast');let toastDeadline=0;
+function showToast(message){toast.textContent=message;toast.hidden=false;toastDeadline=performance.now()+3500}
+const chatPanel=document.querySelector('.hud-chat');
+const actions={
+ interact:()=>pvp.depurar.tecla('e',true),
+ vehicle:()=>pvp.depurar.tecla('e',true),
+ attack:()=>{pvp.depurar.tecla('f',true);setTimeout(()=>pvp.depurar.tecla('f',false),160)},
+ secondary:()=>{pvp.depurar.tecla('g',true);setTimeout(()=>pvp.depurar.tecla('g',false),160)},
+ chat:()=>{chatPanel.classList.toggle('expanded');chatPanel.classList.remove('collapsed')},
+ pvp:()=>{const el=document.querySelector('#pvp-toggle');el.checked=!el.checked;el.dispatchEvent(new Event('change'))},
+ banner:()=>document.querySelector('#grafite-btn').click(),
+ spray:()=>document.querySelector('#grafite-btn').click(),
+ animations:()=>showToast('Ande ou corra para ativar as animações do avatar.'),
+ customize:()=>showToast('Personalize o personagem na tela de entrada.'),
+ aerial:()=>showToast('Aproxime-se de uma aeronave e use Interagir para embarcar.'),
+ debate:()=>showToast('A tribuna fica disponível no painel antes de entrar.'),
+ menu:()=>document.querySelector('.hud-top-nav').classList.toggle('open')
+};
+for(const button of document.querySelectorAll('[data-hud-action]'))button.addEventListener('click',e=>{if(button.dataset.hudAction==='run')return;e.preventDefault();actions[button.dataset.hudAction]?.()});
+document.querySelector('.hud-chat-heading button').addEventListener('click',e=>{e.stopPropagation();chatPanel.classList.toggle('collapsed')});
+const mapCanvas=document.querySelector('#hud-map'),mapCtx=mapCanvas.getContext('2d');let mapElapsed=0;
+function updateNewHud(dt,now){
+ if(!toast.hidden&&now>toastDeadline)toast.hidden=true;
+ if(!entered)return;
+ const score=document.querySelector('#pvp-hud');
+ if(score){for(const [from,to] of [['.vm','#hud-vm'],['.am','#hud-am'],['.meta','#hud-meta']]){const src=score.querySelector(from);if(src)document.querySelector(to).textContent=src.textContent}}
+ document.querySelector('#hud-online').textContent=count.textContent;
+ if(previousPosition){const dist=Math.hypot(player.position.x-previousPosition.x,player.position.z-previousPosition.z);if(dist<12)travelled+=dist}
+ previousPosition={x:player.position.x,z:player.position.z};
+ document.querySelector('#hud-distance').textContent=Math.round(travelled)+' m';
+ document.querySelector('#hud-distance-bar').style.width=Math.min(100,travelled/20)+'%';
+ mapElapsed+=dt;if(mapElapsed<.2)return;mapElapsed=0;
+ const w=mapCanvas.width,h=mapCanvas.height,lim=city.limites;
+ mapCtx.fillStyle='#24483e';mapCtx.fillRect(0,0,w,h);mapCtx.lineWidth=12;mapCtx.strokeStyle='#9dbbad48';
+ for(const k of [.2,.45,.75]){mapCtx.beginPath();mapCtx.moveTo(k*w,0);mapCtx.lineTo(k*w,h);mapCtx.stroke();mapCtx.beginPath();mapCtx.moveTo(0,k*h);mapCtx.lineTo(w,k*h);mapCtx.stroke()}
+ const x=Math.max(9,Math.min(w-9,(player.position.x-lim.xMin)/(lim.xMax-lim.xMin)*w)),y=Math.max(9,Math.min(h-9,(player.position.z-lim.zMin)/(lim.zMax-lim.zMin)*h));
+ mapCtx.fillStyle='#f5d379';mapCtx.beginPath();mapCtx.moveTo(x,y-10);mapCtx.lineTo(x-8,y+8);mapCtx.lineTo(x+8,y+8);mapCtx.closePath();mapCtx.fill();
 }
 let netTick=0;
 const fwd=new THREE.Vector3(),right=new THREE.Vector3(),UP=new THREE.Vector3(0,1,0),lastPlayer=new THREE.Vector3(),tagView=new THREE.Vector3();
@@ -404,12 +448,13 @@ function animate(){
   if(pressed.has('s')||pressed.has('arrowdown'))f-=1;
   if(pressed.has('a')||pressed.has('arrowleft'))r-=1;
   if(pressed.has('d')||pressed.has('arrowright'))r+=1;
+  if(stickId!==null){f=-analogY;r=analogX;if(Math.hypot(f,r)<.13){f=0;r=0}}
   playerMoving=!!(f||r);
   if(playerMoving){
    camera.getWorldDirection(fwd);fwd.y=0;fwd.normalize();right.crossVectors(fwd,UP);
    const dir=new THREE.Vector3().addScaledVector(fwd,f).addScaledVector(right,r).normalize();
    correndo=pressed.has('shift');
-   const vel=(correndo?7.5:3.2)*dt;
+   const vel=(correndo?7.5:3.2)*dt*Math.min(1,Math.hypot(f,r));
    let nx=player.position.x+dir.x*vel,nz=player.position.z+dir.z*vel;
    [nx,nz]=resolveCollision(nx,nz,city.colliders);
    nx=THREE.MathUtils.clamp(nx,city.limites.xMin,city.limites.xMax);
@@ -430,7 +475,7 @@ function animate(){
   if(tg){p.position.x+=(tg.x-p.position.x)*Math.min(1,dt*10);p.position.z+=(tg.z-p.position.z)*Math.min(1,dt*10)}
   animateAvatar(p,now-p.userData.lastMove<260,t,p.userData.ritmo||1.35);updateAvatarMixers(p,dt);
  }
- pvp.update(dt,t);
+ pvp.update(dt,t);updateNewHud(dt,now);
  renderPreview(t);
  controls.update();
  if(camera.position.y<.45)camera.position.y=.45; // câmera nunca entra no chão
