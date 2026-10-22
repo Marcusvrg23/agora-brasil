@@ -15,10 +15,14 @@ const LIMIT_BYTES = 8 * 1024;
 const rooms = new Map();
 const debates = new Map();
 const combates = new Map();
+const graffitis = new Map();
+const placarTotal = {vermelho:0,amarelo:0};
+const salvarPlacar=()=>{try{fs.mkdirSync(DATA,{recursive:true});fs.writeFileSync(path.join(DATA,'vitorias.json'),JSON.stringify(placarTotal))}catch(e){console.warn('Placar nao persistido:',e.message)}};
 const TEAMS = new Set(['vermelho','amarelo']);
 const OUTFITS = new Set(['terno-faixa','camisa']);
 let nextId = 1;
 const DATA = process.env.DATA_DIR || path.join(__dirname, 'data');
+try{Object.assign(placarTotal,JSON.parse(fs.readFileSync(path.join(DATA,'vitorias.json'),'utf8')))}catch{}
 const anuncios = new Anuncios({ arquivo: path.join(DATA, 'anuncios.json'), pastaImagens: path.join(DATA, 'imagens') });
 const ADMIN_TOKEN = process.env.ADMIN_TOKEN || '';
 const PUBLIC_URL = (process.env.PUBLIC_URL || '').replace(/\/$/, '');
@@ -60,7 +64,7 @@ function debateOf(code) {
   return debates.get(code);
 }
 function combateOf(code) {
-  if (!combates.has(code)) combates.set(code, new Combate({ emit: packet => broadcast(code, packet) }));
+  if (!combates.has(code)) combates.set(code, new Combate({ emit: packet => broadcast(code, packet), onWin: team => {if(team==='vermelho'||team==='amarelo'){placarTotal[team]++;salvarPlacar();for(const c of rooms.keys())broadcast(c,{type:'vitorias',placar:placarTotal})}} }));
   return combates.get(code);
 }
 function send(ws, packet) {
@@ -115,6 +119,7 @@ async function confirmarPagamento(ad) {
 
 async function api(req, res, url) {
   const p = url.pathname, m = req.method;
+  if (p === '/api/placar' && m === 'GET') return json(res,200,{placar:placarTotal,nota:'Vitorias de equipes no jogo, nao votos eleitorais.'});
   if (p === '/api/teloes' && m === 'GET') return json(res, 200, { slots: anuncios.publico(), pagamentoOnline: pagamentos.configurado() });
   if (p === '/api/anuncios' && m === 'POST') {
     const corpo = await lerCorpo(req);
@@ -231,6 +236,8 @@ wss.on('connection',(ws)=>{
       publishCount(ws.room);
       send(ws,{type:'debate',state:debateOf(ws.room).estado()});
       send(ws,{type:'teloes',slots:anuncios.publico()});
+      send(ws,{type:'vitorias',placar:placarTotal});
+      send(ws,{type:'graffitis',items:[...(graffitis.get(ws.room)||[])]});
       combateOf(ws.room).entrar(ws.playerId,ws.team,ws.position||{x:0,z:-30});
       send(ws,{type:'pvp',estado:combateOf(ws.room).estado()});
       return;
@@ -250,6 +257,18 @@ wss.on('connection',(ws)=>{
       if(msg.type==='debate-pass') debate.passarVez(ws.playerId,now);
       if(msg.type==='debate-vote') debate.votar(ws.playerId,msg.side);
       return;
+    }
+    if(msg.type==='modo-pvp'){combateOf(ws.room).definirPvP(ws.playerId,msg.ativo===true);return;}
+    if(msg.type==='grafite'){
+      const now=Date.now();if(now-(ws.lastGrafite||0)<12000)return;
+      const texto=clean(msg.text,48);const x=Number(msg.x),z=Number(msg.z);
+      if(!texto||!Number.isFinite(x)||!Number.isFinite(z)||Math.abs(x)>310||z< -650||z>770)return;
+      const j=combateOf(ws.room).jogadores.get(ws.playerId);
+      if(!j||Math.hypot(j.pos.x-x,j.pos.z-z)>9)return;
+      ws.lastGrafite=now;const roomTags=graffitis.get(ws.room)||[];
+      const item={id:'g'+now+'-'+ws.playerId,autor:ws.name,text:texto,x,z,at:now};roomTags.push(item);
+      if(roomTags.length>70)roomTags.shift();graffitis.set(ws.room,roomTags);
+      broadcast(ws.room,{type:'grafite',item});return;
     }
     if(typeof msg.type==='string'&&msg.type.startsWith('pvp-')) { pvp(ws,msg); return; }
     if(msg.type==='chat') {
