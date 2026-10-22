@@ -1,0 +1,52 @@
+name: Pacote Square Cloud (versão completa Claude)
+on:
+  workflow_dispatch:
+  push:
+    branches: [deploy/squarecloud-claude-completo]
+    paths:
+      - "squarecloud.app"
+      - "server.js"
+      - "debate.js"
+      - "combate.js"
+      - "anuncios.js"
+      - "pagamentos.js"
+      - "public/**"
+      - ".github/workflows/squarecloud-package.yml"
+permissions:
+  contents: read
+jobs:
+  preparar-zip:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+      - name: Dependências e testes
+        run: |
+          npm ci
+          npm test
+          node --check server.js
+      - name: Montar pacote deploy
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p /tmp/agora-square-deploy
+          cp squarecloud.app package.json package-lock.json server.js debate.js combate.js anuncios.js pagamentos.js /tmp/agora-square-deploy/
+          cp -a public /tmp/agora-square-deploy/public
+          # Baixa GLBs opcionais e thumbnails do catálogo para a prévia ficar resiliente
+          bash scripts/baixar-modelos.sh || echo "Alguns modelos CDN indisponíveis: haverá fallback no navegador."
+          # Repete depois do download para incluir o que chegou
+          rm -rf /tmp/agora-square-deploy/public
+          cp -a public /tmp/agora-square-deploy/public
+          # Nunca adicionar banco de dados, chaves ou conteúdo de administrador ao ZIP.
+          cd /tmp/agora-square-deploy
+          zip -qr "$GITHUB_WORKSPACE/agora-brasil-claude-squarecloud.zip" .
+          unzip -t "$GITHUB_WORKSPACE/agora-brasil-claude-squarecloud.zip" | tail -1
+      - name: Guardar ZIP para upload na Square Cloud
+        uses: actions/upload-artifact@v4
+        with:
+          name: agora-brasil-claude-squarecloud
+          path: agora-brasil-claude-squarecloud.zip
+          retention-days: 30
