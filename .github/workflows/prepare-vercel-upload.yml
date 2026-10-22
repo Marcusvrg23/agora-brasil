@@ -5,6 +5,7 @@ on:
     paths:
       - ".github/workflows/prepare-vercel-upload.yml"
       - "combate.js"
+      - "public/**"
   workflow_dispatch:
 permissions:
   contents: write
