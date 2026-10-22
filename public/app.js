@@ -383,8 +383,8 @@ const pvp=iniciarPvP({scene,camera,renderer,controls,canvas,city,player,peers,se
 // Analógico circular com pointer capture e deslocamento proporcional.
 const joystick=document.querySelector('#hud-joystick'),knob=document.querySelector('#hud-joystick-knob'), pressedTouch=new Set();
 let analogX=0,analogY=0,stickId=null,travelled=0,previousPosition=null;
-function joystickMove(e){const box=joystick.getBoundingClientRect(),radius=box.width*.34,dx=e.clientX-box.left-box.width/2,dy=e.clientY-box.top-box.height/2,len=Math.hypot(dx,dy),ratio=Math.min(1,radius/(len||1));analogX=dx*ratio/radius;analogY=dy*ratio/radius;knob.style.transform='translate('+analogX*radius+'px,'+analogY*radius+'px)';}
-function joystickReset(){stickId=null;analogX=0;analogY=0;knob.style.transform='';}
+function joystickMove(e){const box=joystick.getBoundingClientRect(),radius=box.width*.34,dx=e.clientX-box.left-box.width/2,dy=e.clientY-box.top-box.height/2,len=Math.hypot(dx,dy),ratio=Math.min(1,radius/(len||1));analogX=dx*ratio/radius;analogY=dy*ratio/radius;knob.style.transform='translate('+analogX*radius+'px,'+analogY*radius+'px)';for(const k of ['w','a','s','d'])pressed.delete(k);if(analogY<-.25)pressed.add('w');if(analogY>.25)pressed.add('s');if(analogX<-.25)pressed.add('a');if(analogX>.25)pressed.add('d');}
+function joystickReset(){stickId=null;analogX=0;analogY=0;knob.style.transform='';for(const k of ['w','a','s','d'])pressed.delete(k)}
 joystick.addEventListener('pointerdown',e=>{if(stickId!==null||!entered)return;stickId=e.pointerId;joystick.setPointerCapture(e.pointerId);joystickMove(e);e.preventDefault()});
 joystick.addEventListener('pointermove',e=>{if(e.pointerId===stickId){joystickMove(e);e.preventDefault()}});
 for(const name of ['pointerup','pointercancel','lostpointercapture'])joystick.addEventListener(name,e=>{if(e.pointerId===stickId)joystickReset()});
