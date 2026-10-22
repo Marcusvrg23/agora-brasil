@@ -35,7 +35,7 @@ jobs:
           test -s public/assets/bases/homem.glb
           test -s screenshots/animacao-corrida-validada.mp4
           test -s screenshots/preview-run.png
-          ffprobe -v error -show_entries format=duration,size -of default=noprint_wrappers=1 screenshots/animacao-corrida-validada.mp4
+          node -e "const fs=require('node:fs');const b=fs.readFileSync('screenshots/animacao-corrida-validada.mp4');if(b.length<50000||b.toString('ascii',4,8)!=='ftyp'||!b.includes(Buffer.from('moov')))process.exit(1);console.log('MP4 ok, bytes='+b.length)"
       - name: Disponibilizar vídeo e screenshots reais
         uses: actions/upload-artifact@v4
         if: always()
