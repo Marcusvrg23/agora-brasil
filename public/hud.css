@@ -98,3 +98,37 @@ body.jogando .world-wrap{height:100dvh;overflow:hidden}
 #pvp-hud .pvp-mira{display:none}
 }
 @media(max-width:380px){.hud-logo{font-size:11px}.hud-joystick{width:118px;height:118px}.hud-joystick-knob{width:55px;height:55px}.hud-touch-actions button{width:48px!important;height:48px!important}}
+
+/* HUD compacta: evitar sobreposições e manter o chat proporcional ao painel. */
+#pvp-hud .pvp-vida{display:none!important}
+#pvp-hud .pvp-base{display:none!important}
+#game-hud .hud-chat{width:245px;max-height:210px;z-index:4}
+#game-hud .hud-chat-messages{height:74px;max-height:100px;min-height:0}
+#game-hud .hud-chat.collapsed{width:190px;max-height:38px;min-height:0}
+#game-hud .hud-chat.collapsed .hud-chat-heading{padding:9px 11px;border-bottom:0}
+#game-hud .hud-chat.collapsed .hud-chat-messages,#game-hud .hud-chat.collapsed #jogo-chat{display:none!important}
+#game-hud .hud-actionbar{width:min(600px,calc(100% - 520px));min-width:0}
+#game-hud .hud-minimap{max-height:225px}
+#game-hud .hud-minimap .hud-mini-map{height:165px}
+#pvp-hud .pvp-feed{top:185px;right:20px;max-width:240px}
+#pvp-hud .pvp-aviso{bottom:175px}
+@media(min-width:701px) and (max-width:1320px){
+ #game-hud .hud-minimap{width:175px;height:192px;left:10px;bottom:10px}
+ #game-hud .hud-minimap .hud-mini-map{height:135px}
+ #game-hud .hud-chat{width:205px;right:10px;bottom:10px}
+ #game-hud .hud-actionbar{left:calc(50% - 3px);width:calc(100% - 420px);height:112px;grid-template-rows:68px 38px;bottom:10px}
+ #game-hud .hud-missions{right:10px;width:205px;top:37%}
+}
+@media(max-width:700px),(pointer:coarse) and (max-width:980px){
+ #game-hud .hud-chat{left:50%;right:auto;transform:translateX(-50%);width:min(54vw,230px);bottom:calc(env(safe-area-inset-bottom) + 10px);max-height:230px}
+ #game-hud .hud-chat.collapsed{width:145px;max-height:35px}
+ #game-hud .hud-chat.collapsed .hud-chat-heading{display:flex!important;padding:7px 10px}
+ #game-hud .hud-chat:not(.expanded):not(.collapsed) .hud-chat-heading{display:none}
+ #game-hud .hud-chat.expanded{width:min(78vw,320px);height:205px}
+ #game-hud .hud-chat.expanded .hud-chat-heading{display:flex!important}
+ #game-hud .hud-joystick{bottom:calc(env(safe-area-inset-bottom) + 86px)}
+ #game-hud .hud-touch-actions{bottom:calc(env(safe-area-inset-bottom) + 84px)}
+ #game-hud .hud-touch-actions button[data-hud-action="pvp"]{display:flex}
+ #pvp-hud .pvp-aviso{bottom:260px}
+ #pvp-hud .pvp-feed{right:8px;top:250px;max-width:140px}
+}
