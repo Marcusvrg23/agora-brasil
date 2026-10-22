@@ -43,6 +43,11 @@ new ResizeObserver(resize).observe(canvas);
 let socket=null,myId=null,entered=false,name='Visitante',room='5300108';
 const live=document.querySelector('#status-dot'),status=document.querySelector('#status-label');
 const peers=new Map();
+let modoPvP=false;
+const tags=new Map();
+const makeTag=(text,color='#d9fff2')=>{const c=document.createElement('canvas');c.width=512;c.height=128;const g=c.getContext('2d');g.fillStyle='#082634e8';g.fillRect(5,8,502,112);g.strokeStyle='#6ae5b1';g.strokeRect(5,8,502,112);g.fillStyle=color;g.textAlign='center';g.font='bold 34px system-ui';g.fillText(String(text).slice(0,38),256,78);const map=new THREE.CanvasTexture(c);const sprite=new THREE.Sprite(new THREE.SpriteMaterial({map,transparent:true,depthWrite:false}));sprite.scale.set(3.4,.85,1);return sprite};
+function etiqueta(id,nome){let t=tags.get(id);if(t){scene.remove(t);t.material.map.dispose();t.material.dispose()}t=makeTag(nome);scene.add(t);tags.set(id,t)}
+function balao(id,mensagem){const alvo=id===myId?player:peers.get(id);if(!alvo)return;let b=alvo.userData.balao;if(b){scene.remove(b);b.material.map.dispose();b.material.dispose()}b=makeTag(mensagem,'#ffeac2');b.scale.set(5.5,1.2,1);scene.add(b);alvo.userData.balao=b;alvo.userData.balaoAte=performance.now()+5000;}
 // Visual do jogador: salvo só neste navegador.
 function loadLook(){try{return sanitizeLook(JSON.parse(localStorage.getItem('agora-look')||'{}'))}catch{return sanitizeLook()}}
 function saveLook(){try{localStorage.setItem('agora-look',JSON.stringify(myLook))}catch{}}
@@ -60,7 +65,7 @@ function remoteAvatar(id,x,z,label,look) {
  dressAvatar(mesh,look);mesh.scale.setScalar(AVATAR_ESCALA);
  mesh.userData.name=label||'';mesh.userData.lastMove=0;
  mesh.position.set(x||0,0,z||-75);scene.add(mesh);
- peers.set(id,mesh);return mesh;
+ peers.set(id,mesh);etiqueta(id,label||'Jogador');return mesh;
 }
 
 // Telão da tribuna: desenha o estado do debate num canvas.
@@ -142,20 +147,25 @@ function connect(){
   if(pvp.mensagem(data))return;
   if(data.type==='hello')myId=data.id;
   if(data.type==='joined'){
-   entered=true;player.visible=true;seguirJogador(true);
-   for(const mesh of peers.values())scene.remove(mesh);peers.clear();
+   entered=true;player.visible=true;seguirJogador(true);etiqueta(myId,name);
+   document.body.classList.add('jogando');document.querySelector('#game-hud').hidden=false;
+   document.querySelector('#pvp-toggle').checked=false;modoPvP=false;
+   for(const mesh of peers.values())scene.remove(mesh);peers.clear();for(const tag of tags.values()){scene.remove(tag);tag.material.map.dispose();tag.material.dispose()}tags.clear();etiqueta(myId,name);
    for(const other of data.peers||[])remoteAvatar(other.id,other.position?.x,other.position?.z,other.name,other.look);
    log('Você entrou na praça. Participação gratuita e plural.');
    count.textContent=data.count+' online';
   }
   if(data.type==='presence')count.textContent=data.count+' online';
-  if(data.type==='chat')log(data.text,data.name,data.time);
+  if(data.type==='vitorias'){document.querySelector('#vitorias').textContent='Vitórias no jogo · Vermelho '+data.placar.vermelho+' × '+data.placar.amarelo+' Amarelo'}
+  if(data.type==='grafite')mostrarGrafite(data.item);
+  if(data.type==='graffitis'){for(const g of data.items||[])mostrarGrafite(g)}
+  if(data.type==='chat'){log(data.text,data.name,data.time);balao(data.id,data.text)}
   if(data.type==='enter'&&data.id!==myId)remoteAvatar(data.id,data.position?.x,data.position?.z,data.name,data.look);
   if(data.type==='look'&&data.id!==myId){const p=peers.get(data.id);if(p)dressAvatar(p,data.look)}
   if(data.type==='debate')renderDebate(data.state);
   if(data.type==='teloes')teloes.atualizar(data.slots);
   if(data.type==='debate-fala')debateLog(data);
-  if(data.type==='leave'){const p=peers.get(data.id);if(p){scene.remove(p);peers.delete(data.id)}}
+  if(data.type==='leave'){const p=peers.get(data.id);if(p){scene.remove(p);peers.delete(data.id)}const t=tags.get(data.id);if(t){scene.remove(t);t.material.map.dispose();t.material.dispose();tags.delete(data.id)}}
   if(data.type==='move'){
    const p=remoteAvatar(data.id,data.x,data.z,'');
    const dx=data.x-p.position.x,dz=data.z-p.position.z;
@@ -166,7 +176,7 @@ function connect(){
   }
  };
  socket.onclose=()=>{
-  entered=false;renderDebate(null);pvp.reset();live.classList.remove('connected');status.textContent='Desconectado';count.textContent='0 online';
+  entered=false;document.body.classList.remove('jogando');document.querySelector('#game-hud').hidden=true;renderDebate(null);pvp.reset();live.classList.remove('connected');status.textContent='Desconectado';count.textContent='0 online';
  };
  socket.onerror=()=>{status.textContent='Sem conexão'};
 }
@@ -386,6 +396,8 @@ function animate(){
   seguirJogador(false);
  } else {playerMoving=false;if(entered)seguirJogador(false)}
  const t=clock.elapsedTime,now=performance.now();
+ for(const [id,tag] of tags){const avatar=id===myId?player:peers.get(id);if(avatar){tag.position.set(avatar.position.x,avatar.position.y+2.6,avatar.position.z)}}
+ for(const avatar of [player,...peers.values()]){const b=avatar.userData.balao;if(!b)continue;if(now>avatar.userData.balaoAte){scene.remove(b);b.material.map.dispose();b.material.dispose();avatar.userData.balao=null}else b.position.set(avatar.position.x,avatar.position.y+3.7,avatar.position.z)}
  npcs.update(dt,t);
  animateAvatar(player,entered&&playerMoving,t,correndo?2.3:1.35);
  updateAvatarMixers(player,dt);
@@ -401,4 +413,31 @@ function animate(){
  city.update(dt,t,controls.target,camera.position.distanceTo(controls.target));
  renderer.render(scene,camera);
 }
+
+const graffitis=new Map();
+function mostrarGrafite(g){
+ if(!g||graffitis.has(g.id))return;
+ const c=document.createElement('canvas');c.width=512;c.height=128;
+ const ctx=c.getContext('2d');ctx.fillStyle='#ffffff';ctx.font='bold 36px system-ui';ctx.textAlign='center';ctx.fillText(String(g.text).slice(0,48),256,60);
+ const tex=new THREE.CanvasTexture(c);const mesh=new THREE.Mesh(new THREE.PlaneGeometry(3.8,1),new THREE.MeshBasicMaterial({map:tex,transparent:true,depthWrite:false,side:THREE.DoubleSide}));
+ mesh.position.set(g.x,1.35,g.z);scene.add(mesh);graffitis.set(g.id,mesh);
+}
+document.querySelector('#pvp-toggle').addEventListener('change',e=>{
+ modoPvP=e.target.checked;
+ send({type:'modo-pvp',ativo:modoPvP});
+ document.querySelector('#pvp-label').textContent=modoPvP?'PvP ligado — combates liberados':'Livre — sem dano entre jogadores';
+});
+document.querySelector('#grafite-btn').addEventListener('click',()=>{
+ if(!entered)return;
+ const v=prompt('Sua arte virtual (máximo 48 caracteres, sem ofensas):');
+ if(v?.trim())send({type:'grafite',text:v.trim().slice(0,48),x:player.position.x,z:player.position.z});
+});
+document.querySelector('#sair-jogo').addEventListener('click',()=>{
+ socket?.close();entered=false;document.body.classList.remove('jogando');document.querySelector('#game-hud').hidden=true;
+ if(document.fullscreenElement)document.exitFullscreen().catch(()=>{});
+});
+document.querySelector('#tela-cheia').addEventListener('click',()=>{
+ document.querySelector('.world-wrap').requestFullscreen?.().catch(()=>{});
+});
+
 resize();animate();
