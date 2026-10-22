@@ -2,7 +2,7 @@ name: Pacote Square Cloud Social
 on:
   push:
     branches: [feat/squarecloud-modos-social]
-    paths: ['.github/workflows/squarecloud-social.yml']
+    paths: ['.github/workflows/squarecloud-social.yml', 'public/**', 'server.js', 'combate.js', 'squarecloud.app']
   workflow_dispatch:
 permissions:
   contents: read
