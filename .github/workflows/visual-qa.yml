@@ -1,0 +1,63 @@
+name: Capturas visuais de Brasília e veículos
+on:
+  workflow_dispatch:
+  push:
+    branches: [feat/animacoes-gratuitas-threejs]
+    paths:
+      - 'public/preview-interacoes.*'
+      - 'scripts/capturar-previas.mjs'
+      - '.github/workflows/visual-qa.yml'
+permissions:
+  contents: write
+jobs:
+  screenshot:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: {node-version: '22'}
+      - name: Instalar dependências e navegador de teste
+        run: |
+          npm install
+          npm install --no-save playwright@1.56.0
+          npx playwright install --with-deps chromium
+      - name: Baixar GLBs públicos para teste
+        shell: bash
+        run: |
+          set -e
+          base='https://d8j0ntlcm91z4.cloudfront.net/user_3KLobL96cAs3bokj0G7CRMHMham'
+          mkdir -p public/assets/veiculos public/assets/bases
+          curl -fLsS --retry 3 -o public/assets/veiculos/trex.glb "$base/hf_20261021_054051_adf5bcf8-7b4b-4ff9-9397-fde6b58754e4.glb"
+          curl -fLsS --retry 3 -o public/assets/veiculos/carro.glb "$base/hf_20261021_054039_72ddea93-584e-4119-8d16-b263c8105194.glb"
+          curl -fLsS --retry 3 -o public/assets/veiculos/moto.glb "$base/hf_20261021_054042_70284ae2-93ad-4cce-91ef-73ffeac65aec.glb"
+          curl -fLsS --retry 3 -o public/assets/veiculos/helicoptero.glb "$base/hf_20261021_054045_47f8d46a-b148-48de-a2a0-8c308403abe2.glb"
+          curl -fLsS --retry 3 -o public/assets/veiculos/caca.glb "$base/hf_20261021_054048_1c7c5a8a-8be6-447a-b4c7-26963ec14352.glb"
+          ls -lh public/assets/veiculos
+      - name: Validar testes e subir aplicação local
+        shell: bash
+        run: |
+          npm test
+          node server.js >/tmp/agora-server.log 2>&1 &
+          sleep 4
+          curl -fLsS http://127.0.0.1:3000/health
+      - name: Capturar telas com Chromium/Playwright
+        shell: bash
+        run: node scripts/capturar-previas.mjs
+      - name: Guardar capturas da execução
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: capturas-reais-agora
+          path: previews/qa
+      - name: Publicar screenshots na branch sem alterar cidade
+        if: success()
+        shell: bash
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add previews/qa
+          if ! git diff --cached --quiet; then
+            git commit -m "test(visual): capturar cidade e interacoes em Chromium [skip ci]"
+            git push
+          fi
