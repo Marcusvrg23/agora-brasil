@@ -90,7 +90,7 @@ export function criarEfeitos(scene,camera,renderer){
  const api={
   // Explosão completa: bola de fogo, fumaça, faíscas, destroços, onda de choque, clarão e marca no chão.
   explosao(x,y,z,raio=6){
-   const n=Math.round(40+raio*14);
+   const n=Math.min(84,Math.round(25+raio*7));
    for(let i=0;i<n;i++){const d=new THREE.Vector3(R(2),Math.random()*1.2,R(2)).normalize().multiplyScalar(raio*(1.5+Math.random()*2.2));
     fogo.emitir(x+R(raio*.3),y+Math.random()*raio*.25,z+R(raio*.3),d.x,d.y,d.z,.45+Math.random()*.55,raio*(.35+Math.random()*.35),1,.75+Math.random()*.2,.4)}
    for(let i=0;i<n*.8;i++){const d=new THREE.Vector3(R(2),Math.random()*1.5+.3,R(2)).normalize().multiplyScalar(raio*(.6+Math.random()*1.3));
@@ -103,7 +103,7 @@ export function criarEfeitos(scene,camera,renderer){
    anel.position.set(x,Math.max(.15,y),z);scene.add(anel);vivos.push({m:anel,t:0,dur:.55,tipo:'anel',raio:raio*3.2});
    const bola=new THREE.Mesh(new THREE.SphereGeometry(1,20,14),new THREE.MeshBasicMaterial({color:'#fff1c9',transparent:true,opacity:1,depthWrite:false,blending:THREE.AdditiveBlending}));
    bola.position.set(x,y+raio*.2,z);scene.add(bola);vivos.push({m:bola,t:0,dur:.28,tipo:'bola',raio:raio*.9});
-   if(y<3){const marca=new THREE.Mesh(marcaGeo,new THREE.MeshBasicMaterial({map:marcaTex,transparent:true,depthWrite:false,polygonOffset:true,polygonOffsetFactor:-4}));
+   if(y<3&&vivos.filter(v=>v.tipo==='marca').length<16){const marca=new THREE.Mesh(marcaGeo,new THREE.MeshBasicMaterial({map:marcaTex,transparent:true,depthWrite:false,polygonOffset:true,polygonOffsetFactor:-4}));
     marca.position.set(x,.06,z);marca.scale.setScalar(raio*2.2);marca.rotation.y=Math.random()*6;scene.add(marca);vivos.push({m:marca,t:0,dur:30,tipo:'marca'})}
    clarao(x,y,z,raio*90,.6);
    const d=camera.position.distanceTo(new THREE.Vector3(x,y,z));tremor=Math.max(tremor,Math.min(1.2,raio*4/Math.max(8,d)));
