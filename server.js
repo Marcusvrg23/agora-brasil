@@ -8,7 +8,8 @@ const { Combate } = require('./combate');
 const { Anuncios, Erro } = require('./anuncios');
 const pagamentos = require('./pagamentos');
 
-const PORT = Number(process.env.PORT || 3000);
+// Square Cloud routes web traffic to port 80 (and can override it via PORT).
+const PORT = Number(process.env.PORT || 80);
 const HOST = process.env.HOST || '0.0.0.0';
 const PUBLIC = path.join(__dirname, 'public');
 const LIMIT_BYTES = 8 * 1024;
