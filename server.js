@@ -8,7 +8,7 @@ const { Combate } = require('./combate');
 const { Anuncios, Erro } = require('./anuncios');
 const pagamentos = require('./pagamentos');
 
-const PORT = Number(process.env.PORT || 3000);
+const PORT = Number(process.env.PORT || 80);
 const HOST = process.env.HOST || '0.0.0.0';
 const PUBLIC = path.join(__dirname, 'public');
 const LIMIT_BYTES = 8 * 1024;
