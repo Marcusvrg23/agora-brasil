@@ -22,6 +22,8 @@ export const TIPOS={
  caca:{nome:'Caça',comp:19,cdn:HF+'054048_1c7c5a8a-8be6-447a-b4c7-26963ec14352.glb',raio:7,alcance:10,voa:true,jato:true,
   bocais:[[.061,-.068,-.462],[-.061,-.068,-.462]],cam:34,motoristaVisivel:false,
   pilones:[[.2,-.085,-.08],[-.2,-.085,-.08]],luzesPisca:[[.44,-.06,-.2,'#ff3b30'],[-.44,-.06,-.2,'#3bff6a']]},
+ 'caminhao-lula':{nome:'Caminhão vermelho',comp:17,raio:4,alcance:7,cam:23,truck:true,motoristaVisivel:false,luzes:{frente:[[.055,.04,.47],[-.055,.04,.47]],tras:[[.055,.04,-.47],[-.055,.04,-.47]]}},
+ 'caminhao-bolsonaro':{nome:'Caminhão verde',comp:17,raio:4,alcance:7,cam:23,truck:true,motoristaVisivel:false,luzes:{frente:[[.055,.04,.47],[-.055,.04,.47]],tras:[[.055,.04,-.47],[-.055,.04,-.47]]}},
  trex:{nome:'T-rex',comp:12,cdn:HF+'054051_adf5bcf8-7b4b-4ff9-9397-fde6b58754e4.glb',raio:3,alcance:6,dino:true,cam:20,motoristaVisivel:true,assento:[0,.19,.08],
   dino_:{quadrilZ:.03,quadrilY:-.01,caudaZ:-.1,pescocoZ:.25,pescocoY:.12,bocaZ:.37,bocaY:.085}},
 };
@@ -34,7 +36,7 @@ function carregar(tipo){
  if(!cache.has(tipo)){
   const L=new GLTFLoader();
   cache.set(tipo,L.loadAsync('/assets/veiculos/'+tipo+'.glb')
-   .catch(()=>L.loadAsync(TIPOS[tipo].cdn))
+   .catch(()=>TIPOS[tipo].cdn?L.loadAsync(TIPOS[tipo].cdn):Promise.reject(new Error('Modelo local indisponível')))
    .then(g=>{statusModelos.set(tipo,'ok');return g.scene})
    .catch(()=>{statusModelos.set(tipo,'procedural');return null}));
  }
@@ -134,7 +136,8 @@ function procedural(tipo){
  if(tipo==='moto'){add(new THREE.BoxGeometry(.12,.12,.5),'#202c3a',0,0,-.05);for(const z of [-.38,.36]){const r=add(new THREE.TorusGeometry(.13,.035,8,20),'#151515',0,-.125,z);r.rotation.y=Math.PI/2}}
  if(tipo==='helicoptero'){add(new THREE.SphereGeometry(.15,20,14),'#7a7e82',0,0,.15).scale.set(1,1,1.6);add(new THREE.BoxGeometry(.04,.05,.5),'#7a7e82',0,.05,-.25);add(new THREE.BoxGeometry(.02,.12,.08),'#7a7e82',0,.11,-.47)}
  if(tipo==='caca'){add(new THREE.ConeGeometry(.08,1,12),'#3a3f45',0,0,0).rotation.x=Math.PI/2;const a=add(new THREE.BoxGeometry(.9,.02,.35),'#3a3f45',0,0,-.1);a.scale.set(1,1,1)}
- if(tipo==='trex'){add(new THREE.SphereGeometry(.12,16,12),'#4c4237',0,.05,0).scale.set(1,1,1.8);add(new THREE.ConeGeometry(.06,.45,10),'#4c4237',0,.05,-.32).rotation.x=-Math.PI/2;add(new THREE.BoxGeometry(.1,.08,.14),'#4c4237',0,.12,.4);for(const x of [-.06,.06])add(new THREE.BoxGeometry(.05,.2,.06),'#4c4237',x,-.1,.07)}
+   if(tipo.startsWith('caminhao-')){const cor=tipo==='caminhao-lula'?'#ba2533':'#147f45';add(new THREE.BoxGeometry(.16,.025,1),'#59646b',0,.075,0);add(new THREE.BoxGeometry(.17,.22,.22),cor,0,.23,.37);add(new THREE.BoxGeometry(.17,.18,.68),cor,0,.27,-.16);for(const z of [-.42,-.28,-.10,.1,.3,.44])for(const x of [-.095,.095]){const w=add(new THREE.CylinderGeometry(.042,.042,.018,12),'#191d22',x,.05,z);w.rotation.z=Math.PI/2}}
+  if(tipo==='trex'){add(new THREE.SphereGeometry(.12,16,12),'#4c4237',0,.05,0).scale.set(1,1,1.8);add(new THREE.ConeGeometry(.06,.45,10),'#4c4237',0,.05,-.32).rotation.x=-Math.PI/2;add(new THREE.BoxGeometry(.1,.08,.14),'#4c4237',0,.12,.4);for(const x of [-.06,.06])add(new THREE.BoxGeometry(.05,.2,.06),'#4c4237',x,-.1,.07)}
  return g;
 }
 
@@ -167,7 +170,8 @@ export class Veiculo{
   modelo.traverse(o=>{if(o.isMesh){o.castShadow=true;o.receiveShadow=true;
    if(!provisorio&&(this.cfg.rodas||this.cfg.dino))o.material=prepararMaterial(o.material,this.cfg,this.uni);
    if(o.material.map)o.material.map.anisotropy=4}});
-  this.corpo.add(holder);this.modelo=holder;
+     this.rodasTruck=[];if(this.cfg.truck)modelo.traverse(o=>{if(o.isMesh&&/^Pneu/i.test(o.name))this.rodasTruck.push(o)});
+   this.corpo.add(holder);this.modelo=holder;
   // ponto (x,y,z) nas coordenadas do modelo normalizado → coordenadas locais do corpo
   const off=modelo.position.clone();
   this.ponto=(x,y,z)=>new THREE.Vector3(x,y,z).multiplyScalar(k).add(off).multiplyScalar(this.escala);
@@ -202,9 +206,8 @@ export class Veiculo{
 
  // ---- Física de quem dirige (só no navegador do motorista) ----
  dirigir(dt,inp,mundo){
-  const s=this.s,C=this.cfg;
-  if(this.tipo==='carro'||this.tipo==='moto'){
-   const max=this.tipo==='moto'?36:42,acel=this.tipo==='moto'?15:13;
+  const s=this.s,C=this.cfg;   if(this.tipo==='carro'||this.tipo==='moto'||C.truck){
+    const max=C.truck?24:(this.tipo==='moto'?36:42),acel=C.truck?7:(this.tipo==='moto'?15:13);
    const v0=s.vel;
    if(inp.frente)s.vel+=(s.vel<0?30:acel)*dt;
    else if(inp.tras)s.vel-=(s.vel>0?30:6)*dt;
@@ -213,7 +216,7 @@ export class Veiculo{
    s.acel=THREE.MathUtils.lerp(s.acel,(s.vel-v0)/Math.max(dt,1e-3),Math.min(1,dt*6));
    const alvoEst=(inp.esq-inp.dir)*(this.tipo==='moto'?.6:.55)/(1+Math.abs(s.vel)/22);
    s.esterco=THREE.MathUtils.lerp(s.esterco,alvoEst,Math.min(1,dt*7));
-   const eixo=this.tipo==='moto'?1.6:2.6;
+       const eixo=C.truck?9.2:(this.tipo==='moto'?1.6:2.6);
    s.ry+=s.vel*Math.tan(s.esterco)/eixo*dt;
    s.lat=THREE.MathUtils.lerp(s.lat,s.vel*s.vel*Math.tan(s.esterco)/eixo,Math.min(1,dt*5));
    this.mover(dt,mundo,s.vel);
@@ -281,17 +284,16 @@ export class Veiculo{
    let d=a.ry-s.ry;d=Math.atan2(Math.sin(d),Math.cos(d));s.ry+=d*k;s.rx+=(a.rx-s.rx)*k;s.rz+=(a.rz-s.rz)*k;
    const v0=s.vel;s.vel+=(a.vel-s.vel)*k;s.acel=(s.vel-v0)/Math.max(dt,1e-3);
    if(this.tipo==='helicoptero'||this.tipo==='caca')s.motor=Math.min(1,s.motor+dt*(this.motorista?.5:-.3));
-   if(this.motorista&&(this.tipo==='carro'||this.tipo==='moto'))s.esterco=THREE.MathUtils.lerp(s.esterco,THREE.MathUtils.clamp(d*4,-.5,.5),k);
+   if(this.motorista&&(this.tipo==='carro'||this.tipo==='moto'||this.cfg.truck))s.esterco=THREE.MathUtils.lerp(s.esterco,THREE.MathUtils.clamp(d*4,-.5,.5),k);
   }
   if(!this.motorista&&!this.local){s.motor=Math.max(0,s.motor-dt*.25)}
   const voando=s.y>.5;
   this.raiz.position.set(s.x,s.y,s.z);
   this.raiz.rotation.set((this.tipo==='helicoptero'||this.tipo==='caca')?s.rx:0,s.ry,(this.tipo==='caca'||this.tipo==='helicoptero')?s.rz:0);
   // suspensão e inclinações por tipo
-  const c=this.corpo;
-  if(this.tipo==='carro'){
-   s.giro+=s.vel*dt/(C.rodas[0][2]*this.escala);
-   this.uni.uGiro.value=s.giro;this.uni.uEsterco.value=s.esterco;
+  const c=this.corpo;  if(this.tipo==='carro'||C.truck){
+   if(C.rodas){s.giro+=s.vel*dt/(C.rodas[0][2]*this.escala);this.uni.uGiro.value=s.giro;this.uni.uEsterco.value=s.esterco}
+   if(C.truck)for(const roda of this.rodasTruck||[])roda.rotation.y+=s.vel*dt/.73;
    const quique=Math.sin(t*17)*.006*Math.min(1,Math.abs(s.vel)/10);
    c.rotation.x=THREE.MathUtils.lerp(c.rotation.x,THREE.MathUtils.clamp(-s.acel*.004,-.05,.05),Math.min(1,dt*5));
    c.rotation.z=THREE.MathUtils.lerp(c.rotation.z,THREE.MathUtils.clamp((s.lat||s.vel*s.esterco*.6)*.0045,-.07,.07),Math.min(1,dt*5));

@@ -158,7 +158,7 @@ export function dressAvatar(group,lookIn){
  const neckTop=new THREE.Group();neckTop.position.set(0,L*.99,0);torso.add(neckTop);
  part(new THREE.CylinderGeometry(.052*k,.06*k,.13*k,14),pele,0,.03*k,0,neckTop);
  const R=.128*k;
- const head=new THREE.Group();head.position.set(0,.1*k+R*1.05,.01*k);neckTop.add(head);
+ const head=new THREE.Group();head.name='avatar-head';head.position.set(0,.1*k+R*1.05,.01*k);neckTop.add(head);
  if(C.curva)head.rotation.x=-C.curva*1.3;
  const headMat=new THREE.MeshPhysicalMaterial({map:faceTexture(look.pele,look.cabelo,tipo),roughness:.6,sheen:.3,sheenColor:new THREE.Color('#ffd7c2')});
  const cranio=part(new THREE.SphereGeometry(R,40,30),headMat,0,0,0,head);cranio.scale.set(.88,1.16,.98);

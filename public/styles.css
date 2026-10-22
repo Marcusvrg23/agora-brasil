@@ -116,3 +116,5 @@ body.jogando .npc-legend{top:167px}
 #game-hud #jogo-chat input{flex:1;min-width:0;background:#102b37;border:1px solid #547f86;border-radius:6px;color:white;padding:7px}
 #game-hud .eleicao-info{max-width:630px;font-size:10px}
 @media(max-width:620px){#game-hud{left:5px;right:5px;font-size:10px}#game-hud .game-toolbar{gap:4px;padding:5px}#game-hud button{padding:6px}body.jogando .scene-label{top:210px}body.jogando .npc-legend{top:285px}}
+
+.photo-profiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:8px;margin:8px 0 14px}.photo-profile{min-height:62px;padding:10px;border:1px solid #53716a;border-radius:12px;color:inherit;background:#16332d;cursor:pointer;text-align:left;font-size:12px}.photo-profile:hover,.photo-profile:focus-visible{outline:2px solid #65d9bb;background:#205047}.creator #clear-face-photo{margin:5px 0 12px}

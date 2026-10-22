@@ -7,6 +7,8 @@ export const DURACAO_EMBARQUE_MS=900;
 const POSES=Object.freeze({
  trex:'montado',
  carro:'dirigindo-carro',
+ 'caminhao-lula':'dirigindo-carro',
+ 'caminhao-bolsonaro':'dirigindo-carro',
  moto:'pilotando-moto',
  helicoptero:'pilotando-helicoptero',
  caca:'pilotando-caca',
