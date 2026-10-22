@@ -5,6 +5,10 @@ on:
     paths:
       - '.github/workflows/visual-smoke.yml'
       - 'public/avatar.js'
+      - 'public/veiculos.js'
+      - 'public/movimento.mjs'
+      - 'public/preview-caminhoes.*'
+      - 'test/movimento.test.mjs'
       - 'public/preview-corrida.*'
       - 'public/assets/bases/homem.glb'
       - 'screenshots/animacao-corrida-validada.mp4'
@@ -28,8 +32,9 @@ jobs:
           node --check public/preview-corrida.js
           node --check public/app.js
           node --check public/veiculos.js
+          node --check public/preview-caminhoes.js
       - name: Testar personagens e montaria
-        run: node --test test/personagens.test.mjs test/montaria.test.mjs
+        run: node --test test/personagens.test.mjs test/montaria.test.mjs test/movimento.test.mjs
       - name: Validar vídeo e modelo local
         run: |
           test -s public/assets/bases/homem.glb
