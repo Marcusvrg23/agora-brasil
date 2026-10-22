@@ -1,0 +1,49 @@
+name: Preparar deploy Vercel direto (sem integração Git OAuth)
+on:
+  push:
+    branches: [deploy/vercel-completo]
+    paths:
+      - ".github/workflows/prepare-vercel-upload.yml"
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  bundle:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@11bd71901bbe02d179e438dbd64c59d42dcb0749ad # v4.2.2
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: '24'
+      - run: npm ci && npm test
+      - name: Preparar manifest de arquivos PUBLICOS, sem credenciais
+        run: |
+          mkdir -p deploy
+          node <<'NODE'
+          const fs=require('fs'),path=require('path');
+          const files=[];
+          function add(file){
+            files.push({file,data:fs.readFileSync(file,'utf8'),encoding:'utf-8'});
+          }
+          function walk(dir){
+            for(const entry of fs.readdirSync(dir,{withFileTypes:true})){
+              const p=path.join(dir,entry.name);
+              if(entry.isDirectory()) { if(entry.name!=='assets')walk(p); }
+              else if (/\.(js|mjs|html|css|json)$/.test(p))add(p);
+            }
+          }
+          walk('public');
+          for(const file of ['api/ws.js','server.js','combate.js','debate.js','anuncios.js','pagamentos.js','package.json','package-lock.json','vercel.json'])add(file);
+          // No binary assets, secrets, /data or .env included
+          fs.writeFileSync('deploy/vercel-upload-manifest.json',JSON.stringify({files,commit:process.env.GITHUB_SHA}));
+          console.log('files:',files.length,'bytes:',fs.statSync('deploy/vercel-upload-manifest.json').size);
+          NODE
+      - name: Registrar manifest na branch de deploy
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add deploy/vercel-upload-manifest.json
+          if ! git diff --cached --quiet; then
+            git commit -m "build: fonte Vercel para deploy direto [skip ci]"
+            git push
+          fi
