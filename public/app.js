@@ -130,7 +130,7 @@ function send(data){if(socket?.readyState===WebSocket.OPEN)socket.send(JSON.stri
 function connect(){
  if(socket&&socket.readyState<2)socket.close();
  const scheme=location.protocol==='https:'?'wss:':'ws:';
- socket=new WebSocket(scheme+'//'+location.host);
+ socket=new WebSocket(scheme+'//'+location.host+'/api/ws');
  socket.onopen=()=>{
   live.classList.add('connected');status.textContent='Conectado';
   send({type:'join',room,name,look:myLook});
