@@ -368,7 +368,7 @@ const fwd=new THREE.Vector3(),right=new THREE.Vector3(),UP=new THREE.Vector3(0,1
 // Câmera em terceira pessoa: acompanha o jogador mantendo o ângulo escolhido com o mouse.
 function seguirJogador(snap){
  const alvo=pvp.alvoCamera()||new THREE.Vector3(player.position.x,player.position.y+1.55,player.position.z);
- if(snap){controls.target.copy(alvo);camera.position.set(alvo.x+2.5,alvo.y+3.2,alvo.z+8.5);lastPlayer.copy(alvo);controls.update();return}
+ if(snap){controls.target.copy(alvo);camera.position.set(alvo.x+1.1,alvo.y+2.35,alvo.z+6.7);lastPlayer.copy(alvo);controls.update();return}
  const d=alvo.clone().sub(lastPlayer);camera.position.add(d);controls.target.add(d);lastPlayer.copy(alvo);
 }
 function animate(){
