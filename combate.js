@@ -55,7 +55,8 @@ function ponto(p, lim = 3000) {
 const naZonaSegura = (p) => ZONAS_SEGURAS.some((z) => Math.hypot(p.x - z.x, p.z - z.z) < z.r);
 
 class Combate {
-  constructor({ emit = () => {}, agora = () => Date.now() } = {}) {
+  constructor({ emit = () => {}, agora = () => Date.now(), onWin = () => {} } = {}) {
+     this.onWin = onWin;
     this.emit = emit; this.agora = agora;
     this.jogadores = new Map();
     this.placar = { vermelho: 0, amarelo: 0 };
@@ -73,7 +74,7 @@ class Combate {
     if (j.veiculo) { const v = this.veiculo(j.veiculo); if (v) return v; }
     return j.pos;
   }
-  pub(j) { return { id: j.id, team: j.team, vida: j.vida, vivo: j.vivo, item: j.item, veiculo: j.veiculo }; }
+  pub(j) { return { id: j.id, team: j.team, vida: j.vida, vivo: j.vivo, item: j.item, veiculo: j.veiculo, pvp: !!j.pvp }; }
   pubV(v) { return { id: v.id, tipo: v.tipo, x: v.x, y: v.y, z: v.z, ry: v.ry, rx: v.rx, rz: v.rz, vida: v.vida, max: VEICULOS[v.tipo].vida, motorista: v.motorista, ativo: !v.destruidoEm }; }
 
   estado() {
@@ -87,7 +88,7 @@ class Combate {
 
   entrar(id, team, pos) {
     const j = { id, team: team === 'amarelo' ? 'amarelo' : 'vermelho', vida: VIDA, vivo: true, item: null, veiculo: null,
-      pos: { x: pos?.x ?? 0, y: 0, z: pos?.z ?? 0 }, protegidoAte: this.agora() + PROTECAO_MS, mortoEm: 0, ultimo: {} };
+      pos: { x: pos?.x ?? 0, y: 0, z: pos?.z ?? 0 }, pvp: false, protegidoAte: this.agora() + PROTECAO_MS, mortoEm: 0, ultimo: {} };
     this.jogadores.set(id, j);
     this.emit({ type: 'jogador', jogador: this.pub(j) });
     return j;
@@ -96,6 +97,13 @@ class Combate {
     const j = this.jogadores.get(id); if (!j) return;
     j.team = team === 'amarelo' ? 'amarelo' : 'vermelho';
     this.emit({ type: 'jogador', jogador: this.pub(j) });
+  }
+  definirPvP(id, ativo) {
+    const j=this.jogadores.get(id);if(!j)return false;
+    j.pvp=ativo===true;
+    if(!j.pvp){j.protegidoAte=this.agora()+1000;}
+    this.emit({type:'jogador',jogador:this.pub(j)});
+    return true;
   }
   sair(id) {
     if (!this.jogadores.has(id)) return;
@@ -223,7 +231,7 @@ class Combate {
   mesmoTime(v, j) { const m = v.motorista && this.jogadores.get(v.motorista); return !!m && m.team === j.team; }
 
   ferir(alvo, dano, autor, arma) {
-    if (this.agora() < alvo.protegidoAte || dano <= 0 || !alvo.vivo) return [];
+    if (!autor?.pvp || !alvo.pvp || this.agora() < alvo.protegidoAte || dano <= 0 || !alvo.vivo) return [];
     if (!alvo.veiculo && naZonaSegura(alvo.pos)) return [];
     alvo.vida = Math.max(0, alvo.vida - dano);
     const ev = { type: 'dano', alvo: alvo.id, vida: alvo.vida, de: autor.id, arma };
@@ -232,7 +240,9 @@ class Combate {
   }
 
   ferirVeiculo(v, dano, autor, arma) {
-    if (dano <= 0) return [];
+    if (dano <= 0 || !autor?.pvp) return [];
+    const piloto=v.motorista&&this.jogadores.get(v.motorista);
+    if (!piloto?.pvp) return [];
     v.vida = Math.max(0, v.vida - dano);
     const ev = [{ type: 'dano-veiculo', veiculo: v.id, vida: v.vida, de: autor.id, arma }];
     this.emit(ev[0]);
@@ -260,6 +270,7 @@ class Combate {
       if (this.placar[autor.team] >= VITORIA) {
         this.vencedor = autor.team; this.reinicioEm = this.agora() + 12000;
         this.emit({ type: 'vitoria', time: autor.team, placar: { ...this.placar } });
+         this.onWin(autor.team);
       }
     }
     return ev;
