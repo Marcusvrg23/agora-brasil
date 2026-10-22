@@ -1,0 +1,100 @@
+
+/* Ágora Brasil: HUD de gameplay, separada das telas de entrada. */
+body.jogando .scene-label,body.jogando .npc-legend,body.jogando .world-tips{display:none!important}
+#game-hud{position:absolute;inset:0!important;top:0!important;left:0!important;right:0!important;z-index:70;pointer-events:none;font:12px Inter,system-ui,sans-serif;color:#effcf5}
+#game-hud[hidden]{display:none}
+#game-hud button{cursor:pointer;font:inherit;color:inherit;touch-action:manipulation}
+#game-hud button:focus-visible,#game-hud input:focus-visible{outline:2px solid #a2ffce;outline-offset:2px}
+#game-hud button:disabled{opacity:.45}
+#game-hud .hud-top,#game-hud .hud-status-cards,#game-hud .hud-panel,#game-hud .hud-minimap,#game-hud .hud-actionbar,#game-hud .hud-chat,#game-hud .hud-location-mobile{background:#09241edb;border:1px solid #9cdfb83f;box-shadow:0 8px 27px #0004;backdrop-filter:blur(15px);border-radius:15px}
+#game-hud .hud-top{position:absolute;top:12px;left:20px;right:20px;height:61px;display:flex;align-items:center;gap:12px;padding:7px 15px;pointer-events:auto}
+.hud-logo{display:flex;align-items:center;gap:9px;white-space:nowrap;font-size:19px;letter-spacing:.03em}
+.hud-logo-mark{font-size:32px;color:#eacd7b}
+.hud-logo small{display:block;font-size:10px;letter-spacing:.2em;line-height:1.3}.hud-logo small span{color:#afcdc1;font-size:8px}
+.hud-top-nav{display:flex;gap:7px}
+#game-hud .hud-top-nav button{border:1px solid #76ba9b68;border-radius:12px;background:#133a30;padding:9px 12px;white-space:nowrap}
+#game-hud .hud-top-nav button:hover,#game-hud .hud-actionbar button:hover{background:#255448}
+.hud-score{position:absolute;left:50%;transform:translateX(-50%);border:1px solid #619ab2;border-radius:30px;display:flex;align-items:center;gap:9px;padding:5px 18px;background:#092032;min-width:210px;justify-content:center}
+.hud-score b{font-size:25px}.hud-score b:first-child{color:#fc7770}.hud-score b:nth-of-type(2){color:#f8d05a}.hud-score small{font-size:10px;color:#bbd5d9;margin-left:7px}
+.hud-presence{margin-left:auto;border-radius:20px;background:#092c27;padding:10px 12px;white-space:nowrap}.hud-online-dot{width:8px;height:8px;background:#45d99e;border-radius:50%;display:inline-block;margin-right:5px}
+#game-hud .hud-menu-button{display:none}
+.hud-status-cards{position:absolute;top:87px;left:20px;width:min(355px,32vw);padding:10px;display:grid;gap:7px;pointer-events:auto}
+.hud-pvp-switch{display:flex;align-items:center;gap:6px;font-size:11px;cursor:pointer}.hud-pvp-switch input{accent-color:#52d3a7}
+.hud-tse{display:flex;gap:8px;font-size:10px;line-height:1.5;border-top:1px solid #ffffff20;padding-top:7px}
+.hud-tse small{display:block;color:#b9c8ca}.hud-tse a{color:#f3d486!important}
+.hud-victories{font-size:10px;color:#a8d7c7;border-top:1px solid #ffffff12;padding-top:4px}
+.hud-location-mobile{display:none}
+.hud-missions{position:absolute;right:20px;top:35%;display:grid;gap:10px;width:262px;pointer-events:auto}
+#game-hud .hud-panel{padding:13px!important;margin:0!important;display:flex;gap:12px;align-items:center;width:100%;text-align:left;min-height:51px}
+.hud-panel small{display:block;color:#b9cbc6;margin-top:6px;font-size:10px}.hud-panel strong{font-size:12px}
+.hud-mission{display:grid!important;gap:9px!important}.hud-mission span{font-size:10px}.hud-progress{width:100%;height:6px;border-radius:10px;background:#d8f1e129;overflow:hidden}.hud-progress i{display:block;height:100%;background:#58dcac;width:0%}
+.hud-debates b{margin-left:auto}
+.hud-minimap{position:absolute;left:20px;bottom:19px;width:224px;height:248px;padding:12px;pointer-events:auto}
+.hud-mini-title{display:flex;gap:7px;font-size:10px;font-weight:800}.hud-mini-title small{display:block;font-size:10px;font-weight:400;color:#bcd3cc}
+.hud-mini-map{position:relative;height:190px;margin-top:9px;border-radius:8px;overflow:hidden;background:#24463c}#hud-map{width:100%;height:100%;display:block}
+.hud-map-caption{position:absolute;bottom:4px;left:7px;font-size:9px;color:#d7f4e7;background:#092920b0;padding:3px;border-radius:3px}
+.hud-actionbar{position:absolute;left:50%;transform:translateX(-50%);bottom:18px;width:min(690px,calc(100% - 560px));min-width:410px;height:140px;display:grid;grid-template-columns:repeat(5,1fr);grid-template-rows:85px 48px;padding:5px 9px;pointer-events:auto}
+#game-hud .hud-actionbar button{border:0;background:transparent;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:7px;font-size:10px;font-weight:650}
+.hud-actionbar button>span{font-size:25px}.hud-action-secondary{grid-column:1/-1;display:flex;justify-content:center;border-top:1px solid #ffffff22;gap:30px}.hud-action-secondary button{flex-direction:row!important;font-size:11px!important}
+.hud-chat{position:absolute;right:20px;bottom:19px;width:285px;display:flex;flex-direction:column;pointer-events:auto;overflow:hidden}
+.hud-chat-heading{display:flex;justify-content:space-between;align-items:center;padding:10px 12px;border-bottom:1px solid #ffffff1a}
+#game-hud .hud-chat-heading button{border:0;background:transparent}
+.hud-chat-messages{height:98px;overflow:auto;padding:9px 12px;font-size:11px}
+.hud-chat-messages .message{margin:0 0 7px}.hud-chat-messages .message b{color:#f3d890}.hud-chat-messages time{float:right;color:#91a49d;font-size:9px}
+.hud-chat-messages .system{color:#a9c7ba;margin:0 0 5px}
+#game-hud #jogo-chat{display:flex;max-width:none!important;margin:0!important;padding:8px!important;border:0!important;background:transparent!important}
+#game-hud #jogo-chat input{min-width:0;flex:1;border-radius:10px;background:#071d18;border:1px solid #8ba99b56;padding:10px;font-size:11px;color:white}
+#game-hud #jogo-chat button{background:transparent;border:0;font-size:18px;padding:3px 10px}
+.hud-chat.collapsed .hud-chat-messages,.hud-chat.collapsed #jogo-chat{display:none!important}
+.hud-toast{position:absolute;bottom:175px;left:50%;transform:translateX(-50%);background:#092820f0;border:1px solid #68d8ac;padding:12px 16px;border-radius:10px;text-align:center;z-index:8;pointer-events:none}
+.hud-toast[hidden],.hud-close-panel[hidden]{display:none}
+.hud-close-panel{position:absolute;right:15px;top:85px;pointer-events:auto;background:#114335;border:1px solid #74bba1;border-radius:9px;padding:10px}
+.hud-touch-actions,.hud-joystick{display:none}
+#pvp-hud .pvp-placar{display:none}
+#pvp-hud .pvp-feed{top:220px;right:25px}
+#pvp-hud .pvp-acoes{display:none!important}
+#pvp-hud .pvp-base{bottom:15px;left:255px;width:165px}
+#pvp-hud .pvp-vida{padding:6px 10px}#pvp-hud .pvp-slot{padding:6px 10px}
+#pvp-hud .pvp-som{bottom:auto;top:24px;right:165px;z-index:80}
+@media(max-width:1150px) and (min-width:701px){
+.hud-top{gap:5px!important}.hud-logo{font-size:14px}.hud-top-nav{gap:3px}.hud-top-nav button{padding:7px!important}.hud-score{top:68px;min-width:180px}.hud-missions{top:34%;width:205px;right:10px}.hud-minimap{width:175px;height:200px;left:10px}.hud-mini-map{height:150px}.hud-chat{width:210px;right:10px}.hud-actionbar{width:calc(100% - 405px);min-width:300px;height:125px;grid-template-rows:75px 44px}.hud-actionbar button{font-size:9px!important}#pvp-hud .pvp-base{left:184px}
+}
+@media(max-width:700px),(pointer:coarse) and (max-width:980px){
+body.jogando .world-wrap{height:100dvh;overflow:hidden}
+#game-hud .hud-top{top:max(8px,env(safe-area-inset-top));left:9px;right:9px;height:51px;padding:7px 10px;gap:8px}
+.hud-logo{font-size:13px}.hud-logo-mark{font-size:23px}.hud-logo small{font-size:8px}.hud-logo small span{display:none}
+#game-hud .hud-top-nav{display:none;position:absolute;right:0;top:55px;flex-direction:column;background:#0a2b26;padding:9px;border:1px solid #83bea3;border-radius:10px}
+#game-hud .hud-top-nav.open{display:flex}#game-hud .hud-menu-button{display:block;margin-left:auto;border:1px solid #6da48b;border-radius:50%;background:#123a30;font-size:21px;width:39px;height:39px}
+.hud-score{position:static;transform:none;min-width:0;gap:5px;padding:5px 9px}.hud-score b{font-size:15px}.hud-score small{display:none}
+.hud-presence{display:none}
+.hud-status-cards{display:none!important}
+.hud-location-mobile{display:flex;position:absolute;top:calc(max(8px,env(safe-area-inset-top)) + 61px);left:9px;max-width:50%;padding:9px;flex-direction:column;font-size:10px}.hud-location-mobile small{font-size:9px;color:#b9d4c7}
+.hud-missions{left:9px;right:auto;top:calc(max(8px,env(safe-area-inset-top)) + 115px);width:min(52vw,235px);gap:0}
+.hud-missions .hud-race,.hud-missions .hud-debates{display:none!important}
+#game-hud .hud-mission{padding:9px!important;gap:5px!important;min-height:auto;font-size:10px}
+.hud-minimap{top:calc(max(8px,env(safe-area-inset-top)) + 65px);bottom:auto;right:9px;left:auto;width:clamp(92px,25vw,155px);height:clamp(107px,30vw,170px);padding:5px;border-radius:12px}
+.hud-mini-title{font-size:8px}.hud-mini-title small{display:none}.hud-mini-map{height:calc(100% - 18px);margin-top:3px}
+.hud-map-caption{font-size:7px}
+.hud-actionbar{display:none}
+.hud-chat{right:9px;left:9px;width:auto;bottom:calc(env(safe-area-inset-bottom) + 8px);border-radius:24px}
+.hud-chat:not(.expanded) .hud-chat-heading,.hud-chat:not(.expanded) .hud-chat-messages{display:none}
+#game-hud #jogo-chat{padding:4px!important}#game-hud #jogo-chat input{font-size:13px;border-radius:20px}
+.hud-chat.expanded{bottom:calc(env(safe-area-inset-bottom) + 8px);height:245px}
+.hud-chat.expanded .hud-chat-messages{flex:1;height:auto}
+.hud-chat.expanded .hud-chat-heading{display:flex}
+.hud-touch-actions{display:flex;position:absolute;right:12px;bottom:calc(env(safe-area-inset-bottom) + 75px);flex-direction:column;gap:11px;pointer-events:auto}
+#game-hud .hud-touch-actions button{border:1px solid #92d7bb;border-radius:50%;width:55px;height:55px;background:#0b362cd9;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0;box-shadow:0 4px 12px #0004;padding:2px}
+.hud-touch-actions button span{font-size:24px}.hud-touch-actions small{font-size:8px}
+#game-hud .hud-touch-actions button:active{background:#2b6a52}
+.hud-joystick{display:grid;position:absolute;left:calc(env(safe-area-inset-left) + 18px);bottom:calc(env(safe-area-inset-bottom) + 95px);width:142px;height:142px;pointer-events:auto;touch-action:none;place-items:center}
+.hud-joystick-track{width:100%;height:100%;border-radius:50%;border:2px solid #b6dac3a8;background:#092c277d;display:grid;place-items:center}
+.hud-joystick-knob{width:64px;height:64px;border-radius:50%;background:#d6e8d6d9;border:4px solid #799b8c;box-shadow:0 2px 8px #0005;touch-action:none}
+.hud-toast{bottom:270px;width:60vw;max-width:270px;font-size:11px}
+#pvp-hud .pvp-base{bottom:calc(env(safe-area-inset-bottom) + 66px);left:calc(env(safe-area-inset-left) + 13px);width:133px}
+#pvp-hud .pvp-slot{display:none}#pvp-hud .pvp-vida{font-size:9px}
+#pvp-hud .pvp-som{top:65px;right:10px;font-size:12px}
+#pvp-hud .pvp-feed{top:280px;right:10px}
+#pvp-hud .pvp-aviso{bottom:calc(env(safe-area-inset-bottom) + 245px);max-width:75%;white-space:normal}
+#pvp-hud .pvp-mira{display:none}
+}
+@media(max-width:380px){.hud-logo{font-size:11px}.hud-joystick{width:118px;height:118px}.hud-joystick-knob{width:55px;height:55px}.hud-touch-actions button{width:48px!important;height:48px!important}}
