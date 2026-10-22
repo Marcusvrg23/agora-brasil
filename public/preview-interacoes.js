@@ -6,11 +6,11 @@ import {dressAvatar,animateAvatar,updateAvatarMixers,poseAvatar} from './avatar.
 
 const HF='https://d8j0ntlcm91z4.cloudfront.net/user_3KLobL96cAs3bokj0G7CRMHMham/hf_20261021_';
 const SOURCES={
- trex:{name:'Dinossauro T-Rex',desc:'Montaria com corpo oscilante e piloto seguindo o assento. A malha original não possui rig.',size:12,local:'/assets/veiculos/trex.glb',remote:HF+'054051_adf5bcf8-7b4b-4ff9-9397-fde6b58754e4.glb',seat:[0,.19,.08],zoom:21,top:.39},
- carro:{name:'Carro esportivo',desc:'Motorista sentado, suspensão e direção simuladas. O painel raio-X revela o piloto na carroceria fechada.',size:4.6,local:'/assets/veiculos/carro.glb',remote:HF+'054039_72ddea93-584e-4119-8d16-b263c8105194.glb',seat:[-.13,.08,.00],zoom:10,top:.33},
- moto:{name:'Motocicleta',desc:'Piloto montado, braços em direção ao guidão e inclinação sincronizada ao movimento.',size:2.5,local:'/assets/veiculos/moto.glb',remote:HF+'054042_70284ae2-93ad-4cce-91ef-73ffeac65aec.glb',seat:[0,.03,-.17],zoom:8.2,top:.57},
- helicoptero:{name:'Helicóptero',desc:'Piloto dentro da cabine, rotor em movimento, oscilações de hover e deslocamento aéreo.',size:14,local:'/assets/veiculos/helicoptero.glb',remote:HF+'054045_47f8d46a-b148-48de-a2a0-8c308403abe2.glb',seat:[0,.03,.10],zoom:23,top:.39},
- caca:{name:'Caça',desc:'Postura de pilotagem, inclinação e propulsão. Cabine transparente somente na ferramenta de inspeção.',size:19,local:'/assets/veiculos/caca.glb',remote:HF+'054048_1c7c5a8a-8be6-447a-b4c7-26963ec14352.glb',seat:[0,.035,.12],zoom:29,top:.27}
+ trex:{name:'Dinossauro T-Rex',desc:'Montaria com corpo oscilante e piloto seguindo o assento. A malha original não possui rig.',size:12,local:'/assets/veiculos/trex.glb',remote:HF+'054051_adf5bcf8-7b4b-4ff9-9397-fde6b58754e4.glb',seat:[0,.19,.08],seatLift:.18,zoom:21,top:.39},
+ carro:{name:'Carro esportivo',desc:'Motorista sentado, suspensão e direção simuladas. O painel raio-X revela o piloto na carroceria fechada.',size:4.6,local:'/assets/veiculos/carro.glb',remote:HF+'054039_72ddea93-584e-4119-8d16-b263c8105194.glb',seat:[-.13,.08,.04],seatLift:-.025,zoom:10,top:.33},
+ moto:{name:'Motocicleta',desc:'Piloto montado, braços em direção ao guidão e inclinação sincronizada ao movimento.',size:2.5,local:'/assets/veiculos/moto.glb',remote:HF+'054042_70284ae2-93ad-4cce-91ef-73ffeac65aec.glb',seat:[0,.03,-.17],seatLift:.18,zoom:8.2,top:.57},
+ helicoptero:{name:'Helicóptero',desc:'Piloto dentro da cabine, rotor em movimento, oscilações de hover e deslocamento aéreo.',size:14,local:'/assets/veiculos/helicoptero.glb',remote:HF+'054045_47f8d46a-b148-48de-a2a0-8c308403abe2.glb',seat:[0,.03,.25],seatLift:.065,zoom:23,top:.39},
+ caca:{name:'Caça',desc:'Postura de pilotagem, inclinação e propulsão. Cabine transparente somente na ferramenta de inspeção.',size:19,local:'/assets/veiculos/caca.glb',remote:HF+'054048_1c7c5a8a-8be6-447a-b4c7-26963ec14352.glb',seat:[0,.035,.30],seatLift:.065,zoom:29,top:.27}
 };
 const labels={trex:'🦖 Dinossauro',carro:'🏎️ Carro',moto:'🏍️ Moto',helicoptero:'🚁 Helicóptero',caca:'✈️ Caça'};
 const cnv=document.getElementById('stage'),status=document.getElementById('asset-status'),title=document.getElementById('object-title'),description=document.getElementById('object-desc');
@@ -121,7 +121,7 @@ async function choose(type){
  const ctr=bb.getCenter(new THREE.Vector3());
  model.position.set(-ctr.x,-bb.min.y,-ctr.z);
  vehRoot.add(model);
- riderAnchor.position.set(cfg.seat[0]*cfg.size, cfg.seat[1]*cfg.size+cfg.size*.18,cfg.seat[2]*cfg.size);
+ riderAnchor.position.set(cfg.seat[0]*cfg.size, (cfg.seat[1]+cfg.seatLift)*cfg.size,cfg.seat[2]*cfg.size);
  rider.position.y=type==='trex'?-1.0:-(type==='moto'?.62:.76);
  rider.rotation.y=Math.PI;
  // Modelos de piloto são visíveis por fora em montarias abertas; x-ray opcional para cabine fechada.
