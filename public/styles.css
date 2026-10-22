@@ -96,3 +96,5 @@
 .pvp-som{position:absolute;right:16px;bottom:66px;pointer-events:auto;background:#07131dd9;border:1px solid #ffffff22;border-radius:9px;color:#fff;padding:6px 9px;cursor:pointer}
 @media (pointer:coarse){.pvp-acoes{display:flex;flex-direction:column}}
 @media(max-width:620px){.pvp-placar{top:10px;font-size:17px;padding:6px 12px}.pvp-feed{top:56px;right:8px;font-size:11px}.pvp-base{left:10px;bottom:46px;width:calc(100% - 120px)}.pvp-aviso{bottom:120px;font-size:11px}.pvp-slot small{display:none}.pvp-som{bottom:46px;right:10px}}
+
+.npc-legend{position:absolute;top:104px;left:29px;background:#0a253ad9;color:#a1ffdb;border:1px solid #63d9b377;border-radius:8px;padding:6px 11px;font:600 11px system-ui;pointer-events:none;z-index:4}@media(max-width:620px){.npc-legend{top:100px;left:14px;font-size:9px}}
