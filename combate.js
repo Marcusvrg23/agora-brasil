@@ -28,11 +28,16 @@ const BILHETE_MS = 12000;
 
 // Pontos fixos do mapa (metros, mesmo sistema da cidade.js; gramado central entre x -117 e 117).
 const PICKUPS = [
+  // Equipamentos visíveis e acessíveis a partir do ponto inicial (0, -30).
+  ['espada', -5, -22], ['arco', 0, -19], ['bomba', 5, -22],
   ['espada', -20, 40], ['espada', 20, 40], ['espada', -40, 300], ['espada', 40, 300],
   ['arco', 0, 90], ['arco', -60, 220], ['arco', 60, 220], ['arco', 0, 470],
   ['bomba', -25, 170], ['bomba', 25, 170], ['bomba', -25, 400], ['bomba', 25, 400],
 ].map(([item, x, z], i) => ({ id: 'i' + i, item, x, z }));
 const GARAGEM = [
+  // Veículos de teste perto da praça inicial, sem remover as garagens existentes.
+  ['moto', -15, -4, 0], ['carro', 15, -4, 0],
+  ['trex', 0, 5, Math.PI], ['helicoptero', -37, 12, Math.PI], ['caca', 37, 12, Math.PI],
   ['carro', -124, 60, 0], ['carro', -124, 180, 0], ['carro', 124, 120, Math.PI],
   ['moto', 124, 60, Math.PI], ['moto', 124, 180, Math.PI], ['moto', -124, 120, 0],
   ['helicoptero', -55, 560, Math.PI], ['helicoptero', 55, 560, Math.PI],
