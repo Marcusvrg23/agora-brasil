@@ -14,6 +14,8 @@ function duelo() {
   r.c.entrar('a', 'vermelho', { x: 0, z: 100 });
   r.c.entrar('b', 'amarelo', { x: 2, z: 100 });
   r.passar(4000);
+  r.c.definirPvP('a',true);
+  r.c.definirPvP('b',true);
   return r;
 }
 function darItem(c, id, item) { c.jogadores.get(id).item = item; }
@@ -164,4 +166,24 @@ test('vitória com o placar máximo e nova partida depois', () => {
   passar(12000); c.tick();
   assert.equal(c.vencedor, null);
   assert.deepEqual(c.placar, { vermelho: 0, amarelo: 0 });
+});
+
+
+test('atacante habilita PvP, alvo pode sofrer dano mesmo desabilitado, sem fogo amigo',()=>{
+ const {c,passar}=duelo();
+ c.definirPvP('b',false);
+ c.jogadores.get('a').item='espada';
+ const hit=c.atacar('a','espada',{alvo:'b'});
+ assert.equal(hit.ok,true);
+ assert.ok(c.jogadores.get('b').vida<100);
+ c.definirPvP('a',false);passar(600);
+ assert.equal(c.atacar('a','espada',{alvo:'b'}).motivo,'pvp-desligado');
+});
+
+test('área segura protege alvo sem PvP mesmo contra atacante habilitado',()=>{
+ const {c,passar}=duelo();
+ c.definirPvP('b',false);c.mover('a',40,-61);c.mover('b',42,-61);
+ c.jogadores.get('a').item='espada';passar(600);
+ c.atacar('a','espada',{alvo:'b'});
+ assert.equal(c.jogadores.get('b').vida,100);
 });
