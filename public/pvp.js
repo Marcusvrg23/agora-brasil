@@ -143,6 +143,7 @@ export function iniciarPvP(o){
  // ---------- Mira e acertos ----------
  const mira={dir:new THREE.Vector3(0,0,1),ponto:new THREE.Vector3(),bloqueio:false};
  const ray=new THREE.Ray();
+ const colBounds=city.colliders.filter(c=>(c.h||25)>=.5);
  function centroJogador(id){const av=avatarDe(id);if(!av)return null;const j=est.jogadores.get(id);
   if(j?.veiculo){const v=est.veiculos.get(j.veiculo);if(v)return v.raiz.position.clone().add(new THREE.Vector3(0,TIPOS[v.tipo].comp*.12,0))}
   return av.position.clone().add(new THREE.Vector3(0,.9,0))}
@@ -164,8 +165,8 @@ export function iniciarPvP(o){
    const t=esfera(c,TIPOS[v.tipo].raio+raioExtra);if(t>=0)ok(t,{tipo:'veiculo',id})
   }
   if(d.y<0){const t=(.02-a.y)/d.y;if(t>=0)ok(t,{tipo:'chao'})}
-  for(const c of city.colliders){
-   if((c.h||25)<.5)continue;
+  for(const c of colBounds){
+   if(Math.max(a.x,b.x)<c.x0||Math.min(a.x,b.x)>c.x1||Math.max(a.z,b.z)<c.z0||Math.min(a.z,b.z)>c.z1)continue;
    // entrada na caixa (slab)
    let t0=0,t1=L;
    for(const [o,dd,mn,mx] of [[a.x,d.x,c.x0,c.x1],[a.y,d.y,0,c.h||25],[a.z,d.z,c.z0,c.z1]]){
