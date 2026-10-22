@@ -182,6 +182,8 @@ function connect(){
 }
 document.querySelector('#enter').addEventListener('click',()=>{
  name=(document.querySelector('#nickname').value||'Visitante').trim().slice(0,24)||'Visitante';
+ // A acao parte do clique do usuario, permitindo Fullscreen API com fallback CSS.
+ document.querySelector('.world-wrap').requestFullscreen?.().catch(()=>{});
  room=document.querySelector('#city').value;
  const sel=document.querySelector('#city');document.querySelector('#room-label').textContent=sel.selectedOptions[0].textContent.split('·')[0].trim();
  connect();
