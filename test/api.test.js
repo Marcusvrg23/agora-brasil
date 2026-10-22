@@ -75,6 +75,8 @@ test('PvP pela rede: estado ao entrar, pegar item e ataque validado no servidor'
   for (const j of c.jogadores.values()) j.protegidoAte = 0;
   b.send({ type: 'move', x: p.x + 1, z: p.z });
   await new Promise((r) => setTimeout(r, 120));
+  a.send({ type: 'modo-pvp', ativo: true });
+  await a.espera(m => m.type==='jogador' && m.jogador?.id===idA && m.jogador.pvp===true);
   a.send({ type: 'pvp-ataque', arma: 'espada', alvo: idB });
   const dano = await b.espera((m) => m.type === 'dano');
   assert.equal(dano.alvo, idB);
