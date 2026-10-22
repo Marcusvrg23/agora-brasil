@@ -333,7 +333,28 @@ async function applyBase(group,look){
  const hips=model.getObjectByName('Hips');
  const mixer=new THREE.AnimationMixer(model);
  const action=mixer.clipAction(walkPara(base,hips?hips.position:null));
- holder.userData.mixer=mixer;holder.userData.walk=action;holder.userData.andando=false;
+ const run=mixer.clipAction(criarClipCorrida(base,hips?hips.position:null));
+ holder.userData.mixer=mixer;holder.userData.walk=action;holder.userData.run=run;holder.userData.locomotion=null;holder.userData.andando=false;
+}
+
+// Corrida com clip independente: mesma hierarquia/esqueleto da caminhada original.
+// Intensifica os movimentos articulares sem alterar montarias ou animações PvP.
+function criarClipCorrida(base,hipsAlvo){
+ const walk=walkPara(base,hipsAlvo);
+ const tracks=walk.tracks.map(tr=>{
+  if(!tr.name.endsWith('.quaternion')||!/(?:UpLeg|Leg|Arm|ForeArm)/.test(tr.name))return tr.clone();
+  const vals=Float32Array.from(tr.values);
+  const start=new THREE.Quaternion().fromArray(vals,0);
+  const q=new THREE.Quaternion(),delta=new THREE.Quaternion(),boost=new THREE.Quaternion(),identity=new THREE.Quaternion();
+  const strength=/Leg|UpLeg/.test(tr.name)?1.32:1.24;
+  for(let i=0;i<vals.length;i+=4){
+   q.fromArray(vals,i);delta.copy(start).invert().multiply(q);
+   boost.copy(identity).slerp(delta,Math.min(1.5,strength));
+   start.clone().multiply(boost).normalize().toArray(vals,i);
+  }
+  return new THREE.QuaternionKeyframeTrack(tr.name,tr.times,vals);
+ });
+ return new THREE.AnimationClip('corrida',walk.duration*.74,tracks);
 }
 
 // Caminhada procedural: balança pernas e braços; parado, respira de leve.
@@ -342,11 +363,16 @@ export function animateAvatar(group,moving,t,ritmo=1){
  const {legs,arms,rig,imported,baseModel,mixer,clips}=group.userData;
  if(!imported&&baseModel){
   const walk=baseModel.userData.walk;
-  if(walk){ // com esqueleto: anima de verdade; parado volta à pose inicial
-   walk.timeScale=ritmo;
-   // andando: entra a caminhada; parado: a caminhada some aos poucos e o boneco volta à pose em pé
-   if(moving&&!baseModel.userData.andando){baseModel.userData.andando=true;walk.reset();walk.paused=false;walk.setEffectiveWeight(1);walk.fadeIn(.2).play()}
-   if(!moving&&baseModel.userData.andando){baseModel.userData.andando=false;walk.fadeOut(.3)}
+  if(walk){
+   const run=baseModel.userData.run;
+   const target=moving?(ritmo>=2?(run||walk):walk):null;
+   const current=baseModel.userData.locomotion||null;
+   if(current!==target){
+    current?.fadeOut(.18);
+    if(target){target.reset();target.enabled=true;target.setEffectiveWeight(1);target.fadeIn(.18).play()}
+    baseModel.userData.locomotion=target;
+   }
+   if(target)target.timeScale=target===walk?Math.max(.75,ritmo/1.35):1;
    return;
   }
   // Sem esqueleto: passo com leve balanço.
@@ -356,7 +382,7 @@ export function animateAvatar(group,moving,t,ritmo=1){
  }
  if(imported){
   if(mixer&&clips){
-   const want=moving?(clips.walk||clips.idle):(clips.idle||clips.walk);
+   const want=moving?(ritmo>=2?(clips.run||clips.walk||clips.idle):(clips.walk||clips.run||clips.idle)):(clips.idle||clips.walk||clips.run);
    if(want&&group.userData.current!==want){group.userData.current?.fadeOut(.2);want.reset().fadeIn(.2).play();group.userData.current=want}
   }
   if(!mixer)imported.position.y=moving?Math.abs(Math.sin(t*9))*.08:0;
@@ -396,9 +422,9 @@ export async function importModel(group,file){
  if(gltf.animations.length){
   const mixer=new THREE.AnimationMixer(model);
   const find=re=>gltf.animations.find(c=>re.test(c.name));
-  const walk=find(/walk|andar|run|correr/i),idle=find(/idle|parad|stand/i)||gltf.animations[0];
+  const walk=find(/walk|andar/i),run=find(/run|correr|sprint/i),idle=find(/idle|parad|stand/i)||gltf.animations[0];
   group.userData.mixer=mixer;
-  group.userData.clips={walk:walk&&mixer.clipAction(walk),idle:idle&&mixer.clipAction(idle)};
+  group.userData.clips={walk:walk&&mixer.clipAction(walk),run:run&&mixer.clipAction(run),idle:idle&&mixer.clipAction(idle)};
  }
  return {nome:file.name,animacoes:gltf.animations.map(a=>a.name)};
 }
