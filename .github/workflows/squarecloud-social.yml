@@ -1,0 +1,30 @@
+name: Pacote Square Cloud Social
+on:
+  push:
+    branches: [feat/squarecloud-modos-social]
+    paths: ['.github/workflows/squarecloud-social.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  bundle:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: {node-version: '24'}
+      - name: Testes
+        run: npm ci && npm test && node --check server.js && node --check combate.js && node --check public/app.js
+      - name: Criar ZIP pronto para Square Cloud
+        run: |
+          mkdir -p release
+          cp squarecloud.app package.json package-lock.json server.js combate.js debate.js anuncios.js pagamentos.js release/
+          cp -a public release/
+          cd release && zip -qr "../agora-brasil-squarecloud-social.zip" .
+          unzip -t ../agora-brasil-squarecloud-social.zip | tail -1
+      - uses: actions/upload-artifact@v4
+        with:
+          name: agora-brasil-squarecloud-social
+          path: agora-brasil-squarecloud-social.zip
+          retention-days: 30
