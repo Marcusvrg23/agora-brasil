@@ -5,6 +5,8 @@ on:
     branches: [feat/animacoes-gratuitas-threejs]
     paths:
       - 'public/preview-interacoes.*'
+      - 'server.js'
+      - 'public/montaria.mjs'
       - 'scripts/capturar-previas.mjs'
       - '.github/workflows/visual-qa.yml'
 permissions:
