@@ -259,11 +259,12 @@ export class Veiculo{
  mover(dt,mundo,v,voa,livre){
   const s=this.s;let nx=s.x+Math.sin(s.ry)*v*dt,nz=s.z+Math.cos(s.ry)*v*dt;
   if(!voa||s.y<45){
-   const alto=voa?mundo.colliders.filter(c=>(c.h||25)>s.y):mundo.colliders;
+   const alto=voa?mundo.colliders.filter(c=>(c.h||25)>s.y+this.cfg.raio*.5):mundo.colliders;
    const [cx,cz]=mundo.colisao(nx,nz,alto,this.cfg.raio);
    if(Math.hypot(cx-nx,cz-nz)>.01){
     if(Math.abs(s.vel)>8){const p=this.mundo(new THREE.Vector3(0,1,this.cfg.comp*.45));this.efeitos.faiscas(p.x,p.y,p.z,10);this.batida=Math.min(1,Math.abs(s.vel)/30)}
-    s.vel*=-.2;nx=cx;nz=cz;
+    // Colisao nao paralisa o helicoptero: escorrega e permite sair da parede.
+    s.vel*=voa?.55:.25;nx=cx;nz=cz;
    }
   }
   if(!livre&&!voa){const L=mundo.limites;nx=THREE.MathUtils.clamp(nx,L.xMin,L.xMax);nz=THREE.MathUtils.clamp(nz,L.zMin,L.zMax)}
