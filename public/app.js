@@ -3,6 +3,7 @@ import {OrbitControls} from 'https://cdn.jsdelivr.net/npm/three@0.169.0/examples
 import {buildCity,resolveCollision} from './cidade.js';
 import {iniciarTeloes,iniciarFormulario} from './teloes.js';
 import {iniciarPvP} from './pvp.js';
+import {iniciarBots} from './bots.js';
 import {dressAvatar,animateAvatar,importModel,removeImported,sanitizeLook,TEAM_COLORS,BASES,baseStatus,updateAvatarMixers,ESTILOS_CABELO,THUMB_CDN} from './avatar.js';
 
 const canvas=document.querySelector('#world');
@@ -29,6 +30,7 @@ const count=document.querySelector('#live-count');
 const clock=new THREE.Clock();
 // Cidade desenhada em código (cidade.js), em metros reais.
 const city=buildCity(scene,renderer,camera,{qualidade:QUALIDADE});
+const npcs=iniciarBots(scene,(x,z)=>resolveCollision(x,z,city.colliders),city.limites);
 modelStatus.textContent='Esplanada em código · gráficos '+(QUALIDADE==='alto'?'altos':'leves');
 const teloes=iniciarTeloes(city);iniciarFormulario();
 const AVATAR_ESCALA=.84; // bonecos de 2,15 m → ~1,80 m na escala da cidade
@@ -384,6 +386,7 @@ function animate(){
   seguirJogador(false);
  } else {playerMoving=false;if(entered)seguirJogador(false)}
  const t=clock.elapsedTime,now=performance.now();
+ npcs.update(dt,t);
  animateAvatar(player,entered&&playerMoving,t,correndo?2.3:1.35);
  updateAvatarMixers(player,dt);
  for(const p of peers.values()){
