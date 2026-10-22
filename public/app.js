@@ -422,6 +422,7 @@ function mostrarGrafite(g){
  const tex=new THREE.CanvasTexture(c);const mesh=new THREE.Mesh(new THREE.PlaneGeometry(3.8,1),new THREE.MeshBasicMaterial({map:tex,transparent:true,depthWrite:false,side:THREE.DoubleSide}));
  mesh.position.set(g.x,1.35,g.z);scene.add(mesh);graffitis.set(g.id,mesh);
 }
+document.querySelector('#jogo-chat').addEventListener('submit',e=>{e.preventDefault();const i=e.currentTarget.querySelector('input');const text=i.value.trim();if(entered&&text)send({type:'chat',text});i.value=''});
 document.querySelector('#pvp-toggle').addEventListener('change',e=>{
  modoPvP=e.target.checked;
  send({type:'modo-pvp',ativo:modoPvP});
