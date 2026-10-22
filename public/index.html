@@ -7,6 +7,7 @@
 <meta name="description" content="Ágora Brasil: praça cívica virtual 3D, independente e gratuita.">
 <title>Ágora Brasil — Brasília 3D</title>
 <link rel="stylesheet" href="/styles.css">
+<link rel="stylesheet" href="/hud.css">
 </head>
 <body>
 <header class="topbar">
@@ -18,10 +19,55 @@
   <canvas id="world"></canvas>
   <div class="scene-label"><span class="tag">CENÁRIO EM DESENVOLVIMENTO</span><h1>Esplanada dos Ministérios</h1><p>Congresso Nacional · Brasília / DF</p></div>
   <div class="npc-legend">6 NPCs simulados · pessoas reais contabilizadas separadamente</div>
-  <div id="game-hud" hidden><div class="game-toolbar"><label><input type="checkbox" id="pvp-toggle"><span id="pvp-label">Livre — sem dano entre jogadores</span></label><button id="grafite-btn">Arte virtual</button><button id="tela-cheia">Tela cheia</button><button id="sair-jogo">Sair</button></div><div id="vitorias">Vitórias no jogo · Vermelho 0 × 0 Amarelo</div><div class="eleicao-info">Apuração oficial (quando disponível): <a href="https://resultados.tse.jus.br/" target="_blank" rel="noopener noreferrer">TSE por estado ↗</a> · <a href="https://www.youtube.com/@justicaeleitoral" target="_blank" rel="noopener noreferrer">Canal da Justiça Eleitoral ↗</a> · não confundir com placar do jogo.</div><form id="jogo-chat"><input maxlength="180" placeholder="Mensagem aparece acima do personagem"><button>Enviar</button></form></div>
+  <div id="game-hud" hidden aria-label="Interface da praça virtual">
+   <div class="hud-top">
+    <div class="hud-logo"><span class="hud-logo-mark" aria-hidden="true">▥</span><b>BRASÍLIA <small>LIVRE <span>· ÁGORA BRASIL</span></small></b></div>
+    <nav class="hud-top-nav" aria-label="Opções do jogo"><button id="grafite-btn" type="button">✦ Arte virtual</button><button id="tela-cheia" type="button">⛶ Tela cheia</button><button id="sair-jogo" type="button">Sair</button></nav>
+    <div class="hud-score" aria-label="Placar do jogo"><b id="hud-vm">0</b><span>⚔</span><b id="hud-am">0</b><small>PvP · até <span id="hud-meta">25</span></small></div>
+    <div class="hud-presence" title="Participantes conectados"><span class="hud-online-dot"></span><strong id="hud-online">0 online</strong></div>
+    <button class="hud-menu-button" type="button" data-hud-action="menu" aria-label="Abrir menu">☰</button>
+   </div>
+   <div class="hud-status-cards">
+    <label class="hud-pvp-switch"><input type="checkbox" id="pvp-toggle"><span class="hud-online-dot"></span><span id="pvp-label">Livre — sem dano entre jogadores</span></label>
+    <div class="hud-tse">⚑ <span>Apuração oficial (quando disponível): <a href="https://resultados.tse.jus.br/" target="_blank" rel="noopener noreferrer">TSE por estado ↗</a><small>Não confundir com placar do jogo.</small></span></div>
+    <div id="vitorias" class="hud-victories" aria-live="polite">Vitórias no jogo · Vermelho 0 × 0 Amarelo</div>
+   </div>
+   <div class="hud-location-mobile"><span>⌖ CONGRESSO NACIONAL</span><small>Brasília / DF · Praça virtual</small></div>
+   <div class="hud-missions">
+    <div class="hud-panel hud-race">⚑ <span>Corridas <small>Em preparação</small></span></div>
+    <div class="hud-panel hud-mission"><strong>Missão 1: Explore Brasília</strong><small>Percorra a Esplanada a pé ou de veículo</small><span><b id="hud-distance">0 m</b> / 2 km</span><div class="hud-progress"><i id="hud-distance-bar"></i></div></div>
+    <button type="button" class="hud-panel hud-debates" data-hud-action="debate">▣ <span>Debates na tribuna</span><b>›</b></button>
+   </div>
+   <div class="hud-minimap" aria-label="Mapa esquemático da praça"><div class="hud-mini-title">⌖ <span>CONGRESSO NACIONAL<small>Brasília / DF</small></span></div><div class="hud-mini-map"><canvas id="hud-map" width="240" height="210" aria-label="Posição aproximada dentro da cena 3D"></canvas><span class="hud-map-caption">Mapa esquemático</span></div></div>
+   <nav class="hud-actionbar" aria-label="Ações do jogador">
+    <button type="button" data-hud-action="vehicle"><span>▤</span>Veículos</button>
+    <button type="button" data-hud-action="banner"><span>⚑</span>Cartaz / bandeira</button>
+    <button type="button" data-hud-action="spray"><span>✎</span>Spray</button>
+    <button type="button" data-hud-action="pvp"><span>⚔</span>PvP</button>
+    <button type="button" data-hud-action="animations"><span>♟</span>Animações</button>
+    <div class="hud-action-secondary"><button type="button" data-hud-action="customize">♧ Customização</button><button type="button" data-hud-action="aerial">◇ Aéreo</button></div>
+   </nav>
+   <section class="hud-chat" aria-label="Conversa da praça">
+    <div class="hud-chat-heading"><b>▣ Conversa na praça</b><button type="button" data-hud-action="chat" aria-label="Recolher ou expandir chat">−</button></div>
+    <div id="hud-chat-messages" class="hud-chat-messages" role="log" aria-live="polite"></div>
+    <form id="jogo-chat"><input maxlength="180" placeholder="Digite uma mensagem..." autocomplete="off" aria-label="Mensagem na praça"><button type="submit" aria-label="Enviar mensagem">➤</button></form>
+   </section>
+   <div class="hud-touch-actions" aria-label="Ações por toque">
+    <button type="button" data-hud-action="interact" aria-label="Interagir"><span>☞</span><small>Interagir</small></button>
+    <button type="button" data-hud-action="attack" aria-label="Atacar"><span>⚔</span><small>Atacar</small></button>
+    <button type="button" data-hud-action="chat" aria-label="Abrir chat"><span>▣</span><small>Chat</small></button>
+    <button type="button" data-hud-action="run" id="hud-run" aria-label="Correr (segurar)"><span>♞</span><small>Correr</small></button>
+    <button type="button" data-hud-action="secondary" id="hud-secondary" aria-label="Ação secundária">✦</button>
+   </div>
+   <div class="hud-joystick" id="hud-joystick" role="group" aria-label="Controle analógico de movimento">
+    <div class="hud-joystick-track"><div class="hud-joystick-knob" id="hud-joystick-knob"></div></div>
+   </div>
+   <div id="hud-toast" class="hud-toast" role="status" aria-live="polite" hidden></div>
+   <button id="hud-close-panel" class="hud-close-panel" type="button" aria-label="Fechar painel" hidden>✕ Fechar</button>
+  </div>
   <div class="world-tips" id="world-tips">Arraste para olhar · WASD anda · <b>E</b> pega item ou entra no veículo · <b>F</b>/clique usa · rolagem dá zoom</div>
   <div class="world-footer"><span id="model-status">Carregando Brasília 3D…</span><span>Modelo arquitetônico estilizado · não georreferenciado</span></div>
-  <div class="mobile-controls" aria-label="Controles de movimento"><button id="up" aria-label="Avançar">↑</button><div><button id="left" aria-label="Esquerda">←</button><button id="down" aria-label="Recuar">↓</button><button id="right" aria-label="Direita">→</button></div></div>
+
  </section>
  <aside class="sidebar">
   <div class="panel intro">
