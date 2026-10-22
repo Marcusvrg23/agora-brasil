@@ -267,14 +267,22 @@ let walkBase=null;
 let genuineRunBase=null;
 function sharedRun(){
  if(!genuineRunBase)genuineRunBase=new GLTFLoader().loadAsync('/assets/anims/run-higgsfield.glb')
-  .then(g=>g.animations.find(a=>/run|corr/i.test(a.name))||g.animations[0]||null).catch(e=>{console.warn('Run GLB unavailable',e);return null});
+  .then(g=>({clip:g.animations.find(a=>/run|corr/i.test(a.name))||g.animations[0]||null,scene:g.scene})).catch(e=>{console.warn('Run GLB unavailable',e);return null});
  return genuineRunBase;
 }
-function runPara(clip, model){
- const bones=new Set();model.traverse(o=>{if(o.isBone)bones.add(o.name)});
- if(!clip)return null;
- const tracks=clip.tracks.filter(t=>t.name.endsWith('.quaternion') && bones.has(t.name.slice(0,-'.quaternion'.length))).map(t=>t.clone());
- return tracks.length>=8?new THREE.AnimationClip('Run',clip.duration,tracks):null;
+function runPara(base, model){
+ if(!base?.clip)return null;
+ const bones=new Map();model.traverse(o=>{if(o.isBone)bones.set(o.name,o)});
+ const tracks=base.clip.tracks.filter(t=>t.name.endsWith('.quaternion') && bones.has(t.name.slice(0,-'.quaternion'.length))).map(t=>{
+  const name=t.name.slice(0,-'.quaternion'.length);
+  const src=base.scene.getObjectByName(name),dst=bones.get(name);
+  if(!src||!dst)return t.clone();
+  const inv=src.quaternion.clone().invert(),rest=dst.quaternion.clone(),vals=Float32Array.from(t.values);
+  const q=new THREE.Quaternion();
+  for(let i=0;i<vals.length;i+=4){q.fromArray(vals,i).premultiply(inv).premultiply(rest).normalize().toArray(vals,i)}
+  return new THREE.QuaternionKeyframeTrack(t.name,t.times,vals);
+ });
+ return tracks.length>=8?new THREE.AnimationClip('Run',base.clip.duration,tracks):null;
 }
 function sharedWalk(){
  if(!walkBase)walkBase=loadBase('homem').then(g=>{
