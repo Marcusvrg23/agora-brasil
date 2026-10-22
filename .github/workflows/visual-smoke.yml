@@ -1,40 +1,52 @@
-name: Screenshots e Smoke Visual - Agora Brasil
+name: Evidencias 3D e testes - Agora Brasil
 on:
   push:
     branches: [feat/caminhoes-personagens-corrida-higgsfield]
-    paths: ['.github/workflows/visual-smoke.yml','scripts/visual-smoke.cjs']
+    paths:
+      - '.github/workflows/visual-smoke.yml'
+      - 'public/avatar.js'
+      - 'public/preview-corrida.*'
+      - 'public/assets/bases/homem.glb'
+      - 'screenshots/animacao-corrida-validada.mp4'
+      - 'test/personagens.test.mjs'
+      - 'public/montaria.mjs'
   workflow_dispatch:
 permissions:
-  contents: write
+  contents: read
 jobs:
-  visual:
+  evidencias:
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 5
     steps:
       - uses: actions/checkout@v4
-        with:
-          persist-credentials: true
       - uses: actions/setup-node@v4
         with:
           node-version: '24'
-      - run: npm ci
-      - run: npm install --no-save playwright
-      - run: npx playwright install chromium --with-deps
-      - name: Capturar ambiente 3D e checar WebSocket
-        run: node scripts/visual-smoke.cjs
-      - uses: actions/upload-artifact@v4
+      - name: Conferir sintaxe dos scripts 3D
+        run: |
+          node --check public/avatar.js
+          node --check public/preview-corrida.js
+          node --check public/app.js
+          node --check public/veiculos.js
+      - name: Testar personagens e montaria
+        run: node --test test/personagens.test.mjs test/montaria.test.mjs
+      - name: Validar vídeo e modelo local
+        run: |
+          test -s public/assets/bases/homem.glb
+          test -s screenshots/animacao-corrida-validada.mp4
+          test -s screenshots/preview-run.png
+          ffprobe -v error -show_entries format=duration,size -of default=noprint_wrappers=1 screenshots/animacao-corrida-validada.mp4
+      - name: Disponibilizar vídeo e screenshots reais
+        uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: screenshots-agora-brasil
-          path: screenshots/*.png
+          name: agora-brasil-animacao-validada
+          path: |
+            screenshots/animacao-corrida-validada.mp4
+            screenshots/preview-idle.png
+            screenshots/preview-walk.png
+            screenshots/preview-run.png
+            screenshots/01-home.png
+            screenshots/02-jogando.png
+            screenshots/03-criador.png
           retention-days: 30
-      - name: Publicar screenshots na branch
-        if: always()
-        run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add -f screenshots/*.png || true
-          if ! git diff --cached --quiet; then
-            git commit -m "test: screenshots reais do jogo [skip ci]"
-            git push
-          fi
