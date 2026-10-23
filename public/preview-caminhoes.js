@@ -10,13 +10,13 @@ const ground=new THREE.Mesh(new THREE.PlaneGeometry(110,110),new THREE.MeshStand
 const efeitos={faiscas(){},pegadas(){},poeira(){},chama(){},escapamento(){},fumacaRastro(){}};
 const make=tipo=>new Veiculo(scene,{id:'demo',tipo,x:0,y:0,z:0,ry:0,vida:620,max:620,motorista:null},efeitos);
 let ativo=make('caminhao-lula'),movendo=false,tempo=0,prev=performance.now();
-const selects=[['lula','caminhao-lula'],['bolsonaro','caminhao-bolsonaro']];
-for(const [id,tipo] of selects)document.querySelector('#'+id).addEventListener('click',()=>{ativo.remover();ativo=make(tipo);tempo=0;for(const [button] of selects)document.querySelector('#'+button).classList.toggle('active',button===id)});
+const selects=[['lula','caminhao-lula'],['bolsonaro','caminhao-bolsonaro'],['carro','carro']];
+for(const [id,tipo] of selects)document.querySelector('#'+id).addEventListener('click',()=>{ativo.remover();ativo=make(tipo);tempo=0;const truck=tipo!=='carro';controls.target.set(0,truck?3.5:1.1,0);camera.position.set(truck?23:7.7,truck?16:4.2,truck?25:8.5);controls.update();for(const [button] of selects)document.querySelector('#'+button).classList.toggle('active',button===id)});
 document.querySelector('#ligar').addEventListener('click',e=>{movendo=!movendo;e.currentTarget.classList.toggle('active',movendo);e.currentTarget.textContent=movendo?'Parar movimento':'Simular movimento'});
 function frame(now){requestAnimationFrame(frame);const dt=Math.min(.04,(now-prev)/1000);prev=now;tempo+=dt;
 const w=canvas.clientWidth,h=canvas.clientHeight;
 if(w&&h&&(canvas.width!==Math.round(w*renderer.getPixelRatio())||canvas.height!==Math.round(h*renderer.getPixelRatio()))){renderer.setSize(w,h,false);camera.aspect=w/h;camera.updateProjectionMatrix()}
 ativo.s.vel=movendo?10:0;ativo.s.acel=0;ativo.local=true;ativo.animar(dt,tempo,camera);ativo.raiz.rotation.y=movendo?Math.sin(tempo*.3)*.15:0;
-const state=statusModelos.get(ativo.tipo);document.querySelector('#status').textContent=state==='ok'?'GLB real carregado':state==='procedural'?'Fallback procedimental':'Carregando modelo 3D';
-window.__truckPreview={tipo:ativo.tipo,status:state||'loading',rodas:ativo.rodasTruck?.length||0,bandeiras:ativo.bandeirasTruck?.length||0,vel:ativo.s.vel};
+const state=statusModelos.get(ativo.tipo);document.querySelector('#status').textContent=state==='ok'?'GLB real carregado':state==='procedural'?'Reserva detalhada — GLB indisponível':'Carregando modelo 3D';
+window.__truckPreview={tipo:ativo.tipo,status:state||'loading',rodas:ativo.rodasTruck?.length||0,bandeiras:ativo.bandeirasTruck?.length||0,vel:ativo.s.vel,procedural:!!ativo.modeloProcedural};
 controls.update();renderer.render(scene,camera)}requestAnimationFrame(frame);
