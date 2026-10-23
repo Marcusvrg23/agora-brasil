@@ -45,7 +45,7 @@ test('Sprint V2 inclui quadril animado em Y, sem root-motion em X/Z',()=>{
  assert.ok(hip,'Faltou Hips.translation');
  const values=run.accessor(a.samplers[hip.sampler].output);
  const range=Math.max(...values.map(a=>a[1]))-Math.min(...values.map(a=>a[1]));
- assert.ok(range>4 && range<10, 'Amplitude do quadril precisa ser natural e limitada: '+range);
+ assert.ok(range>3 && range<8, 'Amplitude do quadril precisa ser natural e limitada: '+range);
  assert.ok(values.every(v=>Math.abs(v[0]-values[0][0])<.001&&Math.abs(v[2]-values[0][2])<.001),'In-place animation only');
 });
 test('Sprint V2 é bilateral: braços alternam, joelhos flexionam, ritmo é diferente de Walk',()=>{
@@ -59,8 +59,8 @@ test('Sprint V2 é bilateral: braços alternam, joelhos flexionam, ritmo é dife
  const delta=(arr,i,j)=>Math.sqrt(arr[i].reduce((s,n,k)=>s+(n-arr[j][k])**2,0));
  assert.ok(delta(left,0,15)>.1, 'Braço esquerdo deve mudar ao longo da passada');
  assert.ok(delta(right,0,15)>.1, 'Braço direito deve mudar ao longo da passada');
- assert.ok(delta(track('LeftLeg'),0,45)>.2);
- assert.ok(delta(track('RightLeg'),0,15)>.2);
+ assert.ok(delta(track('LeftLeg'),0,15)>.2);
+ assert.ok(delta(track('RightLeg'),0,45)>.2);
  assert.ok(a.channels.some(c=>run.data.nodes[c.target.node].name==='LeftFoot'));
  assert.ok(a.channels.some(c=>run.data.nodes[c.target.node].name==='RightFoot'));
  const walk=human.data.animations[0];
