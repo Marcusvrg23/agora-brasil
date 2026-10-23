@@ -6,7 +6,9 @@
   "scripts": {
     "start": "node server.js",
     "test": "node --test",
-    "check": "node --check server.js"
+    "check": "node --check server.js && node --check combate.js && node --check public/app.js && node --check scripts/local-load.cjs && node --check scripts/release-browser-smoke.mjs",
+    "test:ws": "node --test test/multiplayer.test.js test/cartazes.test.js",
+    "test:load:local": "node scripts/local-load.cjs"
   },
   "engines": {
     "node": ">=20"

@@ -12,6 +12,13 @@ const PORT = Number(process.env.PORT || 80);
 const HOST = process.env.HOST || '0.0.0.0';
 const PUBLIC = path.join(__dirname, 'public');
 const LIMIT_BYTES = 8 * 1024;
+const { randomBytes } = require('node:crypto');
+const sessions = new Map();
+const RESUME_MS = 30000;
+const MAX_CONNECTIONS = 500;
+const requestedRoomLimit=Number(process.env.MAX_ROOM_PLAYERS || 100);
+const MAX_ROOM = Number.isInteger(requestedRoomLimit) && requestedRoomLimit>0 ? Math.min(250,requestedRoomLimit) : 100;
+const MAX_BUFFER = 1024 * 1024;
 const rooms = new Map();
 const debates = new Map();
 const combates = new Map();
@@ -68,16 +75,24 @@ function combateOf(code) {
   return combates.get(code);
 }
 function send(ws, packet) {
-  if(ws.readyState===WebSocket.OPEN) ws.send(JSON.stringify(packet));
+  sendEncoded(ws, JSON.stringify(packet));
+}
+function sendEncoded(ws, data) {
+  if (ws.readyState !== WebSocket.OPEN) return;
+  if (ws.bufferedAmount > MAX_BUFFER) { ws.terminate(); return; }
+  ws.send(data, error => { if (error) ws.terminate(); });
 }
 function peers(code) { return [...(rooms.get(code)||[])].filter(ws=>ws.readyState===WebSocket.OPEN); }
 function broadcast(code, data, except) {
-  for(const client of peers(code)) if(client!==except) send(client,data);
+  const encoded = JSON.stringify(data);
+  for(const client of peers(code)) if(client!==except) sendEncoded(client,encoded);
 }
 function publishCount(code) {
   broadcast(code,{type:'presence',count:peers(code).length});
 }
 function leave(ws) {
+  clearTimeout(ws.expiry);
+  if (ws.resumeToken && sessions.get(ws.resumeToken) === ws) sessions.delete(ws.resumeToken);
   if(!ws.room) return;
   const group=rooms.get(ws.room);
   if(group) {
@@ -85,7 +100,7 @@ function leave(ws) {
     debates.get(ws.room)?.saiu(ws.playerId, Date.now());
     combates.get(ws.room)?.sair(ws.playerId);
     broadcast(ws.room,{type:'leave',id:ws.playerId});
-    if(group.size===0) { rooms.delete(ws.room); debates.delete(ws.room); combates.delete(ws.room); }
+    if(group.size===0) { rooms.delete(ws.room); debates.delete(ws.room); combates.delete(ws.room); graffitis.delete(ws.room); }
     else publishCount(ws.room);
   }
   ws.room=null;
@@ -192,7 +207,7 @@ const server=http.createServer((req,res)=>{
   if(url.pathname==='/admin') url.pathname='/admin.html';
   if(url.pathname==='/health') {
     res.writeHead(200,{'content-type':'application/json','cache-control':'no-store'});
-    res.end(JSON.stringify({ok:true,rooms:rooms.size,players:[...rooms.values()].reduce((n,s)=>n+s.size,0)}));
+    res.end(JSON.stringify({ok:true,rooms:rooms.size,players:[...rooms.keys()].reduce((n,code)=>n+peers(code).length,0)}));
     return;
   }
   let pathname;
@@ -214,35 +229,96 @@ const server=http.createServer((req,res)=>{
   });
 });
 const wss=new WebSocketServer({server,maxPayload:LIMIT_BYTES});
+function positionOf(ws) {
+  const c = combates.get(ws.room), j = c?.jogadores.get(ws.playerId);
+  const pos = j ? c.posDe(j) : ws.position;
+  return {x:pos?.x ?? 0,z:pos?.z ?? -30};
+}
+function joinedState(ws) {
+  const occupants = peers(ws.room).filter(p=>p!==ws).map(p=>({
+    id:p.playerId,name:p.name,look:p.look,role:p.role,cartaz:p.cartaz||'',position:positionOf(p)
+  }));
+  send(ws,{type:'joined',id:ws.playerId,role:ws.role,resumeToken:ws.resumeToken,
+    room:ws.room,peers:occupants,count:peers(ws.room).length,cartaz:ws.cartaz,position:positionOf(ws)});
+  send(ws,{type:'debate',state:debateOf(ws.room).estado()});
+  send(ws,{type:'teloes',slots:anuncios.publico()});
+  send(ws,{type:'vitorias',placar:placarTotal});
+  send(ws,{type:'graffitis',items:[...(graffitis.get(ws.room)||[])]});
+  send(ws,{type:'pvp',estado:combateOf(ws.room).estado()});
+}
+function disconnect(ws) {
+  if (!ws.room || ws.expiry) return;
+  broadcast(ws.room,{type:'leave',id:ws.playerId});
+  publishCount(ws.room);
+  // A partida conserva o estado por 30 s; reconectar não cura nem duplica itens.
+  ws.expiry = setTimeout(()=>leave(ws), RESUME_MS);
+  ws.expiry.unref();
+}
+function sweepConnections(now = Date.now()) {
+  for (const ws of wss.clients) {
+    if ((!ws.room && now - ws.connectedAt > 10000) || !ws.alive) { ws.terminate(); continue; }
+    ws.alive = false;
+    if (ws.readyState === WebSocket.OPEN) ws.ping();
+  }
+}
+const heartbeat = setInterval(sweepConnections, 5000);
+heartbeat.unref();
+wss.on('close',()=>{ clearInterval(heartbeat); for (const ws of sessions.values()) leave(ws); });
 wss.on('connection',(ws)=>{
+  ws.on('error',()=>ws.terminate());
+  if (wss.clients.size > MAX_CONNECTIONS) { ws.close(1013,'Servidor cheio'); return; }
+  ws.connectedAt=Date.now();ws.alive=true;
+  ws.on('pong',()=>{ws.alive=true;});
   ws.playerId='p'+nextId++;
-  ws.room=null;ws.name='Visitante';ws.lastChat=0;ws.lastMove=0;ws.cartaz='';ws.lastCartaz=0;setLook(ws,null);
+  ws.room=null;ws.role='participant';ws.name='Visitante';ws.lastChat=0;ws.lastMove=0;ws.cartaz='';ws.lastCartaz=0;setLook(ws,null);
   send(ws,{type:'hello',id:ws.playerId});
   ws.on('message',(raw)=>{
+    if(ws.readyState!==WebSocket.OPEN)return;
+    const now=Date.now();
+    if (now-(ws.messageAt||0)>=1000) { ws.messageAt=now;ws.messageCount=0; }
+    if ((ws.messageCount=(ws.messageCount||0)+1)>80) { ws.close(1008,'Taxa excedida'); return; }
     let msg;try { msg=JSON.parse(String(raw)); }catch{return;}
     if(!msg||typeof msg!=='object') return;
     if(msg.type==='join') {
+      const code=roomCode(msg.room);
+      if (ws.room===code) { joinedState(ws); return; }
+      if (now-(ws.lastJoin||0)<1000) return;
+      ws.lastJoin=now;
+      const candidate=typeof msg.resumeToken==='string' && sessions.get(msg.resumeToken);
+      const resuming=candidate && candidate!==ws && candidate.room===code;
+      if (peers(code).length-(resuming && candidate.readyState===WebSocket.OPEN?1:0)>=MAX_ROOM || (!resuming && sessions.size>=MAX_CONNECTIONS)) {
+        send(ws,{type:'error',code:'capacity'});return;
+      }
       leave(ws);
-      ws.room=roomCode(msg.room);
-      ws.name=clean(msg.name,24)||'Visitante';
-      setLook(ws,msg.look||msg);
-      if(!rooms.has(ws.room)) rooms.set(ws.room,new Set());
-      const occupants=peers(ws.room).map(p=>({
-        id:p.playerId,name:p.name,look:p.look,cartaz:p.cartaz||'',position:p.position||{x:0,z:-30}
-      }));
-      rooms.get(ws.room).add(ws);
-      send(ws,{type:'joined',room:ws.room,peers:occupants,count:peers(ws.room).length,cartaz:ws.cartaz});
-      broadcast(ws.room,{type:'enter',id:ws.playerId,name:ws.name,look:ws.look,cartaz:ws.cartaz,position:ws.position||{x:0,z:-30}},ws);
-      publishCount(ws.room);
-      send(ws,{type:'debate',state:debateOf(ws.room).estado()});
-      send(ws,{type:'teloes',slots:anuncios.publico()});
-      send(ws,{type:'vitorias',placar:placarTotal});
-      send(ws,{type:'graffitis',items:[...(graffitis.get(ws.room)||[])]});
-      combateOf(ws.room).entrar(ws.playerId,ws.team,ws.position||{x:0,z:-30});
-      send(ws,{type:'pvp',estado:combateOf(ws.room).estado()});
+      const previous = typeof msg.resumeToken==='string' && sessions.get(msg.resumeToken);
+      if (previous && previous!==ws && previous.room===code) {
+        clearTimeout(previous.expiry);
+        for (const key of ['playerId','name','look','team','outfit','role','position','cartaz','lastChat','lastMove','lastCartaz','lastGrafite','pvpT','pvpN']) ws[key]=previous[key];
+        rooms.get(code)?.delete(previous);
+        previous.room=null;
+        sessions.delete(msg.resumeToken);
+        if (previous.readyState===WebSocket.OPEN) previous.close(4001,'Sessão reconectada');
+      } else {
+        ws.name=clean(msg.name,24)||'Visitante';
+        ws.role=msg.role==='visitor'?'visitor':'participant';
+        ws.position={x:0,z:-30};ws.cartaz='';
+        setLook(ws,msg.look||msg);
+      }
+      ws.room=code;
+      ws.resumeToken=randomBytes(24).toString('hex');sessions.set(ws.resumeToken,ws);
+      if(!rooms.has(code)) rooms.set(code,new Set());
+      rooms.get(code).add(ws);
+      const c=combateOf(code);
+      if (ws.role!=='visitor' && !c.jogadores.has(ws.playerId)) c.entrar(ws.playerId,ws.team,ws.position);
+      joinedState(ws);
+      broadcast(code,{type:'enter',id:ws.playerId,name:ws.name,look:ws.look,role:ws.role,cartaz:ws.cartaz,position:positionOf(ws)},ws);
+      const j=c.jogadores.get(ws.playerId);
+      if(previous && j)broadcast(code,{type:'jogador',jogador:c.pub(j),pos:j.pos},ws);
+      publishCount(code);
       return;
     }
-    if(!ws.room) return;
+    if(msg.type==='leave'){leave(ws);return;}
+    if(!ws.room || ws.role==='visitor') return;
     if(msg.type==='look') {
       setLook(ws,msg.look||msg);
       broadcast(ws.room,{type:'look',id:ws.playerId,look:ws.look});
@@ -298,8 +374,7 @@ wss.on('connection',(ws)=>{
       broadcast(ws.room,{type:'move',id:ws.playerId,x,z},ws);
     }
   });
-  ws.on('close',()=>leave(ws));
-  ws.on('error',()=>leave(ws));
+  ws.on('close',()=>disconnect(ws));
 });
 // Mensagens do modo PvP. O servidor decide vida, dano, itens e veículos.
 const ID = (v) => (typeof v === 'string' ? v.slice(0, 16) : '');
@@ -343,4 +418,4 @@ if(require.main===module) {
   setInterval(()=>{ if(anuncios.expirar()) publicarTeloes(); },60e3).unref();
   server.listen(PORT,HOST,()=>console.log('Ágora Brasil em http://localhost:'+PORT));
 }
-module.exports={server,clean,roomCode,team,outfit,lookOf,tickDebates,tickCombates,anuncios,combates};
+module.exports={server,clean,roomCode,team,outfit,lookOf,tickDebates,tickCombates,anuncios,combates,sweepConnections};

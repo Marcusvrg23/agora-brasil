@@ -64,6 +64,7 @@ let socket=null,myId=null,entered=false,name='Visitante',room='5300108';
 const live=document.querySelector('#status-dot'),status=document.querySelector('#status-label');
 const peers=new Map();
 let modoPvP=false;
+let connectionWanted=false,connectionRole='participant',resumeToken=null,retryTimer=null,retryAttempt=0;
 const tags=new Map();
 const makeTag=(text,color='#d9fff2')=>{const c=document.createElement('canvas');c.width=512;c.height=128;const g=c.getContext('2d');g.fillStyle='#082634e8';g.fillRect(5,8,502,112);g.strokeStyle='#6ae5b1';g.strokeRect(5,8,502,112);g.fillStyle=color;g.textAlign='center';g.font='bold 34px system-ui';g.fillText(String(text).slice(0,38),256,78);const map=new THREE.CanvasTexture(c);const sprite=new THREE.Sprite(new THREE.SpriteMaterial({map,transparent:true,depthWrite:false}));sprite.scale.set(3.4,.85,1);return sprite};
 function etiqueta(id,nome){let t=tags.get(id);if(t){scene.remove(t);t.material.map.dispose();t.material.dispose()}t=makeTag(nome);scene.add(t);tags.set(id,t)}
@@ -154,27 +155,40 @@ function log(msg,nick,time){
  pane.append(el);pane.scrollTop=pane.scrollHeight;
  while(pane.children.length>65)pane.firstChild.remove();
 }
-function send(data){if(socket?.readyState===WebSocket.OPEN)socket.send(JSON.stringify(data))}
+function send(data){if(connectionRole==='visitor'&&!['join','leave'].includes(data.type))return;if(socket?.readyState===WebSocket.OPEN)socket.send(JSON.stringify(data))}
 function connect(){
- if(socket&&socket.readyState<2)socket.close();
+ clearTimeout(retryTimer);
+ if(socket&&socket.readyState<2)return;
  const scheme=location.protocol==='https:'?'wss:':'ws:';
- socket=new WebSocket(scheme+'//'+location.host+'/api/ws');
+ const current=new WebSocket(scheme+'//'+location.host+'/api/ws');socket=current;
  socket.onopen=()=>{
   live.classList.add('connected');status.textContent='Conectado';
-  send({type:'join',room,name,look:myLook});
+  send({type:'join',room,name,look:myLook,role:connectionRole,resumeToken});
  };
  socket.onmessage=(event)=>{
   let data;try{data=JSON.parse(event.data)}catch{return}
+  if(current!==socket)return;
+  if(data.type==='error'&&data.code==='capacity'){connectionWanted=false;resumeToken=null;status.textContent='Sala cheia — tente novamente em instantes';current.close();return;}
+  if(data.type==='joined'){myId=data.id;resumeToken=data.resumeToken;connectionRole=data.role;retryAttempt=0;}
+  if(data.type==='pvp'){
+   modoPvP=!!data.estado.jogadores.find(j=>j.id===myId)?.pvp;
+   document.querySelector('#pvp-toggle').checked=modoPvP;
+   if(connectionRole!=='visitor')document.querySelector('#pvp-label').textContent=modoPvP?'PvP ligado — combates liberados':'Livre — sem dano entre jogadores';
+  }
   if(pvp.mensagem(data))return;
   if(cartazes.mensagem(data))return;
   if(data.type==='hello')myId=data.id;
   if(data.type==='joined'){
-   entered=true;player.visible=true;seguirJogador(true);etiqueta(myId,name);
+   entered=true;player.visible=connectionRole!=='visitor';if(data.position)player.position.set(data.position.x,0,data.position.z);seguirJogador(true);etiqueta(myId,name);
    document.body.classList.add('jogando');document.querySelector('#game-hud').hidden=false;
    document.querySelector('#pvp-toggle').checked=false;modoPvP=false;
    for(const mesh of peers.values())scene.remove(mesh);peers.clear();for(const tag of tags.values()){scene.remove(tag);tag.material.map.dispose();tag.material.dispose()}tags.clear();etiqueta(myId,name);
-   for(const other of data.peers||[])remoteAvatar(other.id,other.position?.x,other.position?.z,other.name,other.look);
-   log('Você entrou na praça. Participação gratuita e plural.');
+   for(const other of (data.peers||[]).filter(p=>p.role!=='visitor'))remoteAvatar(other.id,other.position?.x,other.position?.z,other.name,other.look);
+   for(const selector of ['#pvp-toggle','#grafite-btn','#cartaz-input','#cartaz-btn','#cartaz-remover','#jogo-chat input','#jogo-chat button','#chat input','#chat button']){
+    const control=document.querySelector(selector);if(control)control.disabled=connectionRole==='visitor';
+   }
+   document.querySelector('#pvp-label').textContent=connectionRole==='visitor'?'Visitante — somente observação':'Livre — sem dano entre jogadores';
+   log(connectionRole==='visitor'?'Você está observando como visitante.':'Você entrou na praça. Participação gratuita e plural.');
    count.textContent=data.count+' online';
   }
   if(data.type==='presence')count.textContent=data.count+' online';
@@ -182,7 +196,7 @@ function connect(){
   if(data.type==='grafite')mostrarGrafite(data.item);
   if(data.type==='graffitis'){for(const g of data.items||[])mostrarGrafite(g)}
   if(data.type==='chat'){log(data.text,data.name,data.time);balao(data.id,data.text)}
-  if(data.type==='enter'&&data.id!==myId)remoteAvatar(data.id,data.position?.x,data.position?.z,data.name,data.look);
+  if(data.type==='enter'&&data.id!==myId&&data.role!=='visitor')remoteAvatar(data.id,data.position?.x,data.position?.z,data.name,data.look);
   if(data.type==='look'&&data.id!==myId){const p=peers.get(data.id);if(p)dressAvatar(p,data.look)}
   if(data.type==='debate')renderDebate(data.state);
   if(data.type==='teloes')teloes.atualizar(data.slots);
@@ -198,18 +212,28 @@ function connect(){
   }
  };
  socket.onclose=()=>{
+  if(current!==socket)return;
   entered=false;cartazes.reset();document.body.classList.remove('jogando');document.querySelector('#game-hud').hidden=true;renderDebate(null);pvp.reset();live.classList.remove('connected');status.textContent='Desconectado';count.textContent='0 online';
+  for(const mesh of peers.values())scene.remove(mesh);peers.clear();
+  for(const tag of tags.values()){scene.remove(tag);tag.material.map.dispose();tag.material.dispose()}tags.clear();
+  if(connectionWanted){status.textContent='Reconectando…';retryTimer=setTimeout(connect,Math.min(10000,500*2**retryAttempt++)+Math.random()*250);}
  };
  socket.onerror=()=>{status.textContent='Sem conexão'};
 }
-document.querySelector('#enter').addEventListener('click',()=>{
+function enterWorld(role){
+ connectionWanted=true;
+ if(connectionRole!==role){send({type:'leave'});socket?.close();socket=null;resumeToken=null;}
+ connectionRole=role;
  name=(document.querySelector('#nickname').value||'Visitante').trim().slice(0,24)||'Visitante';
  // A acao parte do clique do usuario, permitindo Fullscreen API com fallback CSS.
  document.querySelector('.world-wrap').requestFullscreen?.().catch(()=>{});
  room=document.querySelector('#city').value;
  const sel=document.querySelector('#city');document.querySelector('#room-label').textContent=sel.selectedOptions[0].textContent.split('·')[0].trim();
  connect();
-});
+}
+document.querySelector('#enter').addEventListener('click',()=>enterWorld('participant'));
+document.querySelector('#enter-visitor').addEventListener('click',()=>enterWorld('visitor'));
+window.addEventListener('online',()=>{if(connectionWanted&&(!socket||socket.readyState>1))connect()});
 // ---------- Criador de personagem ----------
 const creator={
  base:document.querySelector('#base'),cards:document.querySelector('#base-cards'),
@@ -467,7 +491,7 @@ document.querySelector('#grafite-btn').addEventListener('click',()=>{
  if(v?.trim())send({type:'grafite',text:v.trim().slice(0,48),x:player.position.x,z:player.position.z});
 });
 document.querySelector('#sair-jogo').addEventListener('click',()=>{
- socket?.close();entered=false;document.body.classList.remove('jogando');document.querySelector('#game-hud').hidden=true;
+ connectionWanted=false;clearTimeout(retryTimer);send({type:'leave'});resumeToken=null;socket?.close();entered=false;document.body.classList.remove('jogando');document.querySelector('#game-hud').hidden=true;
  if(document.fullscreenElement)document.exitFullscreen().catch(()=>{});
 });
 document.querySelector('#tela-cheia').addEventListener('click',()=>{
