@@ -16,60 +16,6 @@ function cartazTexture({text,cor,tinta}){
  const tex=new THREE.CanvasTexture(c);tex.colorSpace=THREE.SRGBColorSpace;tex.anisotropy=2;
  return tex;
 }
-function simpleLabel(name){
- const c=document.createElement('canvas');c.width=256;c.height=64;
- const ctx=c.getContext('2d');ctx.fillStyle='#092438df';ctx.fillRect(0,4,256,55);
- ctx.fillStyle='#ffffff';ctx.font='bold 27px system-ui';ctx.textAlign='center';ctx.fillText(name,128,41);
- const tex=new THREE.CanvasTexture(c);tex.colorSpace=THREE.SRGBColorSpace;
- const sprite=new THREE.Sprite(new THREE.SpriteMaterial({map:tex,depthWrite:false,transparent:true}));
- sprite.scale.set(2.8,.7,1);return sprite;
-}
-// Os seis perfis abaixo usam rigorosamente os mesmos modelos, cores e roupas de bots.js.
-// Próximos: corpos 3D originais com mixer. Distantes: impostores capturados desses mesmos
-// corpos (sem cubos, cilindros ou bonecos genéricos para representar a população).
-const RED=[0,3,4],YELLOW=[1,2,5];
-export function varianteFigurante(id){
- const grupo=id%2===0?RED:YELLOW;
- return grupo[Math.floor(id/2)%3];
-}
-function lookDaSemente(i){
- const b=BOT_SEEDS[i];
- return {base:b.base,team:b.team,outfit:i%2?'terno-faixa':'camisa',
-  pele:i%3===0?'#a76a48':'#c99a74',cabelo:'#292320',
-  calca:'#242a39',terno:'#28324a',acessorio:'nenhum',cabeloEstilo:'auto'};
-}
-function criarPlaca(spec){
- const grupo=new THREE.Group();grupo.name='cartaz-em-mãos';
- const madeira=new THREE.Mesh(new THREE.CylinderGeometry(.02,.02,1.25,6),
-  new THREE.MeshLambertMaterial({color:'#7a5536'}));
- madeira.position.y=.62;grupo.add(madeira);
- const tex=cartazTexture(spec);
- const board=new THREE.Mesh(new THREE.PlaneGeometry(1.28,.71),
-  new THREE.MeshBasicMaterial({map:tex,side:THREE.DoubleSide}));
- board.position.y=1.35;grupo.add(board);
- return {grupo,board,tex};
-}
-function encaixarPlaca(avatar,placa){
- avatar.updateMatrixWorld(true);
- const hand=maoDoAvatar(avatar,'D');
- if(hand){
-  const position=new THREE.Vector3();
-  hand.mao.getWorldPosition(position);
-  placa.grupo.position.copy(position);
- }else{
-  // Mesma posição sobre o avatar original quando a malha remota não expõe ossos.
-  placa.grupo.position.copy(avatar.position).add(new THREE.Vector3(.28,1.05,.25));
- }
- placa.grupo.rotation.set(0,avatar.rotation.y,0);
-}
-function criarEtiqueta(nome){
- const c=document.createElement('canvas');c.width=256;c.height=64;
- const g=c.getContext('2d');g.fillStyle='#0a2039e8';g.fillRect(0,5,256,52);
- g.fillStyle='#fff';g.textAlign='center';g.font='bold 27px system-ui';g.fillText(nome,128,41);
- const texture=new THREE.CanvasTexture(c);
- const sprite=new THREE.Sprite(new THREE.SpriteMaterial({map:texture,transparent:true,depthWrite:false}));
- sprite.scale.set(2.25,.56,1);return sprite;
-}
 function buildCrowd(scene,renderer,quantidade,{mobile=false}={}){
  const root=new THREE.Group();root.name='figurantes-mesmos-6-modelos';scene.add(root);
  const facade=new THREE.Group();root.add(facade);
@@ -272,22 +218,19 @@ function buildCaravan(scene){
 }
 export function iniciarDesfile(scene,{renderer,mobile=false,alto=false,param=null}={}){
  if(!renderer)throw new Error('O desfile necessita do renderer para usar os modelos originais.');
- let quantidade=quantidadeInicial({mobile,alto,param}),crowd=buildCrowd(scene,renderer,quantidade,{mobile});
+ let quantidade=quantidadeInicial({mobile,alto,param});
+ const crowd=buildCrowd(scene,renderer,quantidade,{mobile});
  const cars=buildCaravan(scene);
- // Nomes reais na interface, mas rótulo global informa que não são participantes conectados.
- const labels=Array.from({length:20},(_,idx)=>{
-  const label=simpleLabel(NOMES[idx%NOMES.length]);scene.add(label);return label;
- });
- let accumulator=0,lastView=0,frames=0,dtSum=0,lastReduce=-100;
+ let accumulator=0,frames=0,dtSum=0,lastReduce=-100;
  function setQuantidade(n){
   if(!QUANTIDADES.includes(n))return false;
   quantidade=n;crowd.setQuantidade(n);
-  for(const l of labels)l.visible=false;
   return true;
  }
  function update(dt,t,camera){
-  accumulator+=dt;if(accumulator>=.12){crowd.update(t,camera);cars.update(t);accumulator=0;}
-  // Reduz o número de figurantes se o FPS cair de modo sustentado; não afeta usuários reais.
+  accumulator+=dt;
+  if(accumulator>=.12){crowd.update(t,camera);cars.update(t);accumulator=0;}
+  // Reduz a densidade se o dispositivo estiver sobrecarregado.
   dtSum+=dt;frames++;
   let reduced=false;
   if(frames>=120){
@@ -297,23 +240,7 @@ export function iniciarDesfile(scene,{renderer,mobile=false,alto=false,param=nul
     if(idx>1){setQuantidade(QUANTIDADES[idx-1]);lastReduce=t;reduced=true;}
    }
   }
-  if(t-lastView<.4)return reduced;lastView=t;
-  let visible=0;
-  for(let i=0;i<quantidade&&visible<labels.length;i++){
-   const p=posicaoFigurante(i,t,quantidade),dist=Math.hypot(p.x-camera.position.x,p.z-camera.position.z);
-   if(dist<65&&dist>2){
-    const label=labels[visible++];label.position.set(p.x,3.05,p.z);label.visible=true;
-    if(label.userData.previous!==NOMES[i%NOMES.length]){
-      label.material.map.dispose();label.material.dispose();
-      const replacement=simpleLabel(NOMES[i%NOMES.length]);
-      label.material=replacement.material;label.userData.previous=NOMES[i%NOMES.length];
-    }
-   }
-  }
-  for(let j=visible;j<labels.length;j++)labels[j].visible=false;
   return reduced;
  }
- return {update,setQuantidade,get count(){return quantidade},dispose(){
-  crowd.dispose();cars.dispose();for(const label of labels){scene.remove(label);label.material.map.dispose();label.material.dispose();}
- }};
+ return {update,setQuantidade,get count(){return quantidade},dispose(){crowd.dispose();cars.dispose()}};
 }
