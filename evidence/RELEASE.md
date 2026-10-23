@@ -1,5 +1,96 @@
 # Ágora Brasil — evidência de release, 23/10/2026
 
+## Continuação: assets originais e preparação mobile (base e4bc322)
+
+Base exata: `e4bc322ae986643987ceac99873bf64b0fe7dedb`.
+Branch: `investigation/original-assets-mobile-20261023`; head final no PR em rascunho
+encadeado à branch `integration/multiplayer-release-20261023`. As correções anteriores
+não foram refeitas. Código do jogo, servidor, seis identidades, GLBs, animações,
+materiais e protocolo estão sem delta contra essa base. Sem merge/deploy/produção.
+
+**Recomendação atual: APTO PARA REVISÃO; homologação mobile e release amplo
+BLOQUEADOS.** A conclusão de investigação é de restrição comprovada do ambiente,
+com estado dos arquivos de origem ainda desconhecido.
+
+- Três URLs originais testados com permissão de rede do sandbox: `curl` 56, **403
+  do proxy no CONNECT**, status de origem `000`, nenhum byte GLB recebido. Política
+  `restricted/enforced`, host fora da allowlist. Isso não é um 403/404 do CDN nem
+  prova corrupção/expiração. Não houve acesso direto ou contorno de proxy.
+- A descoberta de projetos 3D Jutsu pela conexão Higgsfield expôs somente o projeto
+  de corrida; não localizou as bases pendentes. Essa API/listagem não representa
+  todos os arquivos da conta. Nenhuma cena foi gerada, exportada ou alterada.
+- Manifesto novo fixa URLs e mapeamento Lia/Bia→mulher, Caio/Ivo→homem, Rafa→idoso,
+  Nina→idosa. Os hashes/tamanhos dos três ausentes ficam **nulos**. Licença de
+  assets permanece pendente; licença MIT do código não foi estendida aos modelos.
+- Importador offline preparado exige evidência de licença, SHA-256, bytes fixados,
+  estrutura GLB/rig/materiais; recusa recursos externos e não sobrescreve destinos.
+  Preserva bytes sem recomprimir/reexportar. Teto de 50 MiB não é tamanho medido.
+  Homem: **2.478.984 bytes**, SHA-256
+  `5e90a942da4a573417463cb1b38f7e288be6410948881c5b90cf9d7c75c2d156`.
+- `npm test`: **69/69**, zero falhas/skips, preservando os **61** existentes e
+  acrescentando **8 regressões** de admissão, integridade, identidades e entrega
+  HTTP com MIME correto/bytes originais/404. `npm run check` e `git diff --check`
+  passaram. Sem nova dependência de runtime. Driver Puppeteer opcional não foi
+  acrescentado ao lockfile. Logs novos em `assets-mobile/`.
+- `QA_OUTPUT=evidence/assets-mobile npm run test:visual:layout`: **21/21 casos DOM**
+  sem colisões; captura além da borda, soltura e cancelamento por toque passaram.
+  O parâmetro de saída preserva os artefatos históricos de `evidence/visual`.
+- `npm run test:mobile:readiness`: **PASS funcional**, Chromium
+  **154.0.8037.57/SwiftShader**, HTTPS autoassinado em loopback → proxy → servidor
+  HTTP local, WebSocket **WSS real**, contexto seguro/WebGL, cartaz recebido por
+  peer independente e reconexão com mesmo ID. Cartaz preso à mão (gap medido zero)
+  em idle/caminhada/Run, sem etiqueta local duplicada. Toque emulado CDP moveu o
+  jogador e cancelamento parou movimento; visitante ficou sem vida/ações PvP.
+  Zero exceções JavaScript; **24 requests falhos de assets remotos** registrados,
+  não ocultados. Sem teste novo de FPS/carga; não inferir desempenho deste PASS.
+- Caio/Ivo e jogador: base homem GLB + caminhada/corrida confirmadas. Lia/Bia,
+  Rafa e Nina: `glb/walk/run=false`; três bases `faltando` no diagnóstico. Sete
+  screenshots finais em `assets-mobile/`, com dimensões/hash em `screenshots.json`:
+  desktop 1000×700 parado/andando/correndo; **emulação** mobile 390×844, 320×568,
+  844×390 e visitante 390×844. O participante mobile se chama “Visitante” após o
+  reload; seu papel continua participante. A captura `iphone-visitor-emulated.png`
+  mostra a sessão visitante separada (“Observando”). Nenhuma captura é de iPhone.
+- Primeira execução do harness falhou ao clicar na HUD oculta depois de
+  `setViewport(isMobile=true)`, que recarrega a página. Captura/log/estado mantidos
+  em `first-run-*`. O roteiro passou depois de sair e entrar explicitamente pela
+  interface mobile. As três capturas desktop foram renovadas na execução final.
+
+Índice dos artefatos: [assets-mobile/README.md](assets-mobile/README.md).
+Revisão `code-review-lite` do delta: importação não sobrescreve nem altera bytes,
+TLS de teste confia em chaves específicas, portas/dados/certificado são temporários,
+nenhum token de sessão aparece no relatório, contratos/runtime preservados.
+
+Plano e critérios físicos: [docs/HOMOLOGACAO-MOBILE.md](../docs/HOMOLOGACAO-MOBILE.md).
+Exemplo de proxy: `ops/staging/Caddyfile.example`, preparado e **não executado**.
+Propõe processo/subdomínio/dados isolados, TLS público e WSS same-origin com controle
+de acesso. Nenhuma URL pública, contratação, DNS ou deploy foi realizado.
+
+Metadados de PR via CLI continuam impedidos neste ambiente: `api.github.com`
+recebe 403 no CONNECT (`assets-mobile/github-api-network.txt`). `gh auth status`
+informa token inválido, mas essa mensagem isolada não comprova validade da
+credencial quando a API está bloqueada. Não foi usado editor que regravasse arquivos
+para contornar a restrição. A descrição revisável está em
+`assets-mobile/PR-DESCRIPTION.md`; publicação de metadados pelo conector GitHub será
+registrada com o resultado real. O PR histórico #8 permanece preservado.
+
+### Bloqueios objetivos
+
+1. Acesso autorizado/exportação das mesmas três bases; resposta real do CDN,
+   CORS remoto, bytes, hash e compatibilidade ainda desconhecidos.
+2. Registro de direitos/licença aplicável antes de nova hospedagem/redistribuição.
+3. Conferência visual de GLB/walk/run/materiais/cartazes em **todos os seis** perfis.
+   Homem confirmado não libera aprovação de mulher/idoso/idosa; fallback procedural
+   preexistente não foi substituído nem apresentado como original carregado.
+4. Staging HTTPS público com WSS e cadeia TLS confiável no Safari ainda não existe.
+5. iPhone físico: Safari/iOS, GPU, teclado virtual, safe areas, Wi-Fi/4G/5G,
+   background/retomada e desempenho prolongado continuam **NÃO TESTADOS**.
+6. Limites anteriores permanecem: anti-cheat geométrico incompleto e sessões em
+   memória; nenhum novo ensaio de carga certifica capacidade de hospedagem.
+
+Os dados abaixo são históricos e não substituem os resultados da continuação.
+
+## Histórico de multiplayer anterior a e4bc322
+
 **Recomendação: BLOQUEAR release amplo.** P0 recebeu correções e testes reais locais; uma demonstração restrita a 100 conexões por sala ainda requer validação na hospedagem autorizada e dos assets completos. Sem merge/deploy.
 
 Base: `2f1ba472928eb15e9474959fce92deee53d98297` (skills / PR #6, inclui PR #5). PR #7 `ea490f1` incorporado por cherry-pick em `6503146`. Head exato consta no PR. Checkout inicial `work`/`59673ee` preservado; trabalho em worktree separado.

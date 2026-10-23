@@ -1,0 +1,16 @@
+✔ auditoria preserva o homem original, rig, material, textura e caminhada (7.467177ms)
+✔ HTML de erro e GLB truncado não são aceitos como modelo (0.648042ms)
+✔ hash, tamanho e licença são obrigatórios antes da instalação (47.801616ms)
+✔ limite de tamanho e recursos externos são recusados (0.734158ms)
+✔ importação falha sem escrever e nunca sobrescreve um original (99.921181ms)
+✔ importação recusa destino fora do diretório de bases (0.500179ms)
+✔ manifesto preserva as seis identidades e não inventa hash dos três ausentes (5.035384ms)
+✔ servidor entrega bytes originais com MIME GLB e 404 para arquivo ausente (232.762748ms)
+ℹ tests 8
+ℹ suites 0
+ℹ pass 8
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 726.419256

@@ -2,6 +2,7 @@
 // Screenshots of the game itself are produced separately by visual-demo-qa.mjs.
 import fs from 'node:fs';import {createRequire} from 'node:module';import puppeteer from 'puppeteer-core';
 const require=createRequire(import.meta.url),{server}=require('../server');
+const output=process.env.QA_OUTPUT||'evidence/visual';
 const result={scope:'DOM geometry only; full 3D screenshots are separate',ok:false,cases:[]};let browser;
 try{
  await new Promise(r=>server.listen(0,'127.0.0.1',r));
@@ -53,4 +54,4 @@ try{
  if((await page.evaluate(()=>window.__joy.state)).intensidade!==0)throw Error('Analógico preso no cancelamento');
  result.joystick={captureOutside:true,release:true,cancel:true};result.ok=true;
 }catch(e){result.error=e.stack;process.exitCode=1;}
-finally{await browser?.close();await new Promise(r=>server.close(r));fs.mkdirSync('evidence/visual',{recursive:true});fs.writeFileSync('evidence/visual/hud-layout.json',JSON.stringify(result,null,2)+'\n');console.log(JSON.stringify(result,null,2));}
+finally{await browser?.close();await new Promise(r=>server.close(r));fs.mkdirSync(output,{recursive:true});fs.writeFileSync(output+'/hud-layout.json',JSON.stringify(result,null,2)+'\n');console.log(JSON.stringify({ok:result.ok,cases:result.cases.length,joystick:result.joystick,error:result.error}));}
