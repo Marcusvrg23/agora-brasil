@@ -36,6 +36,7 @@ const clock=new THREE.Clock();
 const city=buildCity(scene,renderer,camera,{qualidade:QUALIDADE});
 const npcs=iniciarBots(scene,(x,z)=>resolveCollision(x,z,city.colliders),city.limites);
 const desfile=iniciarDesfile(scene,{
+ renderer,
  mobile:/Mobi|Android|iPhone|iPad/i.test(navigator.userAgent)||matchMedia('(pointer:coarse)').matches,
  alto:QUALIDADE==='alto',param:new URLSearchParams(location.search).get('figurantes')
 });
@@ -430,7 +431,6 @@ function animate(){
  for(const avatar of [player,...peers.values()]){const b=avatar.userData.balao;if(!b)continue;if(now>avatar.userData.balaoAte){scene.remove(b);b.material.map.dispose();b.material.dispose();avatar.userData.balao=null}else b.position.set(avatar.position.x,avatar.position.y+3.7,avatar.position.z)}
  npcs.update(dt,t);
  if(desfile.update(dt,Date.now()/1000,camera))informarMultidao();
- cartazes.update();
  animateAvatar(player,entered&&playerMoving,t,correndo?2.3:1.35);
  updateAvatarMixers(player,dt);
  for(const p of peers.values()){
@@ -438,6 +438,7 @@ function animate(){
   if(tg){p.position.x+=(tg.x-p.position.x)*Math.min(1,dt*10);p.position.z+=(tg.z-p.position.z)*Math.min(1,dt*10)}
   animateAvatar(p,now-p.userData.lastMove<260,t,p.userData.ritmo||1.35);updateAvatarMixers(p,dt);
  }
+ cartazes.update();
  pvp.update(dt,t);
  renderPreview(t);
  controls.update();
