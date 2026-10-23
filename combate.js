@@ -20,6 +20,19 @@ const VEICULOS = {
   carro: { vida: 260 }, moto: { vida: 160 }, helicoptero: { vida: 420 }, caca: { vida: 360 }, trex: { vida: 650 }, 'caminhao-lula': { vida: 620 }, 'caminhao-bolsonaro': { vida: 620 },
 };
 const VOADORES = new Set(['helicoptero', 'caca']);
+/* Geometria de exclusão do Congresso para veículos terrestres; mesmas medidas
+ * do modelo em public/cidade.js. O cliente já faz colisão, mas o servidor não
+ * pode retransmitir carros deslocados artificialmente para dentro do prédio. */
+const SOLIDOS_CONGRESSO = Object.freeze([
+  { x0: -110, x1: 110, z0: -225, z1: -150 },
+  { x0: -24.5, x1: 4.5, z0: -254.5, z1: -209.5 }
+]);
+const RAIOS_TERRESTRES = Object.freeze({ carro: 2.3, moto: 1.2, trex: 3, 'caminhao-lula': 4, 'caminhao-bolsonaro': 4 });
+function posicaoTerrestreBloqueada(tipo,x,z){
+ const raio=RAIOS_TERRESTRES[tipo]||0;
+ return raio>0 && SOLIDOS_CONGRESSO.some(c=>x>c.x0-raio&&x<c.x1+raio&&z>c.z0-raio&&z<c.z1+raio);
+}
+
 const BASES = { vermelho: { x: -70, z: 120 }, amarelo: { x: 70, z: 120 } };
 const ZONAS_SEGURAS = [{ x: 42, z: -62, r: 26 }]; // tribuna do debate
 const VIDA = 100, RENASCE_MS = 5000, PROTECAO_MS = 3000, ITEM_VOLTA_MS = 20000, VEICULO_VOLTA_MS = 30000, VITORIA = 25;
@@ -159,6 +172,7 @@ class Combate {
     const v = this.veiculo(j.veiculo); if (!v || v.motorista !== id) return null;
     const x = num(s.x, -2500, 2500), z = num(s.z, -2500, 2500), y = num(s.y, 0, 600);
     if (x === null || z === null || y === null) return null;
+    if (posicaoTerrestreBloqueada(v.tipo,x,z)) return null;
     v.x = x; v.z = z; v.y = VOADORES.has(v.tipo) ? y : 0;
     v.ry = num(s.ry, -1000, 1000) ?? v.ry; v.rx = num(s.rx, -3.2, 3.2) ?? 0; v.rz = num(s.rz, -3.2, 3.2) ?? 0;
     v.vel = num(s.vel, -200, 200) ?? 0;
