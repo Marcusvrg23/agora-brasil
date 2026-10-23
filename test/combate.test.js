@@ -139,12 +139,14 @@ test('míssil destrói veículo inimigo e fere o motorista; prédios não têm v
   c.mover('a', caca.x, caca.z); c.entrarVeiculo('a', caca.id);
   c.mover('b', carro.x, carro.z); c.entrarVeiculo('b', carro.id);
   c.moverVeiculo('a', { x: carro.x, y: 120, z: carro.z + 200 });
+  const etapas=[];
   for (let i = 0; i < 4 && carro.vida > 0; i++) {
-    const { tiro } = c.disparar('a', 'missil-caca');
-    c.acertar('a', tiro, { ponto: { x: carro.x, y: 0, z: carro.z } });
+    const disparo = c.disparar('a', 'missil-caca');
+    const acerto=c.acertar('a', disparo.tiro, { ponto: { x: carro.x, y: 0, z: carro.z } });
+    etapas.push({disparo:disparo.motivo||'ok',acerto:acerto.motivo||'ok',vida:carro.vida});
     passar(1800);
   }
-  assert.equal(carro.vida, 0);
+  assert.equal(carro.vida, 0,'etapas='+JSON.stringify(etapas));
   assert.ok(tipos().includes('explosao-veiculo'));
   assert.equal(c.jogadores.get('b').veiculo, null);
   assert.ok(c.jogadores.get('b').vida < 100);
