@@ -22,7 +22,7 @@ function lookDaSemente(i){
   pele:i%3===0?'#a76a48':'#c99a74',cabelo:'#292320',
   calca:'#242a39',terno:'#28324a',acessorio:'nenhum',cabeloEstilo:'auto'};
 }
-function criarPlaca(spec){
+export function criarPlaca(spec){
  const grupo=new THREE.Group();grupo.name='cartaz-em-mãos';
  const madeira=new THREE.Mesh(new THREE.CylinderGeometry(.02,.02,1.25,6),
   new THREE.MeshLambertMaterial({color:'#7a5536'}));
@@ -33,7 +33,7 @@ function criarPlaca(spec){
  board.position.y=1.35;grupo.add(board);
  return {grupo,board,tex};
 }
-function encaixarPlaca(avatar,placa){
+export function encaixarPlaca(avatar,placa){
  avatar.updateMatrixWorld(true);
  const hand=maoDoAvatar(avatar,'D');
  if(hand){
