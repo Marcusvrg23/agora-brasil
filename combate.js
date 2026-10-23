@@ -196,15 +196,19 @@ class Combate {
       const p = ponto(alvo.ponto);
       if (!p || d3(t.origem, p) > a.alcance + MARGEM * 2) return { ok: false, motivo: 'alcance' };
       this.emit({ type: 'explosao', arma: t.arma, de: id, x: p.x, y: p.y, z: p.z, raio: a.raio });
-      for (const alvoJ of this.jogadores.values()) {
-        if (alvoJ.team === j.team || !alvoJ.vivo) continue;
-        const dist = d3(this.posDe(alvoJ), p);
-        if (dist <= a.raio + 1) eventos.push(...this.ferir(alvoJ, Math.round(a.dano * (1 - 0.6 * Math.min(1, dist / a.raio))), j, t.arma));
-      }
+      // O veículo absorve a explosão antes do piloto; a mesma explosão não fere
+      // duas vezes quem já estava embarcado (inclusive se o veículo foi destruído).
+      const ocupantesNoImpacto = new Set([...this.jogadores.values()]
+        .filter((alvoJ) => alvoJ.veiculo).map((alvoJ) => alvoJ.id));
       for (const v of this.veiculos) {
         if (v.destruidoEm || v.id === j.veiculo || this.mesmoTime(v, j)) continue;
         const dist = d3(v, p);
         if (dist <= a.raio + 3) eventos.push(...this.ferirVeiculo(v, Math.round(a.dano * 1.2 * (1 - 0.5 * Math.min(1, dist / (a.raio + 3)))), j, t.arma));
+      }
+      for (const alvoJ of this.jogadores.values()) {
+        if (alvoJ.team === j.team || !alvoJ.vivo || ocupantesNoImpacto.has(alvoJ.id)) continue;
+        const dist = d3(this.posDe(alvoJ), p);
+        if (dist <= a.raio + 1) eventos.push(...this.ferir(alvoJ, Math.round(a.dano * (1 - 0.6 * Math.min(1, dist / a.raio))), j, t.arma));
       }
       return { ok: true, eventos };
     }
