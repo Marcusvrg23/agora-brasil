@@ -63,9 +63,9 @@ def pose(name,phase):
  if name=="RightArm":
   return qmul(qmul(base,qaxis((1,0,0),.70*wave-.12)),qaxis((0,0,1),.075))
  if name=="LeftForeArm":
-  return qmul(base,qaxis((1,0,0),-.66+.12*wave))
+  return qmul(base,qaxis((.577,.577,-.577),1.73+.10*wave))
  if name=="RightForeArm":
-  return qmul(base,qaxis((1,0,0),-.66-.12*wave))
+  return qmul(base,qaxis((.50,-.50,.707),1.58-.10*wave))
  if name=="LeftHand":
   return qmul(base,qaxis((1,0,0),.08+.08*wave))
  if name=="RightHand":
