@@ -1,5 +1,7 @@
 import * as THREE from 'three';
-import {dressAvatar,animateAvatar,updateAvatarMixers} from './avatar.js';
+import {dressAvatar,animateAvatar,updateAvatarMixers,poseAvatar,aplicarPoseAtual} from './avatar.js';
+import {criarPlaca,encaixarPlaca} from './desfile.js';
+import {CARTAZES,CARTAZ_POR_PERFIL} from './desfile-dados.mjs';
 import {BOT_SEEDS,posicaoBot} from './bot-paths.mjs';
 // NPCs locais apenas visuais. Não contam como humanos online, não votam ou enviam mensagens.
 function etiqueta(nome){
@@ -21,8 +23,9 @@ export function iniciarBots(scene,colisao,limites){
   mesh.scale.setScalar(.84);
   const p=posicaoBot(b,0);mesh.position.set(p.x,0,p.z);
   scene.add(mesh);
-  const label=etiqueta(b.name);label.position.set(p.x,2.65,p.z);scene.add(label);
-  return {...b,mesh,label,xp:p.x,zp:p.z};
+  const label=etiqueta(b.name);label.position.set(p.x,3.1,p.z);scene.add(label);
+  const sign=criarPlaca(CARTAZES[CARTAZ_POR_PERFIL[i]]);scene.add(sign.grupo);
+  return {...b,mesh,label,sign,xp:p.x,zp:p.z};
  });
  let tick=0;
  function update(dt,t){
@@ -43,9 +46,17 @@ export function iniciarBots(scene,colisao,limites){
    if(Math.abs(dx)+Math.abs(dz)>.015)b.mesh.rotation.y=Math.atan2(dx,dz);
    animateAvatar(b.mesh,true,t,b.speed*1.3);
    updateAvatarMixers(b.mesh,step);
-   b.label.position.set(b.mesh.position.x,2.65,b.mesh.position.z);
+   poseAvatar(b.mesh,'cartaz');aplicarPoseAtual(b.mesh);
+   encaixarPlaca(b.mesh,b.sign);
+   b.label.position.set(b.mesh.position.x,3.1,b.mesh.position.z);
   }
   if(tick>=.08)tick=0;
  }
- return {update,count:bots.length,dispose(){for(const b of bots){scene.remove(b.mesh);scene.remove(b.label);b.label.material.map.dispose();b.label.material.dispose()}}};
+ return {update,count:bots.length,dispose(){for(const b of bots){
+  scene.remove(b.mesh);scene.remove(b.label);scene.remove(b.sign.grupo);
+  b.label.material.map.dispose();b.label.material.dispose();
+  for(const part of b.sign.grupo.children){
+   part.geometry.dispose();part.material.map?.dispose();part.material.dispose();
+  }
+ }}};
 }
