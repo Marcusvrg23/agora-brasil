@@ -1,4 +1,5 @@
 import * as THREE from 'three';
+import {maoDoAvatar,poseAvatar,aplicarPoseAtual} from './avatar.js';
 // Cartazes editáveis ficam ligados ao avatar no espaço 3D, não são textos flutuantes.
 // O conteúdo é fornecido pelo usuário e validado pelo servidor; os demais apenas renderizam.
 export function iniciarCartazes({scene,player,peers,send,meuId}){
@@ -33,9 +34,9 @@ export function iniciarCartazes({scene,player,peers,send,meuId}){
   text=String(text||'').trim().slice(0,42);if(!text)return;
   const holder=new THREE.Group();holder.name='cartaz-do-participante';
   const pole=new THREE.Mesh(new THREE.CylinderGeometry(.025,.025,1.55,8),new THREE.MeshLambertMaterial({color:'#755c3c'}));
-  pole.position.set(.39,1.61,.38);holder.add(pole);
+  pole.position.set(0,.60,0);holder.add(pole);
   const board=new THREE.Mesh(new THREE.PlaneGeometry(1.65,.94),new THREE.MeshBasicMaterial({map:texture(text),side:THREE.DoubleSide}));
-  board.position.set(.39,2.49,.38);holder.add(board);
+  board.position.set(0,1.33,0);holder.add(board);
   scene.add(holder);cartazes.set(id,{text,group:holder,pole,board});
  }
  document.querySelector('#cartaz-btn').addEventListener('click',()=>{
@@ -67,9 +68,15 @@ export function iniciarCartazes({scene,player,peers,send,meuId}){
    if(!avatar){e.group.visible=false;continue;}
    e.group.visible=avatar.visible;
    // O cartaz acompanha as mãos e a orientação do personagem, inclusive andando.
-   e.group.position.copy(avatar.position);
+   poseAvatar(avatar,'cartaz');
+   aplicarPoseAtual(avatar);
+   avatar.updateMatrixWorld(true);
+   const hand=maoDoAvatar(avatar,'D');
+   if(hand)hand.mao.getWorldPosition(e.group.position);
+   else e.group.position.copy(avatar.position).add(new THREE.Vector3(.29,1.03,.22));
    e.group.rotation.y=avatar.rotation.y;
-   e.group.scale.setScalar(avatar.scale.x||.84);
+   // A posição da mão já inclui a escala do modelo; a haste conserva tamanho real.
+   e.group.scale.setScalar(1);
   }
  }
  function reset(){for(const id of [...cartazes.keys()])remove(id);}
