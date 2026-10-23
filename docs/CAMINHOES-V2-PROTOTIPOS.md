@@ -10,8 +10,8 @@ O responsável aprovou duas referências conceituais 2D geradas na conversa do C
 
 | Protótipo | Arquivo no ZIP | Bytes | Triângulos | Rodas/flags | SHA-256 |
 | --- | --- | ---: | ---: | --- | --- |
-| Vermelho | `caminhao-vermelho-v2.glb` | 221760 | 12144 | 4 / 3 | `a13703cee4ac08662986b6b1523fc0e9aae09afd3eb6a71da18cd2d1f2d6a65c` |
-| Verde | `caminhao-verde-v2.glb` | 223896 | 13496 | 6 / 3 | `1b4c4466be557aaf35b9ee64f88bf506d176dc52d3730ef11eeb6b7c2137f235` |
+| Vermelho | `caminhao-vermelho-v2.glb` | 221764 | 12144 | 4 / 3 | `2fe02f6c88a4c100e7457f6b108b9d7d098810e02107eb6da8ae69e821d87c80` |
+| Verde | `caminhao-verde-v2.glb` | 223896 | 13496 | 6 / 3 | `0cec66bff2f09b3152b7834b87f63afa64add2eee719d15070a9f227f2dab0a0` |
 
 ## Geometria e integração
 
