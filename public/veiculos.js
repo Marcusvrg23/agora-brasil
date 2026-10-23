@@ -35,13 +35,27 @@ export const ARMAS_VEICULO={helicoptero:['metralhadora','missil-heli'],caca:['mi
 // ---------- Carregamento ----------
 const cache=new Map();
 export const statusModelos=new Map();
+export const origemModelos=new Map();
+const V2_TESTE=typeof window!=='undefined'&&new URLSearchParams(window.location.search).get('trucksV2')==='1';
+const ARQUIVOS_V2={'caminhao-lula':'caminhao-vermelho-v2.glb','caminhao-bolsonaro':'caminhao-verde-v2.glb'};
 function carregar(tipo){
  if(!cache.has(tipo)){
   const L=new GLTFLoader();
-  cache.set(tipo,L.loadAsync('/assets/veiculos/'+tipo+'.glb')
-   .catch(()=>TIPOS[tipo].cdn?L.loadAsync(TIPOS[tipo].cdn):Promise.reject(new Error('Modelo local indisponível')))
-   .then(g=>{statusModelos.set(tipo,'ok');return g.scene})
-   .catch(()=>{statusModelos.set(tipo,'procedural');return null}));
+  const original=()=>L.loadAsync('/assets/veiculos/'+tipo+'.glb')
+   .then(g=>{origemModelos.set(tipo,'original');return g})
+   .catch(()=>TIPOS[tipo].cdn?L.loadAsync(TIPOS[tipo].cdn).then(g=>{origemModelos.set(tipo,'cdn');return g}):Promise.reject(new Error('Modelo local indisponível')));
+  // A versão V2 é opt-in, somente prévia (?trucksV2=1). Não há mudança em produção
+  // até os binários aprovados serem colocados em /assets/veiculos/v2/.
+  const promessa=V2_TESTE&&ARQUIVOS_V2[tipo]?
+    L.loadAsync('/assets/veiculos/v2/'+ARQUIVOS_V2[tipo])
+     .then(g=>{origemModelos.set(tipo,'v2');return g})
+     .catch(()=>original())
+    :original();
+  cache.set(tipo,promessa.then(g=>{
+    statusModelos.set(tipo,'ok');return g.scene;
+   }).catch(()=>{
+    statusModelos.set(tipo,'procedural');origemModelos.set(tipo,'procedural');return null;
+   }));
  }
  return cache.get(tipo);
 }
