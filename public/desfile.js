@@ -73,19 +73,23 @@ function criarEtiqueta(nome){
 function buildCrowd(scene,renderer,quantidade,{mobile=false}={}){
  const root=new THREE.Group();root.name='figurantes-mesmos-6-modelos';scene.add(root);
  const facade=new THREE.Group();root.add(facade);
- const groups=Array.from({length:6},()=>[]);
- for(let id=0;id<quantidade;id++)groups[varianteFigurante(id)].push(id);
+ let groups,mesh;
  const dummy=new THREE.Object3D();
  const tex=[null,null,null,null,null,null];
- const mesh=groups.map((ids,i)=>{
-  const plane=new THREE.InstancedMesh(
-   new THREE.PlaneGeometry(1.30,2.82),
-   new THREE.MeshBasicMaterial({color:'#ffffff',transparent:true,alphaTest:.08,depthWrite:false,side:THREE.DoubleSide}),
-   ids.length
-  );
-  plane.frustumCulled=false;plane.instanceMatrix.setUsage(THREE.DynamicDrawUsage);
-  facade.add(plane);return plane;
- });
+ function createInstances(n){
+  groups=Array.from({length:6},()=>[]);
+  for(let id=0;id<n;id++)groups[varianteFigurante(id)].push(id);
+  mesh=groups.map((ids,i)=>{
+   const plane=new THREE.InstancedMesh(
+    new THREE.PlaneGeometry(1.30,2.82),
+    new THREE.MeshBasicMaterial({map:tex[i],color:'#ffffff',transparent:true,alphaTest:.08,depthWrite:false,side:THREE.DoubleSide}),
+    ids.length
+   );
+   plane.frustumCulled=false;plane.instanceMatrix.setUsage(THREE.DynamicDrawUsage);
+   facade.add(plane);return plane;
+  });
+ }
+ createInstances(quantidade);
  const avatars=[];
  const LIMIT=mobile?24:48; // máximo de mixers de personagens detalhados ao mesmo tempo
  for(let i=0;i<6;i++)for(let k=0;k<LIMIT/6;k++){
@@ -207,6 +211,11 @@ function buildCrowd(scene,renderer,quantidade,{mobile=false}={}){
    m.instanceMatrix.needsUpdate=true;
   }
  }
+ function setQuantidade(n){
+  if(destroyed)return;
+  for(const plane of mesh){facade.remove(plane);plane.geometry.dispose();plane.material.dispose();}
+  quantidade=n;createInstances(n);
+ }
  function dispose(){
   destroyed=true;scene.remove(root);target.dispose();
   for(const a of avatars){
@@ -221,7 +230,7 @@ function buildCrowd(scene,renderer,quantidade,{mobile=false}={}){
    stageAvatars[i].sign.grupo.children[0].geometry.dispose();stageAvatars[i].sign.grupo.children[0].material.dispose();
   }
  }
- return {update,renderTextures,dispose};
+ return {update,setQuantidade,renderTextures,dispose};
 }
 function buildCaravan(scene){
  const root=new THREE.Group();root.name='carreata-simulada';scene.add(root);
@@ -272,7 +281,7 @@ export function iniciarDesfile(scene,{renderer,mobile=false,alto=false,param=nul
  let accumulator=0,lastView=0,frames=0,dtSum=0,lastReduce=-100;
  function setQuantidade(n){
   if(!QUANTIDADES.includes(n))return false;
-  crowd.dispose();quantidade=n;crowd=buildCrowd(scene,renderer,n,{mobile});
+  quantidade=n;crowd.setQuantidade(n);
   for(const l of labels)l.visible=false;
   return true;
  }
