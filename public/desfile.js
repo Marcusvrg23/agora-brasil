@@ -3,7 +3,7 @@ import * as THREE from 'three';
 // Multidão exclusivamente visual, determinística e local.
 // Instâncias são desenhadas em lotes; jamais entram no WebSocket, votos ou contagem online.
 export const MAX_FIGURANTES=2000;
-export const QUANTIDADES=Object.freeze([0,180,600,1200,2000]);
+export const QUANTIDADES=Object.freeze([0,180,300,600,1200,2000]);
 export const NOMES=Object.freeze([
  'Rafael','Gabriel','Ana','João','Maria','Lucas','Fernanda','Pedro','Lia','Caio',
  'Bianca','Bruno','Camila','Sofia','Eduardo','Marina','Felipe','Juliana','Luiza','Daniel',
@@ -24,11 +24,14 @@ export function quantidadeInicial({mobile=false,alto=false,param=null}={}){
  if(param!==null && QUANTIDADES.includes(val))return val;
  return mobile?180:(alto?600:300);
 }
-export function posicaoFigurante(id,t=0){
- const lado=id%2===0?-1:1, faixa=Math.floor(id/2)%5, fileira=Math.floor(id/10);
- // Ambas as cores presentes nas mesmas faixas, com duas alas e área central mista.
- const x=lado*(8+faixa*6.25)+Math.sin(id*2.19)*1.7;
- const z=-115+(fileira%34)*6.75+Math.sin(id*1.37)*1.3;
+export function posicaoFigurante(id,t=0,total=600){
+ const lado=id%2===0?-1:1,faixa=Math.floor(id/2)%10,fileira=Math.floor(id/20);
+ // 20 colunas e até 100 fileiras, com representantes de ambas as cores alternados.
+ // Distribuir o total evita sobreposição entre pessoas mesmo no perfil de 2.000.
+ const linhas=Math.max(1,Math.ceil(total/20)),espaco=Math.max(120,Math.min(420,linhas*4.2));
+ const passo=linhas>1?espaco/(linhas-1):0;
+ const x=lado*(8+faixa*3.65)+Math.sin(id*2.19)*.65;
+ const z=-125+fileira*passo+Math.sin(id*1.37)*.45;
  const wobble=Math.sin(t*.48+id*.71),drift=Math.sin(t*.12+id*.17)*2.6;
  return {x:x+drift, z:z+wobble*1.5,team:id%2};
 }
@@ -91,7 +94,7 @@ function buildCrowd(scene,quantidade){
   for(const [team,people] of groups.entries()){
    const m=teamMeshes[team], counters=signsIndex[team];counters.fill(0);
    for(const {id,index} of people){
-    const p=posicaoFigurante(id,t),sway=Math.sin(t*1.7+id*2.17)*.08;
+    const p=posicaoFigurante(id,t,quantidade),sway=Math.sin(t*1.7+id*2.17)*.08;
     const heading=Math.sin(id*.36+t*.16)*.35;
     matrix(m.body,index,p.x,1.12+sway,p.z,1,1,1,heading);
     matrix(m.head,index,p.x,1.74+sway,p.z,1,1,1,heading);
@@ -167,7 +170,7 @@ export function iniciarDesfile(scene,{mobile=false,alto=false,param=null}={}){
   if(t-lastView<.4)return;lastView=t;
   let visible=0;
   for(let i=0;i<quantidade&&visible<labels.length;i++){
-   const p=posicaoFigurante(i,t),dist=Math.hypot(p.x-camera.position.x,p.z-camera.position.z);
+   const p=posicaoFigurante(i,t,quantidade),dist=Math.hypot(p.x-camera.position.x,p.z-camera.position.z);
    if(dist<32&&dist>2){
     const label=labels[visible++];label.position.set(p.x,3.05,p.z);label.visible=true;
     if(label.userData.previous!==NOMES[i%NOMES.length]){
