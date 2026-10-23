@@ -1,6 +1,8 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {MAX_FIGURANTES,QUANTIDADES,quantidadeInicial,posicaoFigurante,CARTAZES,NOMES} from '../public/desfile-dados.mjs';
+import {MAX_FIGURANTES,QUANTIDADES,quantidadeInicial,posicaoFigurante,CARTAZES,NOMES,varianteFigurante,CARTAZ_POR_PERFIL} from '../public/desfile-dados.mjs';
+import {BOT_SEEDS} from '../public/bot-paths.mjs';
+import {readFileSync} from 'node:fs';
 
 test('densidades são progressivas e o celular usa perfil seguro',()=>{
  assert.equal(MAX_FIGURANTES,2000);
@@ -36,4 +38,24 @@ test('cartazes padrão descrevem ambos os grupos e evitam simular contagem real'
  assert.equal(CARTAZES.filter(x=>x.team===1).length,3);
  assert.ok(NOMES.includes('Rafael')&&NOMES.includes('Gabriel'));
  assert.ok(CARTAZES.every(x=>x.text.length<30));
+});
+
+test('as seis identidades do desfile usam exatamente as mesmas bases dos seis NPCs existentes',()=>{
+ const seen=new Set();
+ for(let id=0;id<2000;id++){
+  const index=varianteFigurante(id),base=BOT_SEEDS[index];
+  assert.ok(index>=0&&index<BOT_SEEDS.length);
+  assert.equal(base.team,id%2===0?'vermelho':'amarelo');
+  assert.equal(CARTAZES[CARTAZ_POR_PERFIL[index]].team,id%2);
+  seen.add(index);
+ }
+ assert.equal(seen.size,6);
+ const src=readFileSync(new URL('../public/desfile.js',import.meta.url),'utf8');
+ for(const helper of ['lookDaSemente','criarPlaca','encaixarPlaca','criarEtiqueta']){
+  assert.ok(src.includes('function '+helper+'('),'função necessária ao modelo: '+helper);
+ }
+ assert.match(src,/dressAvatar\(avatar,lookDaSemente\(i\)\)/);
+ assert.match(src,/new THREE\.InstancedMesh/);
+ const crowd=src.slice(src.indexOf('function buildCrowd('),src.indexOf('function buildCaravan('));
+ assert.doesNotMatch(crowd,/new THREE\.BoxGeometry/,'não permitir bonecos geométricos simplificados');
 });
