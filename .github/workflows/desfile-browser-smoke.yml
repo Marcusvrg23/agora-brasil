@@ -22,3 +22,12 @@ jobs:
         run: command -v google-chrome
       - name: Renderizar manifestação e verificar cartaz
         run: node scripts/ci-visual-smoke.mjs
+      - name: Inspecionar carros, caminhões e corrida no navegador
+        run: node scripts/ci-vehicle-run-smoke.mjs
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: agora-p0-veiculos-corrida-evidencias
+          path: evidence/vehicle-run-smoke/
+          if-no-files-found: warn
+          retention-days: 14
