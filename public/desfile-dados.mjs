@@ -1,3 +1,11 @@
+// A correspondência usa os mesmos seis perfis de public/bot-paths.mjs.
+export const PERFIS_VERMELHOS=Object.freeze([0,3,4]);
+export const PERFIS_AMARELOS=Object.freeze([1,2,5]);
+export const CARTAZ_POR_PERFIL=Object.freeze([0,3,4,1,2,5]);
+export function varianteFigurante(id){
+ const variantes=id%2===0?PERFIS_VERMELHOS:PERFIS_AMARELOS;
+ return variantes[Math.floor(id/2)%3];
+}
 export const MAX_FIGURANTES=2000;
 export const QUANTIDADES=Object.freeze([0,180,300,600,1200,2000]);
 export const NOMES=Object.freeze([
