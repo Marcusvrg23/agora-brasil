@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 import {ondulacaoBandeira} from './movimento.mjs';
-import {rodaNomeada,bandeiraNomeada,giroDaRoda} from './veiculo-visual.mjs';
+import {rodaNomeada,bandeiraNomeada,giroDaRoda,afastamentoModelo} from './veiculo-visual.mjs';
 import {criarCarroReserva,criarCaminhaoReserva} from './veiculo-reserva.js';
 import {GLTFLoader} from 'https://cdn.jsdelivr.net/npm/three@0.169.0/examples/jsm/loaders/GLTFLoader.js';
 // Veículos e montaria do modo PvP. Modelos semi-realistas gerados no Higgsfield (sam_3_3d, a partir de
@@ -220,7 +220,14 @@ export class Veiculo{
   if(d.ativo===false&&this.ativo){this.ativo=false;this.raiz.visible=false}
   if(d.ativo&&!this.ativo){this.ativo=true;this.raiz.visible=true;Object.assign(this.s,{x:d.x,y:d.y,z:d.z,ry:d.ry,rx:0,rz:0,vel:0});this.alvo=null}
   if('vida' in d)this.vida=d.vida;if('max' in d)this.max=d.max;if('motorista' in d)this.motorista=d.motorista;
-  if(!this.local&&d.x!=null){this.alvo={x:d.x,y:d.y||0,z:d.z,ry:d.ry,rx:d.rx||0,rz:d.rz||0,vel:d.vel||0}}
+  if(!this.local&&d.x!=null){
+   const next={x:d.x,y:d.y||0,z:d.z,ry:d.ry,rx:d.rx||0,rz:d.rz||0,vel:d.vel||0};
+   // Correções grandes após lag/reconexão devem ser instantâneas:
+   // interpolá-las atravessaria visualmente fachadas e o Congresso.
+   if(afastamentoModelo(Math.hypot(next.x-this.s.x,next.z-this.s.z))){
+    Object.assign(this.s,next);this.alvo=null;
+   }else this.alvo=next;
+  }
  }
 
  // ---- Física de quem dirige (só no navegador do motorista) ----
