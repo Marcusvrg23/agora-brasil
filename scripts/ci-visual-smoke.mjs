@@ -1,6 +1,7 @@
 import {createRequire} from 'node:module';
 import {setTimeout as sleep} from 'node:timers/promises';
 import puppeteer from 'puppeteer-core';
+import {configureQaCdn} from './qa-cdn-transport.mjs';
 const require=createRequire(import.meta.url);
 const {server}=require('../server.js');
 const chrome=process.env.CHROME_BIN||'/usr/bin/google-chrome';
@@ -13,6 +14,7 @@ try{
   args:['--no-sandbox','--disable-dev-shm-usage','--enable-webgl','--enable-unsafe-swiftshader',
   '--use-gl=angle','--use-angle=swiftshader','--ignore-gpu-blocklist','--window-size=1280,900']});
  const page=await browser.newPage();
+ await configureQaCdn(page);
  page.on('pageerror',error=>errors.push(String(error.stack||error)));
  page.on('console',m=>{if(m.type()==='error')console.log('BROWSER CONSOLE',m.text().slice(0,400));});
  await page.setViewport({width:1280,height:900,deviceScaleFactor:1});

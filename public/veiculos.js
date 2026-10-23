@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 import {ondulacaoBandeira} from './movimento.mjs';
-import {rodaNomeada,bandeiraNomeada,giroDaRoda,afastamentoModelo,pecaIsolada} from './veiculo-visual.mjs';
+import {rodaNomeada,bandeiraNomeada,giroDaRoda,afastamentoModelo,pecaIsolada,usarCaminhoesV2} from './veiculo-visual.mjs';
 import {criarCarroReserva,criarCaminhaoReserva} from './veiculo-reserva.js';
 import {GLTFLoader} from 'https://cdn.jsdelivr.net/npm/three@0.169.0/examples/jsm/loaders/GLTFLoader.js';
 // Veículos e montaria do modo PvP. Modelos semi-realistas gerados no Higgsfield (sam_3_3d, a partir de
@@ -36,7 +36,7 @@ export const ARMAS_VEICULO={helicoptero:['metralhadora','missil-heli'],caca:['mi
 const cache=new Map();
 export const statusModelos=new Map();
 export const origemModelos=new Map();
-const V2_TESTE=typeof window!=='undefined'&&new URLSearchParams(window.location.search).get('trucksV2')==='1';
+const V2_TESTE=typeof window!=='undefined'&&usarCaminhoesV2(window.location);
 const ARQUIVOS_V2={'caminhao-lula':'caminhao-vermelho-v2.glb','caminhao-bolsonaro':'caminhao-verde-v2.glb'};
 function carregar(tipo){
  if(!cache.has(tipo)){
@@ -44,8 +44,8 @@ function carregar(tipo){
   const original=()=>L.loadAsync('/assets/veiculos/'+tipo+'.glb')
    .then(g=>{origemModelos.set(tipo,'original');return g})
    .catch(()=>TIPOS[tipo].cdn?L.loadAsync(TIPOS[tipo].cdn).then(g=>{origemModelos.set(tipo,'cdn');return g}):Promise.reject(new Error('Modelo local indisponível')));
-  // A versão V2 é opt-in, somente prévia (?trucksV2=1). Não há mudança em produção
-  // até os binários aprovados serem colocados em /assets/veiculos/v2/.
+  // V2 somente na prévia explícita; o jogo continua com os GLBs originais,
+  // mesmo se alguém acrescentar ?trucksV2=1 à URL principal.
   const promessa=V2_TESTE&&ARQUIVOS_V2[tipo]?
     L.loadAsync('/assets/veiculos/v2/'+ARQUIVOS_V2[tipo])
      .then(g=>{origemModelos.set(tipo,'v2');return g})
@@ -186,7 +186,14 @@ export class Veiculo{
   const box2=new THREE.Box3().setFromObject(modelo),c=box2.getCenter(new THREE.Vector3());
   modelo.position.sub(new THREE.Vector3(c.x,box2.min.y,c.z));
   holder.scale.setScalar(this.escala);
+  // As dimensões das peças precisam incluir a escala final em metros.
+  holder.updateMatrixWorld(true);
+  const v2=!provisorio&&origemModelos.get(this.tipo)==='v2';
   modelo.traverse(o=>{if(o.isMesh){o.castShadow=true;o.receiveShadow=true;
+   // Os protótipos só trazem COLOR_0, sem materiais PBR. O padrão glTF é
+   // metalness=1, que escurece pintura/tecido/borracha sem mapa de ambiente.
+   if(v2){o.material=o.material.clone();const metal=/^Static_(steel|chrome)$/.test(o.name);
+    o.material.metalness=metal?.55:0;o.material.roughness=metal?.38:.78;}
    if(!provisorio&&(this.cfg.rodas||this.cfg.dino))o.material=prepararMaterial(o.material,this.cfg,this.uni);
    if(o.material.map)o.material.map.anisotropy=4}});
    // Pivôs independentes: carro reserva não usa shader; caminhões giram rodas/estandartes por peça.
@@ -206,7 +213,7 @@ export class Veiculo{
     }
     if(this.cfg.truck&&bandeiraNomeada(o.name)){
      const tamanho=new THREE.Box3().setFromObject(o).getSize(new THREE.Vector3());
-     if(pecaIsolada(tamanho,{limite:3.0})){o.userData.indice=this.bandeirasTruck.length;this.bandeirasTruck.push(o)}
+     if(pecaIsolada(tamanho,{limite:3.0})){o.userData.indice=this.bandeirasTruck.length;o.userData.eixoBandeira=v2?'y':'x';this.bandeirasTruck.push(o)}
     }
    });
    this.corpo.add(holder);this.modelo=holder;
@@ -340,7 +347,7 @@ export class Veiculo{
    if(C.rodas){s.giro+=s.vel*dt/(C.rodas[0][2]*this.escala);this.uni.uGiro.value=s.giro;this.uni.uEsterco.value=s.esterco}
    if(C.truck||(this.tipo==='carro'&&this.modeloProcedural)){
     for(const {pivot,raio} of this.animPneus||[])pivot.rotation.x+=giroDaRoda(s.vel,dt,raio);
-    for(const band of this.bandeirasTruck||[])band.rotation.x=ondulacaoBandeira(t,band.userData.indice,s.vel);
+    for(const band of this.bandeirasTruck||[])band.rotation[band.userData.eixoBandeira||'x']=ondulacaoBandeira(t,band.userData.indice,s.vel);
    }
    const quique=Math.sin(t*17)*.006*Math.min(1,Math.abs(s.vel)/10);
    c.rotation.x=THREE.MathUtils.lerp(c.rotation.x,THREE.MathUtils.clamp(-s.acel*.004,-.05,.05),Math.min(1,dt*5));

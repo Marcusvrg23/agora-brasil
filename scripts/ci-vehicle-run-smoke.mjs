@@ -1,6 +1,7 @@
 import fs from 'node:fs';
 import {createRequire} from 'node:module';
 import puppeteer from 'puppeteer-core';
+import {configureQaCdn} from './qa-cdn-transport.mjs';
 const require=createRequire(import.meta.url);
 const {server}=require('../server.js');
 const evidence='evidence/vehicle-run-smoke';
@@ -16,6 +17,7 @@ try{
    '--use-gl=angle','--use-angle=swiftshader','--ignore-gpu-blocklist']});
  result.browser=await browser.version();
  const page=await browser.newPage();page.on('pageerror',e=>result.errors.push(String(e.stack||e)));
+ await configureQaCdn(page);
  await page.setViewport({width:1150,height:780,deviceScaleFactor:1});
  await page.goto(origin+'/preview-caminhoes.html',{waitUntil:'domcontentloaded',timeout:45000});
  const selections=[['caminhao-lula','lula','caminhao-vermelho'],['caminhao-bolsonaro','bolsonaro','caminhao-verde'],['carro','carro','carro-esportivo']];

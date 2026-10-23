@@ -1,4 +1,7 @@
 // Indicadores puros usados na montagem de veículos de reserva e na animação visual.
+export function usarCaminhoesV2({pathname='',search=''}={}){
+ return pathname==='/preview-caminhoes.html'&&new URLSearchParams(search).get('trucksV2')==='1';
+}
 export function rodaNomeada(nome){
  return /^(?:Pneu|Wheel|Tire)(?:[_ .-]|$)/i.test(String(nome||''));
 }

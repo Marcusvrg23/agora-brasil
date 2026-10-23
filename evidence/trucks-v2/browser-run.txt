@@ -1,0 +1,85 @@
+PASS veículo {"version":1,"mobile":false,"name":"vermelho","wheels":1,"radius":0.730000137981077,"flagAnchorDrift":0.007375435804748414}
+PASS veículo {"version":1,"mobile":false,"name":"verde","wheels":1,"radius":0.730000137981077,"flagAnchorDrift":0.009445759730080343}
+PASS veículo {"version":2,"mobile":false,"name":"vermelho","wheels":4,"radius":0.7670087350660502,"flagAnchorDrift":8.881784197001252e-16}
+PASS veículo {"version":2,"mobile":false,"name":"verde","wheels":6,"radius":0.7670087350660502,"flagAnchorDrift":8.881784197001252e-16}
+PASS veículo {"version":1,"mobile":true,"name":"vermelho","wheels":1,"radius":0.730000137981077,"flagAnchorDrift":0.011116848240740202}
+PASS veículo {"version":1,"mobile":true,"name":"verde","wheels":1,"radius":0.730000137981077,"flagAnchorDrift":0.012080590516951536}
+PASS veículo {"version":2,"mobile":true,"name":"vermelho","wheels":4,"radius":0.7670087350660502,"flagAnchorDrift":8.881784197001252e-16}
+PASS veículo {"version":2,"mobile":true,"name":"verde","wheels":6,"radius":0.7670087350660502,"flagAnchorDrift":8.881784197001252e-16}
+{
+  "ok": true,
+  "browser": "Chrome/154.0.8037.57",
+  "vehicles": [
+    {
+      "version": 1,
+      "tipo": "caminhao-lula",
+      "mobile": false,
+      "wheels": 1,
+      "drift": 1.1102230246251565e-16
+    },
+    {
+      "version": 1,
+      "tipo": "caminhao-bolsonaro",
+      "mobile": false,
+      "wheels": 1,
+      "drift": 1.1102230246251565e-16
+    },
+    {
+      "version": 2,
+      "tipo": "caminhao-lula",
+      "mobile": false,
+      "wheels": 4,
+      "drift": 1.1102230246251565e-16
+    },
+    {
+      "version": 2,
+      "tipo": "caminhao-bolsonaro",
+      "mobile": false,
+      "wheels": 6,
+      "drift": 1.1102230246251565e-16
+    },
+    {
+      "version": 1,
+      "tipo": "caminhao-lula",
+      "mobile": true,
+      "wheels": 1,
+      "drift": 1.1102230246251565e-16
+    },
+    {
+      "version": 1,
+      "tipo": "caminhao-bolsonaro",
+      "mobile": true,
+      "wheels": 1,
+      "drift": 1.1102230246251565e-16
+    },
+    {
+      "version": 2,
+      "tipo": "caminhao-lula",
+      "mobile": true,
+      "wheels": 4,
+      "drift": 1.1102230246251565e-16
+    },
+    {
+      "version": 2,
+      "tipo": "caminhao-bolsonaro",
+      "mobile": true,
+      "wheels": 6,
+      "drift": 1.1102230246251565e-16
+    }
+  ],
+  "locomotion": [
+    {
+      "mode": "walk",
+      "duration": 4.199999809265137,
+      "min": -0.03642883448513737,
+      "maxSupport": 0.014681174145661528
+    },
+    {
+      "mode": "run",
+      "duration": 1,
+      "min": 0.020221820293170722,
+      "maxSupport": 0.19318367195124458
+    }
+  ],
+  "errors": []
+}

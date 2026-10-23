@@ -17,17 +17,21 @@ jobs:
         with: {node-version: '22'}
       - run: npm install
       - name: Instalar driver para Chrome
-        run: npm install --no-save puppeteer-core
+        run: npm install --no-save puppeteer-core gltf-validator
       - name: Verificar navegador
         run: command -v google-chrome
       - name: Renderizar manifestação e verificar cartaz
         run: node scripts/ci-visual-smoke.mjs
       - name: Inspecionar carros, caminhões e corrida no navegador
         run: node scripts/ci-vehicle-run-smoke.mjs
+      - name: Validar GLBs V2 e comparar prévias desktop/mobile
+        run: node scripts/validate-trucks-v2.mjs && node scripts/trucks-v2-browser-qa.mjs
       - uses: actions/upload-artifact@v4
         if: always()
         with:
           name: agora-p0-veiculos-corrida-evidencias
-          path: evidence/vehicle-run-smoke/
+          path: |
+            evidence/vehicle-run-smoke/
+            evidence/trucks-v2/
           if-no-files-found: warn
           retention-days: 14
