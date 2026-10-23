@@ -41,7 +41,10 @@ function buildCrowd(scene,quantidade){
   return {
    body:inst(new THREE.BoxGeometry(.58,.77,.29),camiseta,a.length),
    head:inst(new THREE.SphereGeometry(.17,6,5),pele,a.length),
-   legs:inst(new THREE.BoxGeometry(.41,.68,.23),calca,a.length),
+   leftLeg:inst(new THREE.BoxGeometry(.18,.68,.23),calca,a.length),
+   rightLeg:inst(new THREE.BoxGeometry(.18,.68,.23),calca,a.length),
+   leftArm:inst(new THREE.BoxGeometry(.15,.57,.18),pele,a.length),
+   rightArm:inst(new THREE.BoxGeometry(.15,.57,.18),pele,a.length),
    pole:inst(new THREE.CylinderGeometry(.014,.014,1.4,5),haste,a.length),
    signs: Array.from({length:3},(_,idx)=>{
     const tex=cartazTexture(CARTAZES[team*3+idx]);
@@ -53,8 +56,8 @@ function buildCrowd(scene,quantidade){
  });
  // Indexação de cada placa: garantimos que as contagens correspondam ao total de variantes.
  const signsIndex=[Array(3).fill(0),Array(3).fill(0)];
- function matrix(mesh,i,x,y,z,sizeX=1,sizeY=1,sizeZ=1,yaw=0){
-  dummy.position.set(x,y,z);dummy.rotation.set(0,yaw,0);
+ function matrix(mesh,i,x,y,z,sizeX=1,sizeY=1,sizeZ=1,yaw=0,tilt=0){
+  dummy.position.set(x,y,z);dummy.rotation.set(0,yaw,tilt);
   dummy.scale.set(sizeX,sizeY,sizeZ);dummy.updateMatrix();
   mesh.setMatrixAt(i,dummy.matrix);
  }
@@ -66,7 +69,11 @@ function buildCrowd(scene,quantidade){
     const heading=Math.sin(id*.36+t*.16)*.35;
     matrix(m.body,index,p.x,1.12+sway,p.z,1,1,1,heading);
     matrix(m.head,index,p.x,1.74+sway,p.z,1,1,1,heading);
-    matrix(m.legs,index,p.x,.42+sway*.4,p.z,1,1,1,heading);
+    const passo=Math.sin(t*2.5+id*1.2)*.11;
+    matrix(m.leftLeg,index,p.x-.15,.42+sway*.4,p.z+passo,1,1,1,heading);
+    matrix(m.rightLeg,index,p.x+.15,.42+sway*.4,p.z-passo,1,1,1,heading);
+    matrix(m.leftArm,index,p.x-.37,1.25+sway,p.z,1,1,1,heading,-.08);
+    matrix(m.rightArm,index,p.x+.33,1.39+sway,p.z+.2,1,1,1,heading,-.35);
     matrix(m.pole,index,p.x+.42,2.0+sway,p.z+.19,1,1,1,heading);
     const variant=Math.floor(id/2)%3;
     matrix(m.signs[variant],counters[variant]++,p.x+.42,2.66+sway,p.z+.19,1,1,1,heading);
