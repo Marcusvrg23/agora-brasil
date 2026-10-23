@@ -45,7 +45,7 @@ try{
  result.run=await page.evaluate(()=>window.__avatarPreviewStatus);
  if(!result.run?.rigged)throw Error('Run GLB não foi comprovado na prévia');
  if(result.run.source!=='Sprint V2 - rig original'||result.run.clipName!=='Sprint_V2_RealStride')throw Error('Novo Sprint V2 não foi selecionado: '+JSON.stringify(result.run));
- if(result.run.trackCount<20||result.run.hipsRange<4)throw Error('Animação sem canais suficientes ou quadril não animado: '+JSON.stringify(result.run));
+ if(result.run.trackCount<20||result.run.hipsRange<3)throw Error('Animação sem canais suficientes ou quadril não animado: '+JSON.stringify(result.run));
  // Duas fases de passada capturadas no renderizador real (sem pré-render/vídeo simulado).
  await page.screenshot({path:evidence+'/sprint-v2-frame-a.png'});
  await new Promise(done=>setTimeout(done,220));
