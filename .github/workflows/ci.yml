@@ -24,5 +24,5 @@ jobs:
           node --check public/cartazes.js
       - name: Testar desfile, posicionamento e cartazes com limite de tempo
         run: node --test --test-timeout=15000 --test-force-exit test/desfile.test.mjs test/cartazes.test.js
-      - name: Rodar suíte completa (bloqueio máximo 120 segundos)
-        run: timeout 120s npm test
+      - name: Rodar suíte completa (tempo limitado e liberação de handles)
+        run: timeout 80s node --test --test-timeout=12000 --test-force-exit
