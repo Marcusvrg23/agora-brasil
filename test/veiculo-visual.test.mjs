@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
-import {rodaNomeada,bandeiraNomeada,giroDaRoda,afastamentoModelo} from '../public/veiculo-visual.mjs';
+import {rodaNomeada,bandeiraNomeada,giroDaRoda,afastamentoModelo,pecaIsolada} from '../public/veiculo-visual.mjs';
 import {modoLocomocao} from '../public/movimento.mjs';
 
 test('detecção de peças para GLBs novos e antigos',()=>{
@@ -41,4 +41,11 @@ test('corrida separada do walk e fallback visual de reserva disponíveis',()=>{
  assert.match(reserva,/export function criarCaminhaoReserva/);
  assert.match(reserva,/Pneu_/);
  assert.match(reserva,/Bandeira_/);
+});
+
+test('não animar malhas que agregam todas as rodas ou bandeiras',()=>{
+ assert.equal(pecaIsolada({x:1.7,y:1.7,z:1.6}),true,'pneu individual GLB V2');
+ assert.equal(pecaIsolada({x:2,y:1,z:12}),false,'pneus agrupados no comprimento');
+ assert.equal(pecaIsolada({x:0.1,y:.8,z:9},{limite:3}),false,'várias bandeiras numa malha');
+ assert.equal(pecaIsolada({x:.04,y:.8,z:1.1},{limite:3}),true,'bandeira isolada');
 });
