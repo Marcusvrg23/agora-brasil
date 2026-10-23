@@ -1,0 +1,45 @@
+name: Pacote de preview isolado - PR9 ragdoll
+on:
+  push:
+    branches:
+      - preview/ragdoll-pr9-20261023
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  test-and-package:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - name: Instalar dependencias
+        run: npm ci
+      - name: Testar sintaxe
+        run: |
+          npm run check
+          node --check public/ragdoll-experimental.mjs
+          node --check test/ragdoll-experimental.test.mjs
+      - name: Executar suite automatizada
+        run: timeout 100s node --test --test-timeout=12000 --test-force-exit
+      - name: Montar pacote de preview separado
+        run: |
+          set -eu
+          mkdir -p release
+          cp ops/staging/squarecloud-preview.app release/squarecloud.app
+          cp package.json package-lock.json server.js combate.js debate.js anuncios.js pagamentos.js release/
+          cp -a public release/
+          grep -qx 'SUBDOMAIN=agora-brasil-preview-qa' release/squarecloud.app
+          if grep -q 'SUBDOMAIN=agora-brasil-multiplayer' release/squarecloud.app; then
+            echo 'Bloqueado: configuracao do app de producao'; exit 1
+          fi
+          (cd release && zip -qr ../agora-brasil-preview-qa.zip .)
+          unzip -t agora-brasil-preview-qa.zip | tail -1
+      - uses: actions/upload-artifact@v4
+        with:
+          name: agora-brasil-pr9-ragdoll-preview
+          path: agora-brasil-preview-qa.zip
+          retention-days: 7

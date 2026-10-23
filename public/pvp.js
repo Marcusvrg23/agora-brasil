@@ -5,6 +5,7 @@ import {ITENS,Rastro,animarArco,soltarArco,criarFlecha,animarBomba} from './iten
 import {poseAvatar,maoDoAvatar,TEAM_COLORS} from './avatar.js';
 import {deveExibirPiloto,poseParaVeiculo,progressoDeEmbarque,ritmoDeVeiculo} from './montaria.mjs';
 import {som,motorVeiculo,alternarSom,somLigado} from './som.js';
+import {criarRagdollExperimental,ragdollHabilitado} from './ragdoll-experimental.mjs';
 
 // Modo PvP da praça: itens no gramado, veículos, combate entre os times vermelho e amarelo.
 // O servidor decide vida, dano e placar. Armas só atingem jogadores e veículos: os prédios
@@ -23,6 +24,8 @@ export function iniciarPvP(o){
  preCarregar();
  const mundo={colliders:city.colliders,limites:city.limites,colisao};
  const est={jogadores:new Map(),veiculos:new Map(),pickups:new Map(),placar:{vermelho:0,amarelo:0},vitoria:25,ativo:false};
+ // Prévia opcional (?ragdoll=1). A produção e o acesso normal permanecem sem este efeito.
+ const ragdoll=criarRagdollExperimental({habilitado:ragdollHabilitado(location.search),maxAtivos:4});
  const embarques=new Map(); // entrada independente por jogador, sem modificar a cidade
  const proj=[]; // projéteis em voo
  const meusTiros=new Map();let ref=0;
@@ -427,11 +430,13 @@ export function iniciarPvP(o){
   off.setLength(dist);camera.position.copy(controls.target).add(off);
  }
  function morrer(id){
+  ragdoll.restaurar(id);
   const av=avatarDe(id);if(av){av.userData.morto=0.001;equipar(id,null)}
   if(id===meuId()){$('.pvp-morte').hidden=false;local.acao=null;local.puxando=false;let n=5;$('.pvp-morte span').textContent='Volta na base do seu time em '+n+' s';
    clearInterval(local.contagem);local.contagem=setInterval(()=>{n--;if(n<=0)clearInterval(local.contagem);$('.pvp-morte span').textContent=n>0?'Volta na base do seu time em '+n+' s':'Voltando…'},1000)}
  }
  function renascer(id,pos,vida){
+  ragdoll.restaurar(id);
   const j=est.jogadores.get(id);if(j){j.vivo=true;j.vida=vida}
   const av=avatarDe(id);if(av){av.userData.morto=0;av.rotation.x=0;av.position.y=0;av.visible=true;if(pos){av.position.set(pos.x,0,pos.z);av.userData.target={x:pos.x,z:pos.z}}}
   if(id===meuId()){$('.pvp-morte').hidden=true;clearInterval(local.contagem);if(pos){player.position.set(pos.x,0,pos.z);send({type:'move',x:pos.x,z:pos.z});o.aoTeleporte?.()}pintarVida();pintarSlot()}
@@ -439,6 +444,7 @@ export function iniciarPvP(o){
  function mensagem(d){
   switch(d.type){
    case 'pvp':{
+    ragdoll.limpar();
     est.ativo=true;hud.hidden=false;
     for(const v of est.veiculos.values())v.remover();est.veiculos.clear();
     for(const g of est.pickups.values())extras.remove(g);est.pickups.clear();
@@ -482,7 +488,12 @@ export function iniciarPvP(o){
     return true}
    case 'explosao-veiculo':{const v=est.veiculos.get(d.veiculo);efeitos.explosao(d.x,d.y+1,d.z,12);som.explosao(camera.position.distanceTo(new THREE.Vector3(d.x,d.y,d.z)));if(v){feed(`💥 ${TIPOS[v.tipo].nome} destruído`)}return true}
    case 'dano':{
-    const j=est.jogadores.get(d.alvo);if(j)j.vida=d.vida;
+    const j=est.jogadores.get(d.alvo);
+    const vidaAnterior=j?.vida;
+    if(j)j.vida=d.vida;
+    if(j)ragdoll.impacto(d.alvo,avatarDe(d.alvo),{
+     vidaAnterior,vidaNova:d.vida,pvp:j.pvp,vivo:j.vivo,veiculo:j.veiculo
+    });
     if(d.alvo===meuId()){pintarVida();danoT=.6;som.dano()}
     if(d.de===meuId()&&d.alvo!==meuId()){const m=$('.pvp-mira');m.classList.remove('hit');void m.offsetWidth;m.classList.add('hit')}
     const c=centroJogador(d.alvo);if(c)efeitos.impacto(c.x,c.y,c.z,[1,.4,.3]);
@@ -494,7 +505,7 @@ export function iniciarPvP(o){
    case 'renasceu':renascer(d.id,d.pos,d.vida);return true;
    case 'placar':{est.placar=d.placar;pintarPlacar();if(d.novaPartida){$('.pvp-vitoria').hidden=true;feed('Nova partida começou.')}return true}
    case 'vitoria':{est.placar=d.placar;pintarPlacar();const el=$('.pvp-vitoria');el.hidden=false;el.style.setProperty('--cor',TEAM_COLORS[d.time]);el.innerHTML=`<b>Time ${d.time} venceu!</b><span>${d.placar.vermelho} × ${d.placar.amarelo} · nova partida em 12 s</span>`;return true}
-   case 'leave':{const e=naMao.get(d.id);if(e){scene.remove(e.mesh);e.rastro?.remover();naMao.delete(d.id)}est.jogadores.delete(d.id);return false}
+   case 'leave':{ragdoll.restaurar(d.id);const e=naMao.get(d.id);if(e){scene.remove(e.mesh);e.rastro?.remover();naMao.delete(d.id)}est.jogadores.delete(d.id);return false}
    case 'look':{return false}
   }
   return false;
@@ -570,6 +581,8 @@ export function iniciarPvP(o){
   // queda de quem foi derrubado
   for(const [id,jj] of est.jogadores){const av=avatarDe(id);if(!av)continue;
    if(av.userData.morto>0){av.userData.morto=Math.min(1,av.userData.morto+dt*2.2);av.rotation.order='YXZ';av.rotation.x=-Math.PI/2*Math.sin(av.userData.morto*Math.PI/2);av.position.y=.25*av.userData.morto;poseAvatar(av,null)}}
+  // Reação visual temporária, sempre após as poses e sem alterar a raiz/autoria do servidor.
+  ragdoll.atualizar(dt,avatarDe,id=>est.jogadores.get(id));
   // itens nas mãos
   for(const [id,e] of naMao)posicionarItem(id,e);
   atualizarProjeteis(dt);
@@ -597,7 +610,7 @@ export function iniciarPvP(o){
   dirigindo:()=>!!eu()?.veiculo,
   morto:()=>eu()?.vivo===false,
   alvoCamera(){const j=eu();if(!j?.veiculo)return null;const v=est.veiculos.get(j.veiculo);if(!v)return null;return v.raiz.position.clone().add(new THREE.Vector3(0,TIPOS[v.tipo].comp*.18+1,0))},
-  reset(){est.ativo=false;hud.hidden=true;motorVeiculo(null)},
-  depurar:{est,proj,naMao,efeitos,tecla}
+  reset(){ragdoll.limpar();est.ativo=false;hud.hidden=true;motorVeiculo(null)},
+  depurar:{est,proj,naMao,efeitos,tecla,ragdoll}
  };
 }
