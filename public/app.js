@@ -429,7 +429,7 @@ function animate(){
  for(const [id,tag] of tags){const avatar=id===myId?player:peers.get(id);if(avatar){tag.position.set(avatar.position.x,avatar.position.y+2.6,avatar.position.z)}}
  for(const avatar of [player,...peers.values()]){const b=avatar.userData.balao;if(!b)continue;if(now>avatar.userData.balaoAte){scene.remove(b);b.material.map.dispose();b.material.dispose();avatar.userData.balao=null}else b.position.set(avatar.position.x,avatar.position.y+3.7,avatar.position.z)}
  npcs.update(dt,t);
- if(desfile.update(dt,t,camera))informarMultidao();
+ if(desfile.update(dt,Date.now()/1000,camera))informarMultidao();
  cartazes.update();
  animateAvatar(player,entered&&playerMoving,t,correndo?2.3:1.35);
  updateAvatarMixers(player,dt);
