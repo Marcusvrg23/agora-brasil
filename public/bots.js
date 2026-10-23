@@ -52,7 +52,7 @@ export function iniciarBots(scene,colisao,limites){
   }
   if(tick>=.08)tick=0;
  }
- return {update,count:bots.length,dispose(){for(const b of bots){
+ return {update,count:bots.length,estadoModelos:()=>bots.map(b=>({id:b.id,name:b.name,base:b.base,team:b.team,glb:!!b.mesh.userData.baseModel,walk:!!b.mesh.userData.baseModel?.userData.walk,run:!!b.mesh.userData.baseModel?.userData.run})),dispose(){for(const b of bots){
   scene.remove(b.mesh);scene.remove(b.label);scene.remove(b.sign.grupo);
   b.label.material.map.dispose();b.label.material.dispose();
   for(const part of b.sign.grupo.children){

@@ -1,0 +1,60 @@
+✔ clientes independentes: salas isolam posição, chat e cartaz; entrada tardia recebe estado (134.644742ms)
+✔ veículo: disputa concorrente tem um motorista, movimento e liberação sincronizados (121.278617ms)
+✖ visitante observa sem entrar no combate nem modificar itens, veículos, cartazes ou debate (18.15699ms)
+✖ reconexão com bilhete restaura identidade, posição, cartaz e inventário sem duplicação (17.610029ms)
+✖ reenvio de join não cura jogador nem remove inventário e bilhete não cruza salas (18.968021ms)
+ℹ tests 5
+ℹ suites 0
+ℹ pass 2
+ℹ fail 3
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 407.17442
+
+✖ failing tests:
+
+test at test/multiplayer.test.js:57:1
+✖ visitante observa sem entrar no combate nem modificar itens, veículos, cartazes ou debate (18.15699ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+
+  + undefined
+  - 'visitor'
+
+      at TestContext.<anonymous> (/workspace/agora-multiplayer/test/multiplayer.test.js:59:10)
+      at async Test.run (node:internal/test_runner/test:1389:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: 'visitor',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at test/multiplayer.test.js:70:1
+✖ reconexão com bilhete restaura identidade, posição, cartaz e inventário sem duplicação (17.610029ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+
+  + 'undefined'
+  - 'string'
+
+      at TestContext.<anonymous> (/workspace/agora-multiplayer/test/multiplayer.test.js:72:10)
+      at async Test.run (node:internal/test_runner/test:1389:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 'undefined',
+    expected: 'string',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at test/multiplayer.test.js:86:1
+✖ reenvio de join não cura jogador nem remove inventário e bilhete não cruza salas (18.968021ms)
+  TypeError: Cannot read properties of undefined (reading 'vida')
+      at TestContext.<anonymous> (/workspace/agora-multiplayer/test/multiplayer.test.js:90:37)
+      at async Test.run (node:internal/test_runner/test:1389:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7)

@@ -18,10 +18,21 @@
   <canvas id="world"></canvas>
   <div class="scene-label"><span class="tag">CENÁRIO EM DESENVOLVIMENTO</span><h1>Esplanada dos Ministérios</h1><p>Congresso Nacional · Brasília / DF</p></div>
   <div class="npc-legend" id="figuras-info">SIMULAÇÃO 3D · figurantes virtuais não são pessoas conectadas</div>
-  <div id="game-hud" hidden><div class="game-toolbar"><label><input type="checkbox" id="pvp-toggle"><span id="pvp-label">Livre — sem dano entre jogadores</span></label><button id="grafite-btn">Arte virtual</button><label for="multidao-quantidade">Figurantes 3D <select id="multidao-quantidade" aria-label="Densidade da simulação"><option value="0">0</option><option value="180">180</option><option value="300">300</option><option value="600">600</option><option value="1200">1200</option><option value="2000">2000 (alto)</option></select></label><button id="tela-cheia">Tela cheia</button><button id="sair-jogo">Sair</button></div><div id="vitorias">Vitórias no jogo · Vermelho 0 × 0 Amarelo</div><div class="eleicao-info">Apuração oficial (quando disponível): <a href="https://resultados.tse.jus.br/" target="_blank" rel="noopener noreferrer">TSE por estado ↗</a> · <a href="https://www.youtube.com/@justicaeleitoral" target="_blank" rel="noopener noreferrer">Canal da Justiça Eleitoral ↗</a> · não confundir com placar do jogo.</div><form id="jogo-chat"><input maxlength="180" placeholder="Mensagem aparece acima do personagem"><button>Enviar</button></form><div id="cartaz-toolbar"><label for="cartaz-input">Meu cartaz, segurado no avatar:</label><input id="cartaz-input" maxlength="42" placeholder="Escreva sua frase (até 42 caracteres)" aria-label="Texto do cartaz"><button id="cartaz-btn" type="button">Levantar cartaz</button><button id="cartaz-remover" type="button">Guardar</button><span id="cartaz-status" role="status"></span></div></div>
+  <div id="game-hud" hidden>
+   <div class="game-toolbar">
+    <div class="hud-session"><b id="hud-player-name"></b><span id="hud-online">0 online</span><div id="hud-score"></div></div>
+    <button id="hud-minimize" type="button" aria-expanded="true" aria-controls="hud-panels">Minimizar</button>
+    <nav id="hud-tabs" aria-label="Painéis do jogo"><button type="button" data-hud-panel="hud-chat" aria-controls="hud-chat">Chat</button><button type="button" data-hud-panel="hud-cartaz" aria-controls="hud-cartaz">Cartaz</button><button type="button" data-hud-panel="hud-settings" aria-controls="hud-settings">Opções</button><span id="hud-simulation"></span></nav>
+   </div>
+   <div id="hud-panels">
+    <section id="hud-chat" class="hud-panel" aria-label="Chat" hidden><div id="hud-chat-messages" role="log" aria-live="polite"></div><form id="jogo-chat"><input maxlength="180" aria-label="Mensagem no chat" placeholder="Converse na praça"><button>Enviar</button></form></section>
+    <section id="hud-cartaz" class="hud-panel" aria-label="Cartaz" hidden><div id="cartaz-toolbar"><label for="cartaz-input">Meu cartaz</label><input id="cartaz-input" maxlength="42" placeholder="Sua frase (até 42 caracteres)" aria-label="Texto do cartaz"><button id="cartaz-btn" type="button">Levantar cartaz</button><button id="cartaz-remover" type="button">Guardar</button><span id="cartaz-status" role="status"></span></div></section>
+    <section id="hud-settings" class="hud-panel" aria-label="Opções" hidden><label class="hud-setting"><input type="checkbox" id="pvp-toggle"><span id="pvp-label">Livre — sem dano entre jogadores</span></label><label class="hud-setting" for="multidao-quantidade">Figurantes simulados <select id="multidao-quantidade" aria-label="Densidade da simulação"><option value="0">0</option><option value="180">180</option><option value="300">300</option><option value="600">600</option><option value="1200">1200</option><option value="2000">2000 (alto)</option></select></label><div id="hud-settings-actions"><button id="grafite-btn" type="button">Arte virtual</button><button id="tela-cheia" type="button">Tela cheia</button><button id="sair-jogo" type="button">Sair</button></div><div id="vitorias">Vitórias no jogo · Vermelho 0 × 0 Amarelo</div><details class="eleicao-info"><summary>Apuração oficial</summary><a href="https://resultados.tse.jus.br/" target="_blank" rel="noopener noreferrer">Resultados TSE ↗</a> · <a href="https://www.youtube.com/@justicaeleitoral" target="_blank" rel="noopener noreferrer">Justiça Eleitoral ↗</a><p>O placar do jogo não representa votos eleitorais.</p></details></section>
+   </div>
+  </div>
   <div class="world-tips" id="world-tips">Arraste para olhar · WASD anda · <b>E</b> pega item ou entra no veículo · <b>F</b>/clique usa · rolagem dá zoom</div>
   <div class="world-footer"><span id="model-status">Carregando Brasília 3D…</span><span>Modelo arquitetônico estilizado · não georreferenciado</span></div>
-  <div class="mobile-controls" aria-label="Controles de movimento"><button id="up" aria-label="Avançar">↑</button><div><button id="left" aria-label="Esquerda">←</button><button id="down" aria-label="Recuar">↓</button><button id="right" aria-label="Direita">→</button></div></div>
+  <div class="mobile-controls" aria-label="Controles de movimento"><div id="joystick" role="group" tabindex="0" aria-label="Analógico de movimento. Arraste para caminhar; teclado WASD também disponível." data-movement="idle"><span class="joystick-thumb"></span></div><button id="mobile-run" type="button" aria-label="Segurar para correr" aria-pressed="false">Correr</button></div>
  </section>
  <aside class="sidebar">
   <div class="panel intro">
@@ -31,7 +42,8 @@
    <label for="nickname">Seu apelido</label><input id="nickname" maxlength="24" placeholder="Como quer aparecer?" value="Visitante">
    <label for="city">Sala</label>
    <select id="city"><option value="5300108">Brasília · DF</option><option value="3550308">São Paulo · SP (cenário Brasília)</option><option value="3304557">Rio de Janeiro · RJ (cenário Brasília)</option><option value="3106200">Belo Horizonte · MG (cenário Brasília)</option></select>
-   <button id="enter" class="primary">Entrar na manifestação gratuita</button>
+   <button id="enter" class="primary">Entrar na Manifestação</button>
+   <button id="enter-visitor" class="secondary">Entrar como Visitante</button>
    <p class="fineprint">Ao entrar, a praça se torna o foco da tela. Clique em Tela cheia para ativar a tela cheia nativa do navegador.</p>
    <div class="fineprint">Todas as salas usam, por enquanto, o mesmo cenário de Brasília. A multidão e os veículos de desfile são simulados, não usuários reais. Outros cenários ainda não foram modelados.</div>
   </div>

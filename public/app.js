@@ -7,9 +7,12 @@ import {PHOTO_PROFILES} from './personagens.mjs';
 import {aplicarRostoLocal,limparRostoLocal} from './foto-avatar.js';
 import {iniciarBots} from './bots.js';
 import {iniciarDesfile} from './desfile.js';
+import {iniciarHud} from './hud.mjs';
+import {iniciarAnalogico} from './joystick.mjs';
 import {iniciarCartazes} from './cartazes.js';
-import {dressAvatar,animateAvatar,importModel,removeImported,sanitizeLook,TEAM_COLORS,BASES,baseStatus,updateAvatarMixers,ESTILOS_CABELO,THUMB_CDN} from './avatar.js';
+import {dressAvatar,animateAvatar,importModel,removeImported,sanitizeLook,TEAM_COLORS,BASES,baseStatus,maoDoAvatar,updateAvatarMixers,ESTILOS_CABELO,THUMB_CDN} from './avatar.js';
 
+const hud=iniciarHud();
 const canvas=document.querySelector('#world');
 const scene=new THREE.Scene();
 // Qualidade gráfica: "alto" (sombras 2048, espelho d'água com reflexo real) ou "leve" (notebooks e celulares).
@@ -44,6 +47,7 @@ const selecionarMultidao=document.querySelector('#multidao-quantidade');
 const avisoFigurantes=document.querySelector('#figuras-info');
 function informarMultidao(){
  selecionarMultidao.value=String(desfile.count);
+ document.querySelector('#hud-simulation').textContent='SIMULAÇÃO · '+(desfile.count+npcs.count)+' figurantes';
  avisoFigurantes.textContent='SIMULAÇÃO 3D · '+(desfile.count+npcs.count)+' figurantes virtuais · usuários reais: contador online';
 }
 selecionarMultidao.addEventListener('change',()=>{
@@ -64,9 +68,10 @@ let socket=null,myId=null,entered=false,name='Visitante',room='5300108';
 const live=document.querySelector('#status-dot'),status=document.querySelector('#status-label');
 const peers=new Map();
 let modoPvP=false;
+let connectionWanted=false,connectionRole='participant',resumeToken=null,retryTimer=null,retryAttempt=0;
 const tags=new Map();
 const makeTag=(text,color='#d9fff2')=>{const c=document.createElement('canvas');c.width=512;c.height=128;const g=c.getContext('2d');g.fillStyle='#082634e8';g.fillRect(5,8,502,112);g.strokeStyle='#6ae5b1';g.strokeRect(5,8,502,112);g.fillStyle=color;g.textAlign='center';g.font='bold 34px system-ui';g.fillText(String(text).slice(0,38),256,78);const map=new THREE.CanvasTexture(c);const sprite=new THREE.Sprite(new THREE.SpriteMaterial({map,transparent:true,depthWrite:false}));sprite.scale.set(3.4,.85,1);return sprite};
-function etiqueta(id,nome){let t=tags.get(id);if(t){scene.remove(t);t.material.map.dispose();t.material.dispose()}t=makeTag(nome);scene.add(t);tags.set(id,t)}
+function etiqueta(id,nome){if(id===myId)return;let t=tags.get(id);if(t){scene.remove(t);t.material.map.dispose();t.material.dispose()}t=makeTag(nome);scene.add(t);tags.set(id,t)}
 function balao(id,mensagem){const alvo=id===myId?player:peers.get(id);if(!alvo)return;let b=alvo.userData.balao;if(b){scene.remove(b);b.material.map.dispose();b.material.dispose()}b=makeTag(mensagem,'#ffeac2');b.scale.set(5.5,1.2,1);scene.add(b);alvo.userData.balao=b;alvo.userData.balaoAte=performance.now()+5000;}
 // Visual do jogador: salvo só neste navegador.
 function loadLook(){try{return sanitizeLook(JSON.parse(localStorage.getItem('agora-look')||'{}'))}catch{return sanitizeLook()}}
@@ -152,37 +157,51 @@ function log(msg,nick,time){
   el.append(document.createTextNode(msg));
  } else el.textContent=msg;
  pane.append(el);pane.scrollTop=pane.scrollHeight;
+ const small=document.querySelector('#hud-chat-messages');small.append(el.cloneNode(true));while(small.children.length>6)small.firstChild.remove();small.scrollTop=small.scrollHeight;
  while(pane.children.length>65)pane.firstChild.remove();
 }
-function send(data){if(socket?.readyState===WebSocket.OPEN)socket.send(JSON.stringify(data))}
+function send(data){if(connectionRole==='visitor'&&!['join','leave'].includes(data.type))return;if(socket?.readyState===WebSocket.OPEN)socket.send(JSON.stringify(data))}
 function connect(){
- if(socket&&socket.readyState<2)socket.close();
+ clearTimeout(retryTimer);
+ if(socket&&socket.readyState<2)return;
  const scheme=location.protocol==='https:'?'wss:':'ws:';
- socket=new WebSocket(scheme+'//'+location.host+'/api/ws');
+ const current=new WebSocket(scheme+'//'+location.host+'/api/ws');socket=current;
  socket.onopen=()=>{
   live.classList.add('connected');status.textContent='Conectado';
-  send({type:'join',room,name,look:myLook});
+  send({type:'join',room,name,look:myLook,role:connectionRole,resumeToken});
  };
  socket.onmessage=(event)=>{
   let data;try{data=JSON.parse(event.data)}catch{return}
+  if(current!==socket)return;
+  if(data.type==='error'&&data.code==='capacity'){connectionWanted=false;resumeToken=null;status.textContent='Sala cheia — tente novamente em instantes';current.close();return;}
+  if(data.type==='joined'){myId=data.id;resumeToken=data.resumeToken;connectionRole=data.role;retryAttempt=0;}
+  if(data.type==='pvp'){
+   modoPvP=!!data.estado.jogadores.find(j=>j.id===myId)?.pvp;
+   document.querySelector('#pvp-toggle').checked=modoPvP;
+   if(connectionRole!=='visitor')document.querySelector('#pvp-label').textContent=modoPvP?'PvP ligado — combates liberados':'Livre — sem dano entre jogadores';
+  }
   if(pvp.mensagem(data))return;
   if(cartazes.mensagem(data))return;
   if(data.type==='hello')myId=data.id;
   if(data.type==='joined'){
-   entered=true;player.visible=true;seguirJogador(true);etiqueta(myId,name);
+   entered=true;hud.role(connectionRole);document.querySelector('#hud-player-name').textContent=connectionRole==='visitor'?'Observando':name;player.visible=connectionRole!=='visitor';if(data.position)player.position.set(data.position.x,0,data.position.z);seguirJogador(true);etiqueta(myId,name);
    document.body.classList.add('jogando');document.querySelector('#game-hud').hidden=false;
    document.querySelector('#pvp-toggle').checked=false;modoPvP=false;
    for(const mesh of peers.values())scene.remove(mesh);peers.clear();for(const tag of tags.values()){scene.remove(tag);tag.material.map.dispose();tag.material.dispose()}tags.clear();etiqueta(myId,name);
-   for(const other of data.peers||[])remoteAvatar(other.id,other.position?.x,other.position?.z,other.name,other.look);
-   log('Você entrou na praça. Participação gratuita e plural.');
-   count.textContent=data.count+' online';
+   for(const other of (data.peers||[]).filter(p=>p.role!=='visitor'))remoteAvatar(other.id,other.position?.x,other.position?.z,other.name,other.look);
+   for(const selector of ['#pvp-toggle','#grafite-btn','#cartaz-input','#cartaz-btn','#cartaz-remover','#jogo-chat input','#jogo-chat button','#chat input','#chat button']){
+    const control=document.querySelector(selector);if(control)control.disabled=connectionRole==='visitor';
+   }
+   document.querySelector('#pvp-label').textContent=connectionRole==='visitor'?'Visitante — somente observação':'Livre — sem dano entre jogadores';
+   log(connectionRole==='visitor'?'Você está observando como visitante.':'Você entrou na praça. Participação gratuita e plural.');
+   count.textContent=data.count+' online';document.querySelector('#hud-online').textContent=count.textContent;
   }
-  if(data.type==='presence')count.textContent=data.count+' online';
+  if(data.type==='presence'){count.textContent=data.count+' online';document.querySelector('#hud-online').textContent=count.textContent;}
   if(data.type==='vitorias'){document.querySelector('#vitorias').textContent='Vitórias no jogo · Vermelho '+data.placar.vermelho+' × '+data.placar.amarelo+' Amarelo'}
   if(data.type==='grafite')mostrarGrafite(data.item);
   if(data.type==='graffitis'){for(const g of data.items||[])mostrarGrafite(g)}
   if(data.type==='chat'){log(data.text,data.name,data.time);balao(data.id,data.text)}
-  if(data.type==='enter'&&data.id!==myId)remoteAvatar(data.id,data.position?.x,data.position?.z,data.name,data.look);
+  if(data.type==='enter'&&data.id!==myId&&data.role!=='visitor')remoteAvatar(data.id,data.position?.x,data.position?.z,data.name,data.look);
   if(data.type==='look'&&data.id!==myId){const p=peers.get(data.id);if(p)dressAvatar(p,data.look)}
   if(data.type==='debate')renderDebate(data.state);
   if(data.type==='teloes')teloes.atualizar(data.slots);
@@ -198,18 +217,28 @@ function connect(){
   }
  };
  socket.onclose=()=>{
-  entered=false;cartazes.reset();document.body.classList.remove('jogando');document.querySelector('#game-hud').hidden=true;renderDebate(null);pvp.reset();live.classList.remove('connected');status.textContent='Desconectado';count.textContent='0 online';
+  if(current!==socket)return;
+  entered=false;joystick.reset();pressed.clear();cartazes.reset();document.body.classList.remove('jogando');document.querySelector('#game-hud').hidden=true;renderDebate(null);pvp.reset();live.classList.remove('connected');status.textContent='Desconectado';count.textContent='0 online';
+  for(const mesh of peers.values())scene.remove(mesh);peers.clear();
+  for(const tag of tags.values()){scene.remove(tag);tag.material.map.dispose();tag.material.dispose()}tags.clear();
+  if(connectionWanted){status.textContent='Reconectando…';retryTimer=setTimeout(connect,Math.min(10000,500*2**retryAttempt++)+Math.random()*250);}
  };
  socket.onerror=()=>{status.textContent='Sem conexão'};
 }
-document.querySelector('#enter').addEventListener('click',()=>{
+function enterWorld(role){
+ connectionWanted=true;
+ if(connectionRole!==role){send({type:'leave'});socket?.close();socket=null;resumeToken=null;}
+ connectionRole=role;
  name=(document.querySelector('#nickname').value||'Visitante').trim().slice(0,24)||'Visitante';
  // A acao parte do clique do usuario, permitindo Fullscreen API com fallback CSS.
  document.querySelector('.world-wrap').requestFullscreen?.().catch(()=>{});
  room=document.querySelector('#city').value;
  const sel=document.querySelector('#city');document.querySelector('#room-label').textContent=sel.selectedOptions[0].textContent.split('·')[0].trim();
  connect();
-});
+}
+document.querySelector('#enter').addEventListener('click',()=>enterWorld('participant'));
+document.querySelector('#enter-visitor').addEventListener('click',()=>enterWorld('visitor'));
+window.addEventListener('online',()=>{if(connectionWanted&&(!socket||socket.readyState>1))connect()});
 // ---------- Criador de personagem ----------
 const creator={
  base:document.querySelector('#base'),cards:document.querySelector('#base-cards'),
@@ -376,6 +405,7 @@ document.querySelector('#chat-form').addEventListener('submit',e=>{
  if(text)send({type:'chat',text});input.value='';
 });
 const pressed=new Set();
+const joystick=iniciarAnalogico(document.querySelector('#joystick'),document.querySelector('#mobile-run'));
 window.addEventListener('keydown',e=>{
  if(e.target.matches('input,select,textarea'))return;
  const key=e.key.toLowerCase();if(['w','a','s','d','arrowup','arrowdown','arrowleft','arrowright'].includes(key)){pressed.add(key);if(key.startsWith('arrow'))e.preventDefault()}
@@ -385,13 +415,9 @@ window.addEventListener('keydown',e=>{if(e.key==='Shift')pressed.add('shift')});
 window.addEventListener('blur',()=>pressed.clear());
 // Modo PvP: itens, veículos e combate (pvp.js). O servidor valida tudo.
 const pvp=iniciarPvP({scene,camera,renderer,controls,canvas,city,player,peers,send,colisao:resolveCollision,
- meuId:()=>myId,meuNome:()=>name,teclas:()=>pressed,wrap:document.querySelector('.world-wrap'),aoTeleporte:()=>seguirJogador(false)});
-for(const [id,key] of [['up','w'],['down','s'],['left','a'],['right','d']]){
- const button=document.querySelector('#'+id);
- for(const eventName of ['pointerdown','pointerup','pointercancel','pointerleave']){
-  button.addEventListener(eventName,e=>{e.preventDefault();if(eventName==='pointerdown')pressed.add(key);else pressed.delete(key)})
- }
-}
+ meuId:()=>myId,meuNome:()=>name,teclas:()=>new Set([...pressed,...joystick.keys]),wrap:document.querySelector('.world-wrap'),aoTeleporte:()=>seguirJogador(false)});
+document.querySelector('#hud-score').append(document.querySelector('.pvp-placar'));
+document.querySelector('#hud-settings-actions').append(document.querySelector('.pvp-som'));
 let netTick=0;
 const fwd=new THREE.Vector3(),right=new THREE.Vector3(),UP=new THREE.Vector3(0,1,0),lastPlayer=new THREE.Vector3();
 // Câmera em terceira pessoa: acompanha o jogador mantendo o ângulo escolhido com o mouse.
@@ -410,12 +436,14 @@ function animate(){
   if(pressed.has('s')||pressed.has('arrowdown'))f-=1;
   if(pressed.has('a')||pressed.has('arrowleft'))r-=1;
   if(pressed.has('d')||pressed.has('arrowright'))r+=1;
-  playerMoving=!!(f||r);
+  f-=joystick.state.y;r+=joystick.state.x;
+  const intensidade=Math.min(1,Math.hypot(f,r));
+  playerMoving=intensidade>0;
   if(playerMoving){
    camera.getWorldDirection(fwd);fwd.y=0;fwd.normalize();right.crossVectors(fwd,UP);
    const dir=new THREE.Vector3().addScaledVector(fwd,f).addScaledVector(right,r).normalize();
-   correndo=pressed.has('shift');
-   const vel=(correndo?7.5:3.2)*dt;
+   correndo=pressed.has('shift')||joystick.running;
+   const vel=(correndo?7.5:3.2)*dt*intensidade;
    let nx=player.position.x+dir.x*vel,nz=player.position.z+dir.z*vel;
    [nx,nz]=resolveCollision(nx,nz,city.colliders);
    nx=THREE.MathUtils.clamp(nx,city.limites.xMin,city.limites.xMax);
@@ -467,7 +495,7 @@ document.querySelector('#grafite-btn').addEventListener('click',()=>{
  if(v?.trim())send({type:'grafite',text:v.trim().slice(0,48),x:player.position.x,z:player.position.z});
 });
 document.querySelector('#sair-jogo').addEventListener('click',()=>{
- socket?.close();entered=false;document.body.classList.remove('jogando');document.querySelector('#game-hud').hidden=true;
+ connectionWanted=false;clearTimeout(retryTimer);send({type:'leave'});resumeToken=null;socket?.close();entered=false;document.body.classList.remove('jogando');document.querySelector('#game-hud').hidden=true;
  if(document.fullscreenElement)document.exitFullscreen().catch(()=>{});
 });
 document.querySelector('#tela-cheia').addEventListener('click',()=>{
@@ -475,3 +503,11 @@ document.querySelector('#tela-cheia').addEventListener('click',()=>{
 });
 
 resize();animate();
+
+// Read-only diagnostics for browser QA. No session credentials or mutation hooks.
+export function visualSnapshot(){
+ const hand=maoDoAvatar(player,'D'),left=maoDoAvatar(player,'E');
+ return {entered,role:connectionRole,input:{...joystick.state,running:joystick.running},localNameTags:[...tags.keys()].filter(id=>id===myId).length,
+  player:{position:player.position.toArray(),moving:playerMoving,running:correndo,locomotion:player.userData.baseModel?.userData.locomotion?.getClip()?.name||'idle',glb:!!player.userData.baseModel,hand:hand?.mao.getWorldPosition(new THREE.Vector3()).toArray(),leftArm:left?.antebraco.quaternion.toArray()},
+  signs:cartazes.diagnostico(),models:npcs.estadoModelos(),baseStatus:Object.fromEntries(baseStatus),density:desfile.count,render:{calls:renderer.info.render.calls,triangles:renderer.info.render.triangles}};
+}

@@ -132,6 +132,30 @@ test('veículo: entra, dirige, só o motorista move; armas do veículo certo', (
   assert.equal(heli.motorista, null); assert.equal(heli.y, 0);
 });
 
+test('mísseis danificam veículo antes do piloto e não aplicam dano duplo na explosão', () => {
+  const { c, passar } = duelo();
+  const caca = c.veiculos.find((v) => v.tipo === 'caca');
+  const carro = c.veiculos.find((v) => v.tipo === 'carro');
+  c.mover('a', caca.x, caca.z); assert.equal(c.entrarVeiculo('a', caca.id), true);
+  c.mover('b', carro.x, carro.z); assert.equal(c.entrarVeiculo('b', carro.id), true);
+  c.moverVeiculo('a', { x: carro.x, y: 120, z: carro.z + 200 });
+  for (let i = 0; i < 2; i++) {
+    const disparo = c.disparar('a', 'missil-caca');
+    assert.equal(disparo.ok, true);
+    assert.equal(c.acertar('a', disparo.tiro, { ponto: { x: carro.x, y: 0, z: carro.z } }).ok, true);
+    assert.equal(c.jogadores.get('b').vida, 100, 'o veículo protege o ocupante até ser destruído');
+    assert.equal(c.jogadores.get('b').veiculo, carro.id);
+    passar(1800);
+  }
+  assert.equal(carro.vida, 32);
+  const disparo = c.disparar('a', 'missil-caca');
+  assert.equal(disparo.ok, true);
+  assert.equal(c.acertar('a', disparo.tiro, { ponto: { x: carro.x, y: 0, z: carro.z } }).ok, true);
+  assert.equal(carro.vida, 0);
+  assert.equal(c.jogadores.get('b').veiculo, null);
+  assert.equal(c.jogadores.get('b').vida, 30, 'dano ao piloto aplicado uma vez pela destruição');
+});
+
 test('míssil destrói veículo inimigo e fere o motorista; prédios não têm vida', () => {
   const { c, passar, tipos } = duelo();
   const caca = c.veiculos.find((v) => v.tipo === 'caca');

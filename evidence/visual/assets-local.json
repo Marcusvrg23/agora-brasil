@@ -1,0 +1,68 @@
+[
+  {
+    "path": "public/assets/bases/homem.glb",
+    "bytes": 2478984,
+    "sha256": "5e90a942da4a573417463cb1b38f7e288be6410948881c5b90cf9d7c75c2d156",
+    "meshes": 1,
+    "skins": [
+      {
+        "joints": 24
+      }
+    ],
+    "animations": [
+      "Armature|Casual_Walk|baselayer"
+    ]
+  },
+  {
+    "path": "public/assets/anims/run-higgsfield.glb",
+    "bytes": 49884,
+    "sha256": "0acfb5aba4b47806b33184106316ec5195c9aee4bf2ac82beea67a2f6b62ed79",
+    "meshes": 1,
+    "skins": [
+      {
+        "joints": 22
+      }
+    ],
+    "animations": [
+      "RIG_Run"
+    ]
+  },
+  {
+    "path": "public/assets/veiculos/caminhao-lula.glb",
+    "bytes": 242352,
+    "sha256": "17488ae3c85b7a117b9f968725888225bbae038a245ef179237fe4dfc91f9fc1",
+    "meshes": 66,
+    "animations": []
+  },
+  {
+    "path": "public/assets/veiculos/caminhao-bolsonaro.glb",
+    "bytes": 478788,
+    "sha256": "8ff894ee63b4dba0b72d2bdf6d49fcc23e4e17809b7c89fa672364f5614afaa4",
+    "meshes": 66,
+    "animations": []
+  },
+  {
+    "path": "public/assets/brasilia-v4.glb",
+    "bytes": 1354552,
+    "sha256": "1b5993f39a684ffa1c852e01d9cb6c5d090ea3b6e40b7936599156d916fe8d8a",
+    "meshes": 487,
+    "animations": [
+      "AVATAR_amarelo_braco_pivo_1",
+      "AVATAR_amarelo_braco_pivo_-1",
+      "AVATAR_amarelo_perna_pivo_1",
+      "AVATAR_amarelo_perna_pivo_-1",
+      "AVATAR_azul_braco_pivo_1",
+      "AVATAR_azul_braco_pivo_-1",
+      "AVATAR_azul_perna_pivo_1",
+      "AVATAR_azul_perna_pivo_-1",
+      "AVATAR_branco_braco_pivo_1",
+      "AVATAR_branco_braco_pivo_-1",
+      "AVATAR_branco_perna_pivo_1",
+      "AVATAR_branco_perna_pivo_-1",
+      "AVATAR_vermelho_braco_pivo_1",
+      "AVATAR_vermelho_braco_pivo_-1",
+      "AVATAR_vermelho_perna_pivo_1",
+      "AVATAR_vermelho_perna_pivo_-1"
+    ]
+  }
+]

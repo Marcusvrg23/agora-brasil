@@ -41,6 +41,7 @@ try{
  }
  await page.select('#multidao-quantidade','300');
  await page.waitForFunction(()=>document.querySelector('#figuras-info')?.textContent.includes('306 figurantes'),{timeout:10000});
+ await page.click('[data-hud-panel="hud-cartaz"]');
  await page.type('#cartaz-input','PAZ E DIALOGO');
  await page.click('#cartaz-btn');
  await page.waitForFunction(()=>document.querySelector('#cartaz-status')?.textContent.includes('aparecendo'),{timeout:12000});

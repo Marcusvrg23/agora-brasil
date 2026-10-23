@@ -1,4 +1,5 @@
 import * as THREE from 'three';
+import {criarCartaz3D} from './cartaz-3d.js';
 import {maoDoAvatar,poseAvatar,aplicarPoseAtual} from './avatar.js';
 // Cartazes editáveis ficam ligados ao avatar no espaço 3D, não são textos flutuantes.
 // O conteúdo é fornecido pelo usuário e validado pelo servidor; os demais apenas renderizam.
@@ -26,17 +27,15 @@ export function iniciarCartazes({scene,player,peers,send,meuId}){
  }
  function remove(id){
   const e=cartazes.get(id);if(!e)return;
+  const avatar=id===meuId()?player:peers.get(id);if(avatar?.userData.pose?.nome==='cartaz'){poseAvatar(avatar,null);aplicarPoseAtual(avatar);}
   scene.remove(e.group);e.board.material.map.dispose();e.board.material.dispose();
   e.board.geometry.dispose();e.pole.material.dispose();e.pole.geometry.dispose();cartazes.delete(id);
  }
  function set(id,text){
   remove(id);
   text=String(text||'').trim().slice(0,42);if(!text)return;
-  const holder=new THREE.Group();holder.name='cartaz-do-participante';
-  const pole=new THREE.Mesh(new THREE.CylinderGeometry(.025,.025,1.55,8),new THREE.MeshLambertMaterial({color:'#755c3c'}));
-  pole.position.set(0,.60,0);holder.add(pole);
-  const board=new THREE.Mesh(new THREE.PlaneGeometry(1.65,.94),new THREE.MeshBasicMaterial({map:texture(text),side:THREE.DoubleSide}));
-  board.position.set(0,1.33,0);holder.add(board);
+  const {group:holder,pole,board}=criarCartaz3D(texture(text));
+  holder.name='cartaz-do-participante';
   scene.add(holder);cartazes.set(id,{text,group:holder,pole,board});
  }
  document.querySelector('#cartaz-btn').addEventListener('click',()=>{
@@ -80,5 +79,5 @@ export function iniciarCartazes({scene,player,peers,send,meuId}){
   }
  }
  function reset(){for(const id of [...cartazes.keys()])remove(id);}
- return {mensagem,update,reset};
+ return {mensagem,update,reset,diagnostico:()=>[...cartazes].map(([id,e])=>({id,text:e.text,position:e.group.position.toArray(),haste:e.pole.geometry.parameters.height,placa:e.board.geometry.parameters.height,verso:e.board.children.some(c=>c.name==='verso-legivel')}))};
 }
