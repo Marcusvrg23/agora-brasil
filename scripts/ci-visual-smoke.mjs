@@ -14,6 +14,7 @@ try{
   '--use-gl=angle','--use-angle=swiftshader','--ignore-gpu-blocklist','--window-size=1280,900']});
  const page=await browser.newPage();
  page.on('pageerror',error=>errors.push(String(error.stack||error)));
+ page.on('console',m=>{if(m.type()==='error')console.log('BROWSER CONSOLE',m.text().slice(0,400));});
  await page.setViewport({width:1280,height:900,deviceScaleFactor:1});
  await page.goto(url,{waitUntil:'domcontentloaded',timeout:45000});
  await page.waitForFunction(()=>document.querySelector('#figuras-info')?.textContent.includes('186 figurantes'),{timeout:25000});
@@ -27,7 +28,17 @@ try{
  if(!initial.webgl)throw Error('WebGL2 indisponível no Chrome do runner');
  console.log('MUNDO',JSON.stringify(initial));
  await page.click('#enter');
- await page.waitForFunction(()=>!document.querySelector('#game-hud')?.hidden,{timeout:10000});
+ try{await page.waitForFunction(()=>!document.querySelector('#game-hud')?.hidden,{timeout:30000});}
+ catch(error){
+  console.log('ENTRADA DIAGNÓSTICO',JSON.stringify(await page.evaluate(()=>({
+   status:document.querySelector('#status-label')?.textContent,
+   classes:document.body.className,
+   hudHidden:document.querySelector('#game-hud')?.hidden,
+   errors:document.querySelector('#messages')?.textContent?.slice(-200)
+  }))));
+  if(errors.length)console.log('PAGE ERRORS',errors.slice(0,3));
+  throw error;
+ }
  await page.select('#multidao-quantidade','300');
  await page.waitForFunction(()=>document.querySelector('#figuras-info')?.textContent.includes('306 figurantes'),{timeout:10000});
  await page.type('#cartaz-input','PAZ E DIALOGO');
