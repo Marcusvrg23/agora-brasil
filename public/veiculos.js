@@ -1,5 +1,7 @@
 import * as THREE from 'three';
-import {deslocamentoRoda,ondulacaoBandeira} from './movimento.mjs';
+import {ondulacaoBandeira} from './movimento.mjs';
+import {rodaNomeada,bandeiraNomeada,giroDaRoda} from './veiculo-visual.mjs';
+import {criarCarroReserva,criarCaminhaoReserva} from './veiculo-reserva.js';
 import {GLTFLoader} from 'https://cdn.jsdelivr.net/npm/three@0.169.0/examples/jsm/loaders/GLTFLoader.js';
 // Veículos e montaria do modo PvP. Modelos semi-realistas gerados no Higgsfield (sam_3_3d, a partir de
 // desenhos próprios, sem marca), com todas as animações feitas em código:
@@ -132,6 +134,8 @@ function brilho(cor,tam){const s=new THREE.Sprite(new THREE.SpriteMaterial({map:
 
 // Modelos de reserva, se o GLB não carregar (mesma escala normalizada: comprimento 1 em Z).
 function procedural(tipo){
+ if(tipo==='carro')return criarCarroReserva();
+ if(tipo.startsWith('caminhao-'))return criarCaminhaoReserva(tipo);
  const g=new THREE.Group();const add=(geo,cor,x,y,z,m=.3)=>{const k=new THREE.Mesh(geo,metal(cor,.45,m));k.position.set(x,y,z);k.castShadow=true;g.add(k);return k};
  if(tipo==='carro'){add(new THREE.BoxGeometry(.5,.14,1),'#d46a12',0,-.05,0);add(new THREE.BoxGeometry(.4,.1,.45),'#202428',0,.07,-.05);for(const z of [-.31,.26])for(const x of [-.24,.24]){const r=add(new THREE.CylinderGeometry(.1,.1,.07,18),'#151515',x,-.06,z);r.rotation.z=Math.PI/2}}
  if(tipo==='moto'){add(new THREE.BoxGeometry(.12,.12,.5),'#202c3a',0,0,-.05);for(const z of [-.38,.36]){const r=add(new THREE.TorusGeometry(.13,.035,8,20),'#151515',0,-.125,z);r.rotation.y=Math.PI/2}}
@@ -171,7 +175,21 @@ export class Veiculo{
   modelo.traverse(o=>{if(o.isMesh){o.castShadow=true;o.receiveShadow=true;
    if(!provisorio&&(this.cfg.rodas||this.cfg.dino))o.material=prepararMaterial(o.material,this.cfg,this.uni);
    if(o.material.map)o.material.map.anisotropy=4}});
-     this.rodasTruck=[];this.bandeirasTruck=[];if(this.cfg.truck)modelo.traverse(o=>{if(o.isMesh&&/^Pneu/i.test(o.name))this.rodasTruck.push(o);if(o.isMesh&&/^Bandeira/i.test(o.name)){o.userData.indice=this.bandeirasTruck.length;this.bandeirasTruck.push(o)}});
+   // Pivôs independentes: carro reserva não usa shader; caminhões giram rodas/estandartes por peça.
+   this.modeloProcedural=provisorio;this.rodasTruck=[];this.animPneus=[];this.bandeirasTruck=[];
+   const encontrados=new Set();
+   if(this.cfg.truck || (this.tipo==='carro'&&provisorio))modelo.traverse(o=>{
+    if(!o.isMesh)return;
+    if(rodaNomeada(o.name)){
+     const pivot=o.parent?.name.endsWith('_PIVOT')?o.parent:o;
+     if(!encontrados.has(pivot.uuid)){
+      encontrados.add(pivot.uuid);this.rodasTruck.push(o);
+      const size=new THREE.Box3().setFromObject(o).getSize(new THREE.Vector3());
+      this.animPneus.push({pivot,raio:THREE.MathUtils.clamp(size.y*.5,.28,1.4)});
+     }
+    }
+    if(this.cfg.truck&&bandeiraNomeada(o.name)){o.userData.indice=this.bandeirasTruck.length;this.bandeirasTruck.push(o)}
+   });
    this.corpo.add(holder);this.modelo=holder;
   // ponto (x,y,z) nas coordenadas do modelo normalizado → coordenadas locais do corpo
   const off=modelo.position.clone();
@@ -294,7 +312,10 @@ export class Veiculo{
   // suspensão e inclinações por tipo
   const c=this.corpo;  if(this.tipo==='carro'||C.truck){
    if(C.rodas){s.giro+=s.vel*dt/(C.rodas[0][2]*this.escala);this.uni.uGiro.value=s.giro;this.uni.uEsterco.value=s.esterco}
-   if(C.truck){for(const roda of this.rodasTruck||[])roda.rotation.x+=deslocamentoRoda(s.vel,dt);for(const band of this.bandeirasTruck||[])band.rotation.x=ondulacaoBandeira(t,band.userData.indice,s.vel)}
+   if(C.truck||(this.tipo==='carro'&&this.modeloProcedural)){
+    for(const {pivot,raio} of this.animPneus||[])pivot.rotation.x+=giroDaRoda(s.vel,dt,raio);
+    for(const band of this.bandeirasTruck||[])band.rotation.x=ondulacaoBandeira(t,band.userData.indice,s.vel);
+   }
    const quique=Math.sin(t*17)*.006*Math.min(1,Math.abs(s.vel)/10);
    c.rotation.x=THREE.MathUtils.lerp(c.rotation.x,THREE.MathUtils.clamp(-s.acel*.004,-.05,.05),Math.min(1,dt*5));
    c.rotation.z=THREE.MathUtils.lerp(c.rotation.z,THREE.MathUtils.clamp((s.lat||s.vel*s.esterco*.6)*.0045,-.07,.07),Math.min(1,dt*5));
