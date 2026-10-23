@@ -1,4 +1,6 @@
 import * as THREE from 'three';
+import {BOT_SEEDS} from './bot-paths.mjs';
+import {dressAvatar,animateAvatar,updateAvatarMixers,poseAvatar,aplicarPoseAtual,maoDoAvatar} from './avatar.js';
 
 // Multidão exclusivamente visual, determinística e local.
 // Instâncias são desenhadas em lotes; jamais entram no WebSocket, votos ou contagem online.
@@ -22,71 +24,213 @@ function simpleLabel(name){
  const sprite=new THREE.Sprite(new THREE.SpriteMaterial({map:tex,depthWrite:false,transparent:true}));
  sprite.scale.set(2.8,.7,1);return sprite;
 }
-function buildCrowd(scene,quantidade){
- const root=new THREE.Group();root.name='figurantes-simulados';scene.add(root);
- const groups=[[],[]];
- for(let id=0;id<quantidade;id++)groups[id%2].push({id,index:groups[id%2].length});
- const dummy=new THREE.Object3D(), meshes=[], marks=[];
- function inst(geometry,material,n){
-  const m=new THREE.InstancedMesh(geometry,material,n);
-  m.instanceMatrix.setUsage(THREE.DynamicDrawUsage);m.frustumCulled=false;
-  m.castShadow=false;m.receiveShadow=false;root.add(m);meshes.push(m);return m;
+// Os seis perfis abaixo usam rigorosamente os mesmos modelos, cores e roupas de bots.js.
+// Próximos: corpos 3D originais com mixer. Distantes: impostores capturados desses mesmos
+// corpos (sem cubos, cilindros ou bonecos genéricos para representar a população).
+const RED=[0,3,4],YELLOW=[1,2,5];
+export function varianteFigurante(id){
+ const grupo=id%2===0?RED:YELLOW;
+ return grupo[Math.floor(id/2)%3];
+}
+function lookDaSemente(i){
+ const b=BOT_SEEDS[i];
+ return {base:b.base,team:b.team,outfit:i%2?'terno-faixa':'camisa',
+  pele:i%3===0?'#a76a48':'#c99a74',cabelo:'#292320',
+  calca:'#242a39',terno:'#28324a',acessorio:'nenhum',cabeloEstilo:'auto'};
+}
+function criarPlaca(spec){
+ const grupo=new THREE.Group();grupo.name='cartaz-em-mãos';
+ const madeira=new THREE.Mesh(new THREE.CylinderGeometry(.02,.02,1.25,6),
+  new THREE.MeshLambertMaterial({color:'#7a5536'}));
+ madeira.position.y=.62;grupo.add(madeira);
+ const tex=cartazTexture(spec);
+ const board=new THREE.Mesh(new THREE.PlaneGeometry(1.28,.71),
+  new THREE.MeshBasicMaterial({map:tex,side:THREE.DoubleSide}));
+ board.position.y=1.35;grupo.add(board);
+ return {grupo,board,tex};
+}
+function encaixarPlaca(avatar,placa){
+ avatar.updateMatrixWorld(true);
+ const hand=maoDoAvatar(avatar,'D');
+ if(hand){
+  const position=new THREE.Vector3();
+  hand.mao.getWorldPosition(position);
+  placa.grupo.position.copy(position);
+ }else{
+  // Mesma posição sobre o avatar original quando a malha remota não expõe ossos.
+  placa.grupo.position.copy(avatar.position).add(new THREE.Vector3(.28,1.05,.25));
  }
- const teamMeshes=groups.map((a,team)=>{
-  const cor=team===0?'#bf3443':'#d1ba3e';
-  const camiseta=new THREE.MeshLambertMaterial({color:cor});
-  const pele=new THREE.MeshLambertMaterial({color:'#cba17e'});
-  const calca=new THREE.MeshLambertMaterial({color:'#333a48'});
-  const haste=new THREE.MeshBasicMaterial({color:'#5d5345'});
-  return {
-   body:inst(new THREE.BoxGeometry(.58,.77,.29),camiseta,a.length),
-   head:inst(new THREE.SphereGeometry(.17,6,5),pele,a.length),
-   leftLeg:inst(new THREE.BoxGeometry(.18,.68,.23),calca,a.length),
-   rightLeg:inst(new THREE.BoxGeometry(.18,.68,.23),calca,a.length),
-   leftArm:inst(new THREE.BoxGeometry(.15,.57,.18),pele,a.length),
-   rightArm:inst(new THREE.BoxGeometry(.15,.57,.18),pele,a.length),
-   pole:inst(new THREE.CylinderGeometry(.014,.014,1.4,5),haste,a.length),
-   signs: Array.from({length:3},(_,idx)=>{
-    const tex=cartazTexture(CARTAZES[team*3+idx]);
-    const material=new THREE.MeshBasicMaterial({map:tex,side:THREE.DoubleSide,transparent:false});
-    marks.push({tex,material});
-    return inst(new THREE.PlaneGeometry(1.2,.72),material,a.filter((b)=>b.id%6===team+idx*2).length);
-   }),
-  };
+ placa.grupo.rotation.set(0,avatar.rotation.y,0);
+}
+function criarEtiqueta(nome){
+ const c=document.createElement('canvas');c.width=256;c.height=64;
+ const g=c.getContext('2d');g.fillStyle='#0a2039e8';g.fillRect(0,5,256,52);
+ g.fillStyle='#fff';g.textAlign='center';g.font='bold 27px system-ui';g.fillText(nome,128,41);
+ const texture=new THREE.CanvasTexture(c);
+ const sprite=new THREE.Sprite(new THREE.SpriteMaterial({map:texture,transparent:true,depthWrite:false}));
+ sprite.scale.set(2.25,.56,1);return sprite;
+}
+function buildCrowd(scene,renderer,quantidade,{mobile=false}={}){
+ const root=new THREE.Group();root.name='figurantes-mesmos-6-modelos';scene.add(root);
+ const facade=new THREE.Group();root.add(facade);
+ const white=new THREE.Object3D(), sprites=[], groups=Array.from({length:6},()=>[]);
+ for(let id=0;id<quantidade;id++)groups[varianteFigurante(id)].push(id);
+ const dummy=new THREE.Object3D();
+ const tex=[null,null,null,null,null,null];
+ const mesh=groups.map((ids,i)=>{
+  const plane=new THREE.InstancedMesh(
+   new THREE.PlaneGeometry(1.30,2.82),
+   new THREE.MeshBasicMaterial({color:'#ffffff',transparent:true,alphaTest:.08,depthWrite:false,side:THREE.DoubleSide}),
+   ids.length
+  );
+  plane.frustumCulled=false;plane.instanceMatrix.setUsage(THREE.DynamicDrawUsage);
+  facade.add(plane);return plane;
  });
- // Indexação de cada placa: garantimos que as contagens correspondam ao total de variantes.
- const signsIndex=[Array(3).fill(0),Array(3).fill(0)];
- function matrix(mesh,i,x,y,z,sizeX=1,sizeY=1,sizeZ=1,yaw=0,tilt=0){
-  dummy.position.set(x,y,z);dummy.rotation.set(0,yaw,tilt);
-  dummy.scale.set(sizeX,sizeY,sizeZ);dummy.updateMatrix();
-  mesh.setMatrixAt(i,dummy.matrix);
+ const avatars=[];
+ const LIMIT=mobile?24:48; // máximo de mixers de personagens detalhados ao mesmo tempo
+ for(let i=0;i<6;i++)for(let k=0;k<LIMIT/6;k++){
+  const avatar=new THREE.Group();avatar.scale.setScalar(.84);
+  dressAvatar(avatar,lookDaSemente(i));avatar.visible=false;root.add(avatar);
+  const sign=criarPlaca(CARTAZES[i<3?0:3]); // substituído pelo texto da variante abaixo
+  const item=CARTAZES[BOT_SEEDS[i].team==='vermelho'?i===0?0:i===3?1:2:i===1?3:i===2?4:5];
+  const replacement=cartazTexture(item);
+  sign.board.material.map.dispose();sign.board.material.map=replacement;sign.tex=replacement;
+  sign.board.material.needsUpdate=true;
+  sign.grupo.visible=false;root.add(sign.grupo);
+  const label=criarEtiqueta(NOMES[k%NOMES.length]);label.visible=false;root.add(label);
+  avatars.push({i,id:-1,avatar,sign,label});
  }
- function update(t){
-  for(const [team,people] of groups.entries()){
-   const m=teamMeshes[team], counters=signsIndex[team];counters.fill(0);
-   for(const {id,index} of people){
-    const p=posicaoFigurante(id,t,quantidade),sway=Math.sin(t*1.7+id*2.17)*.08;
-    const heading=Math.sin(id*.36+t*.16)*.35;
-    matrix(m.body,index,p.x,1.12+sway,p.z,1,1,1,heading);
-    matrix(m.head,index,p.x,1.74+sway,p.z,1,1,1,heading);
-    const passo=Math.sin(t*2.5+id*1.2)*.11;
-    matrix(m.leftLeg,index,p.x-.15,.42+sway*.4,p.z+passo,1,1,1,heading);
-    matrix(m.rightLeg,index,p.x+.15,.42+sway*.4,p.z-passo,1,1,1,heading);
-    matrix(m.leftArm,index,p.x-.37,1.25+sway,p.z,1,1,1,heading,-.08);
-    matrix(m.rightArm,index,p.x+.33,1.39+sway,p.z+.2,1,1,1,heading,-.35);
-    matrix(m.pole,index,p.x+.42,2.0+sway,p.z+.19,1,1,1,heading);
-    const variant=Math.floor(id/2)%3;
-    matrix(m.signs[variant],counters[variant]++,p.x+.42,2.66+sway,p.z+.19,1,1,1,heading);
+ const map=new Map(avatars.map((a,i)=>[a,i]));
+ const stage=new THREE.Scene();
+ stage.add(new THREE.HemisphereLight('#ffffff','#86909d',2.25));
+ const lamp=new THREE.DirectionalLight('#fff2de',2.1);lamp.position.set(-3,6,7);stage.add(lamp);
+ const stageCam=new THREE.PerspectiveCamera(33,384/640,.1,40);
+ stageCam.position.set(0,1.5,5.6);stageCam.lookAt(0,1.47,0);
+ const stageAvatars=Array.from({length:6},(_,i)=>{
+  const avatar=new THREE.Group();avatar.scale.setScalar(.84);
+  dressAvatar(avatar,lookDaSemente(i));stage.add(avatar);
+  const item=CARTAZES[BOT_SEEDS[i].team==='vermelho'?i===0?0:i===3?1:2:i===1?3:i===2?4:5];
+  const sign=criarPlaca(item);stage.add(sign.grupo);
+  return {avatar,sign};
+ });
+ const target=new THREE.WebGLRenderTarget(384,640,{format:THREE.RGBAFormat,depthBuffer:true});
+ const pixels=new Uint8Array(384*640*4);
+ let destroyed=false,prepared=false;
+ function renderTextures(){
+  if(destroyed)return;
+  const previousTarget=renderer.getRenderTarget();
+  const previousColor=new THREE.Color();renderer.getClearColor(previousColor);
+  const previousAlpha=renderer.getClearAlpha();
+  const previousAuto=renderer.autoClear;
+  renderer.autoClear=true;renderer.setClearColor('#000000',0);
+  try{
+   for(let i=0;i<6;i++){
+    stageAvatars.forEach((s,n)=>{
+     s.avatar.visible=n===i;s.sign.grupo.visible=n===i;
+     if(n!==i)return;
+     animateAvatar(s.avatar,false,0,1);
+     poseAvatar(s.avatar,'cartaz');aplicarPoseAtual(s.avatar);
+     encaixarPlaca(s.avatar,s.sign);
+    });
+    renderer.setRenderTarget(target);renderer.clear(true,true,true);renderer.render(stage,stageCam);
+    renderer.readRenderTargetPixels(target,0,0,384,640,pixels);
+    const canvas=document.createElement('canvas');canvas.width=384;canvas.height=640;
+    const ctx=canvas.getContext('2d');
+    const flipped=new Uint8ClampedArray(pixels.length);
+    for(let y=0;y<640;y++){
+     const row=384*4;flipped.set(pixels.subarray(y*row,(y+1)*row),(639-y)*row);
+    }
+    ctx.putImageData(new ImageData(flipped,384,640),0,0);
+    const next=new THREE.CanvasTexture(canvas);next.colorSpace=THREE.SRGBColorSpace;
+    tex[i]?.dispose();tex[i]=next;
+    mesh[i].material.map=next;mesh[i].material.needsUpdate=true;
+   }
+   prepared=true;
+  }catch(error){console.warn('Não foi possível capturar modelos do desfile',error);}
+  finally{
+   renderer.setRenderTarget(previousTarget);
+   renderer.setClearColor(previousColor,previousAlpha);renderer.autoClear=previousAuto;
+  }
+ }
+ // A primeira captura já usa o avatar original procedural; a seguinte usa o GLB do mesmo
+ // personagem, após o carregamento. Assim, jamais substituímos por caixas ou esferas.
+ let renderAfter=0;
+ function update(t,camera){
+  if(!prepared||t-renderAfter>9&&renderAfter===0){
+   renderTextures();renderAfter=t;
+  }
+  const nearby=Array.from({length:6},()=>[]);
+  const radius=mobile?35:55,rad2=radius*radius;
+  for(let id=0;id<quantidade;id++){
+   const p=posicaoFigurante(id,t,quantidade);
+   const dx=p.x-camera.position.x,dz=p.z-camera.position.z,d2=dx*dx+dz*dz;
+   const variant=varianteFigurante(id);
+   if(d2<rad2)nearby[variant].push({id,p,d2});
+  }
+  const used=new Set();
+  for(let variant=0;variant<6;variant++){
+   nearby[variant].sort((a,b)=>a.d2-b.d2);
+   const slots=avatars.filter(a=>a.i===variant);
+   for(let k=0;k<slots.length;k++){
+    const slot=slots[k],o=nearby[variant][k];
+    if(!o){
+     slot.id=-1;slot.avatar.visible=false;slot.sign.grupo.visible=false;slot.label.visible=false;
+     continue;
+    }
+    used.add(o.id);
+    const av=slot.avatar;
+    av.visible=true;
+    av.position.set(o.p.x,0,o.p.z);
+    av.rotation.y=.18*Math.sin(t*.42+o.id*.73);
+    const pace=1.05+.13*Math.sin(o.id);
+    animateAvatar(av,true,t+o.id*.31,pace);
+    updateAvatarMixers(av,.1);
+    poseAvatar(av,'cartaz');aplicarPoseAtual(av);
+    encaixarPlaca(av,slot.sign);slot.sign.grupo.visible=true;
+    if(slot.id!==o.id){
+     slot.id=o.id;
+     const previous=slot.label;root.remove(previous);
+     previous.material.map.dispose();previous.material.dispose();
+     slot.label=criarEtiqueta(NOMES[o.id%NOMES.length]);root.add(slot.label);
+    }
+    slot.label.visible=o.d2<21*21;
+    slot.label.position.set(o.p.x,2.52,o.p.z);
    }
   }
-  for(const mesh of meshes)mesh.instanceMatrix.needsUpdate=true;
+  for(let variant=0;variant<6;variant++){
+   const ids=groups[variant],m=mesh[variant];
+   for(let i=0;i<ids.length;i++){
+    const id=ids[i],p=posicaoFigurante(id,t,quantidade);
+    const dx=camera.position.x-p.x,dz=camera.position.z-p.z;
+    dummy.position.set(p.x,1.41,p.z);
+    dummy.rotation.set(0,Math.atan2(dx,dz),0);
+    const scale=used.has(id)||!tex[variant]?0:1;
+    dummy.scale.setScalar(scale);
+    dummy.updateMatrix();
+    m.setMatrixAt(i,dummy.matrix);
+   }
+   m.instanceMatrix.needsUpdate=true;
+  }
  }
- update(0);
- return {root,update,dispose(){
-  scene.remove(root);
-  for(const mesh of meshes){mesh.geometry.dispose();mesh.material.dispose();}
-  for(const mark of marks)mark.tex.dispose();
- }};
+ let attempts=0;
+ function finishSprites(t){
+  update(t,window.__agoraCamera||new THREE.PerspectiveCamera());
+ }
+ function dispose(){
+  destroyed=true;scene.remove(root);target.dispose();
+  for(const a of avatars){
+   a.label.material.map.dispose();a.label.material.dispose();
+   a.sign.board.geometry.dispose();a.sign.board.material.map.dispose();a.sign.board.material.dispose();
+   a.sign.grupo.children[0].geometry.dispose();a.sign.grupo.children[0].material.dispose();
+  }
+  for(let i=0;i<6;i++){
+   tex[i]?.dispose();mesh[i].geometry.dispose();mesh[i].material.dispose();
+   stageAvatars[i].sign.board.geometry.dispose();stageAvatars[i].sign.board.material.map.dispose();
+   stageAvatars[i].sign.board.material.dispose();
+   stageAvatars[i].sign.grupo.children[0].geometry.dispose();stageAvatars[i].sign.grupo.children[0].material.dispose();
+  }
+ }
+ return {update,renderTextures,dispose};
 }
 function buildCaravan(scene){
  const root=new THREE.Group();root.name='carreata-simulada';scene.add(root);
