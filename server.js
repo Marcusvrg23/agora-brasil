@@ -216,7 +216,7 @@ const server=http.createServer((req,res)=>{
 const wss=new WebSocketServer({server,maxPayload:LIMIT_BYTES});
 wss.on('connection',(ws)=>{
   ws.playerId='p'+nextId++;
-  ws.room=null;ws.name='Visitante';ws.lastChat=0;ws.lastMove=0;setLook(ws,null);
+  ws.room=null;ws.name='Visitante';ws.lastChat=0;ws.lastMove=0;ws.cartaz='';ws.lastCartaz=0;setLook(ws,null);
   send(ws,{type:'hello',id:ws.playerId});
   ws.on('message',(raw)=>{
     let msg;try { msg=JSON.parse(String(raw)); }catch{return;}
@@ -228,11 +228,11 @@ wss.on('connection',(ws)=>{
       setLook(ws,msg.look||msg);
       if(!rooms.has(ws.room)) rooms.set(ws.room,new Set());
       const occupants=peers(ws.room).map(p=>({
-        id:p.playerId,name:p.name,look:p.look,position:p.position||{x:0,z:-30}
+        id:p.playerId,name:p.name,look:p.look,cartaz:p.cartaz||'',position:p.position||{x:0,z:-30}
       }));
       rooms.get(ws.room).add(ws);
-      send(ws,{type:'joined',room:ws.room,peers:occupants,count:peers(ws.room).length});
-      broadcast(ws.room,{type:'enter',id:ws.playerId,name:ws.name,look:ws.look,position:ws.position||{x:0,z:-30}},ws);
+      send(ws,{type:'joined',room:ws.room,peers:occupants,count:peers(ws.room).length,cartaz:ws.cartaz});
+      broadcast(ws.room,{type:'enter',id:ws.playerId,name:ws.name,look:ws.look,cartaz:ws.cartaz,position:ws.position||{x:0,z:-30}},ws);
       publishCount(ws.room);
       send(ws,{type:'debate',state:debateOf(ws.room).estado()});
       send(ws,{type:'teloes',slots:anuncios.publico()});
@@ -247,6 +247,15 @@ wss.on('connection',(ws)=>{
       setLook(ws,msg.look||msg);
       broadcast(ws.room,{type:'look',id:ws.playerId,look:ws.look});
       combateOf(ws.room).trocarTime(ws.playerId,ws.team);
+      return;
+    }
+    if(msg.type==='cartaz') {
+      const now=Date.now();
+      if(now-ws.lastCartaz<2200)return;
+      const text=clean(msg.text,42);
+      if(/https?:\/\/|www\.|(?:\+?\d[\d ()-]{9,}\d)/i.test(text))return; // cartazes não são links nem números de contato
+      ws.lastCartaz=now;ws.cartaz=text;
+      broadcast(ws.room,{type:'cartaz',id:ws.playerId,text});
       return;
     }
     if(typeof msg.type==='string'&&msg.type.startsWith('debate-')) {
