@@ -8,7 +8,7 @@ function etiqueta(nome){
  ctx.fillStyle='rgba(5,26,37,.9)';ctx.fillRect(4,6,248,50);
  ctx.strokeStyle='#70e8cb';ctx.strokeRect(4,6,248,50);
  ctx.fillStyle='#d9fff2';ctx.font='bold 25px system-ui';ctx.textAlign='center';
- ctx.fillText('NPC · '+nome,128,40);
+ ctx.fillText(nome,128,40);
  const tex=new THREE.CanvasTexture(canvas);tex.colorSpace=THREE.SRGBColorSpace;
  const s=new THREE.Sprite(new THREE.SpriteMaterial({map:tex,depthWrite:false,transparent:true}));
  s.scale.set(3.1,.78,1);return s;
