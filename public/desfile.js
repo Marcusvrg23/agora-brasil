@@ -130,10 +130,10 @@ export function iniciarDesfile(scene,{mobile=false,alto=false,param=null}={}){
  let quantidade=quantidadeInicial({mobile,alto,param}),crowd=buildCrowd(scene,quantidade);
  const cars=buildCaravan(scene);
  // Nomes reais na interface, mas rótulo global informa que não são participantes conectados.
- const labels=Array.from({length:Math.min(20,quantidade)},(_,idx)=>{
+ const labels=Array.from({length:20},(_,idx)=>{
   const label=simpleLabel(NOMES[idx%NOMES.length]);scene.add(label);return label;
  });
- let accumulator=0,lastView=0;
+ let accumulator=0,lastView=0,frames=0,dtSum=0,lastReduce=-100;
  function setQuantidade(n){
   if(!QUANTIDADES.includes(n))return false;
   crowd.dispose();quantidade=n;crowd=buildCrowd(scene,n);
@@ -142,7 +142,17 @@ export function iniciarDesfile(scene,{mobile=false,alto=false,param=null}={}){
  }
  function update(dt,t,camera){
   accumulator+=dt;if(accumulator>=.12){crowd.update(t);cars.update(t);accumulator=0;}
-  if(t-lastView<.4)return;lastView=t;
+  // Reduz o número de figurantes se o FPS cair de modo sustentado; não afeta usuários reais.
+  dtSum+=dt;frames++;
+  let reduced=false;
+  if(frames>=120){
+   const mean=dtSum/frames;dtSum=0;frames=0;
+   if(mean>.042&&quantidade>180&&t-lastReduce>14){
+    const idx=QUANTIDADES.indexOf(quantidade);
+    if(idx>1){setQuantidade(QUANTIDADES[idx-1]);lastReduce=t;reduced=true;}
+   }
+  }
+  if(t-lastView<.4)return reduced;lastView=t;
   let visible=0;
   for(let i=0;i<quantidade&&visible<labels.length;i++){
    const p=posicaoFigurante(i,t,quantidade),dist=Math.hypot(p.x-camera.position.x,p.z-camera.position.z);
@@ -156,6 +166,7 @@ export function iniciarDesfile(scene,{mobile=false,alto=false,param=null}={}){
    }
   }
   for(let j=visible;j<labels.length;j++)labels[j].visible=false;
+  return reduced;
  }
  return {update,setQuantidade,get count(){return quantidade},dispose(){
   crowd.dispose();cars.dispose();for(const label of labels){scene.remove(label);label.material.map.dispose();label.material.dispose();}
