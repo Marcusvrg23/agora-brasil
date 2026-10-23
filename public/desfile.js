@@ -88,7 +88,8 @@ function buildCrowd(scene,renderer,quantidade,{mobile=false}={}){
  const stage=new THREE.Scene();
  stage.add(new THREE.HemisphereLight('#ffffff','#86909d',2.25));
  const lamp=new THREE.DirectionalLight('#fff2de',2.1);lamp.position.set(-3,6,7);stage.add(lamp);
- const stageCam=new THREE.PerspectiveCamera(33,384/640,.1,40);
+ const w=mobile?224:320,h=mobile?374:534;
+ const stageCam=new THREE.PerspectiveCamera(33,w/h,.1,40);
  stageCam.position.set(0,1.5,5.6);stageCam.lookAt(0,1.47,0);
  const stageAvatars=Array.from({length:6},(_,i)=>{
   const avatar=new THREE.Group();avatar.scale.setScalar(.84);
@@ -97,10 +98,10 @@ function buildCrowd(scene,renderer,quantidade,{mobile=false}={}){
   const sign=criarPlaca(item);stage.add(sign.grupo);
   return {avatar,sign};
  });
- const target=new THREE.WebGLRenderTarget(384,640,{format:THREE.RGBAFormat,depthBuffer:true});
- const pixels=new Uint8Array(384*640*4);
- let destroyed=false,prepared=false,renderCount=0,lastRender=0;
- function renderTextures(){
+ const target=new THREE.WebGLRenderTarget(w,h,{format:THREE.RGBAFormat,depthBuffer:true});
+ const pixels=new Uint8Array(w*h*4);
+ let destroyed=false,renderCount=0,lastRender=0;
+ function renderTexture(i){
   if(destroyed)return;
   const previousTarget=renderer.getRenderTarget();
   const previousColor=new THREE.Color();renderer.getClearColor(previousColor);
@@ -108,7 +109,6 @@ function buildCrowd(scene,renderer,quantidade,{mobile=false}={}){
   const previousAuto=renderer.autoClear;
   renderer.autoClear=true;renderer.setClearColor('#000000',0);
   try{
-   for(let i=0;i<6;i++){
     stageAvatars.forEach((s,n)=>{
      s.avatar.visible=n===i;s.sign.grupo.visible=n===i;
      if(n!==i)return;
@@ -117,20 +117,18 @@ function buildCrowd(scene,renderer,quantidade,{mobile=false}={}){
      encaixarPlaca(s.avatar,s.sign);
     });
     renderer.setRenderTarget(target);renderer.clear(true,true,true);renderer.render(stage,stageCam);
-    renderer.readRenderTargetPixels(target,0,0,384,640,pixels);
-    const canvas=document.createElement('canvas');canvas.width=384;canvas.height=640;
+    renderer.readRenderTargetPixels(target,0,0,w,h,pixels);
+    const canvas=document.createElement('canvas');canvas.width=w;canvas.height=h;
     const ctx=canvas.getContext('2d');
     const flipped=new Uint8ClampedArray(pixels.length);
-    for(let y=0;y<640;y++){
-     const row=384*4;flipped.set(pixels.subarray(y*row,(y+1)*row),(639-y)*row);
+    for(let y=0;y<h;y++){
+     const row=w*4;flipped.set(pixels.subarray(y*row,(y+1)*row),(h-1-y)*row);
     }
-    ctx.putImageData(new ImageData(flipped,384,640),0,0);
+    ctx.putImageData(new ImageData(flipped,w,h),0,0);
     const next=new THREE.CanvasTexture(canvas);next.colorSpace=THREE.SRGBColorSpace;
     tex[i]?.dispose();tex[i]=next;
     mesh[i].material.map=next;mesh[i].material.needsUpdate=true;
-   }
-   prepared=true;
-  }catch(error){console.warn('Não foi possível capturar modelos do desfile',error);}
+  }catch(error){console.warn('Não foi possível capturar modelo do desfile '+i,error);}
   finally{
    renderer.setRenderTarget(previousTarget);
    renderer.setClearColor(previousColor,previousAlpha);renderer.autoClear=previousAuto;
@@ -139,8 +137,10 @@ function buildCrowd(scene,renderer,quantidade,{mobile=false}={}){
  // A primeira captura já usa o avatar original procedural; a seguinte usa o GLB do mesmo
  // personagem, após o carregamento. Assim, jamais substituímos por caixas ou esferas.
  function update(t,camera){
-  if(renderCount<3&&(renderCount===0||t-lastRender>(renderCount===1?3:8))){
-   renderTextures();lastRender=t;renderCount++;
+  // Um único modelo capturado por atualização: a praça permanece responsiva,
+  // inclusive durante o carregamento dos GLBs e em smartphones modestos.
+  if(renderCount<12&&t-lastRender>(renderCount===6?6:.30)){
+   renderTexture(renderCount%6);lastRender=t;renderCount++;
   }
   const nearby=Array.from({length:6},()=>[]);
   const radius=mobile?35:55,rad2=radius*radius;
@@ -214,7 +214,7 @@ function buildCrowd(scene,renderer,quantidade,{mobile=false}={}){
    stageAvatars[i].sign.grupo.children[0].geometry.dispose();stageAvatars[i].sign.grupo.children[0].material.dispose();
   }
  }
- return {update,setQuantidade,renderTextures,dispose};
+ return {update,setQuantidade,dispose};
 }
 function buildCaravan(scene){
  const root=new THREE.Group();root.name='carreata-simulada';scene.add(root);
