@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 import {OrbitControls} from 'https://cdn.jsdelivr.net/npm/three@0.169.0/examples/jsm/controls/OrbitControls.js';
-import {Veiculo,statusModelos} from './veiculos.js';
+import {Veiculo,statusModelos,origemModelos} from './veiculos.js';
 const scene=new THREE.Scene();scene.background=new THREE.Color('#102d32');
 const canvas=document.querySelector('#viewer');const renderer=new THREE.WebGLRenderer({canvas,antialias:true,powerPreference:'low-power'});renderer.setPixelRatio(Math.min(window.devicePixelRatio||1,1.25));
 const camera=new THREE.PerspectiveCamera(45,1,.1,150);camera.position.set(23,16,25);
@@ -17,6 +17,6 @@ function frame(now){requestAnimationFrame(frame);const dt=Math.min(.04,(now-prev
 const w=canvas.clientWidth,h=canvas.clientHeight;
 if(w&&h&&(canvas.width!==Math.round(w*renderer.getPixelRatio())||canvas.height!==Math.round(h*renderer.getPixelRatio()))){renderer.setSize(w,h,false);camera.aspect=w/h;camera.updateProjectionMatrix()}
 ativo.s.vel=movendo?10:0;ativo.s.acel=0;ativo.local=true;ativo.animar(dt,tempo,camera);ativo.raiz.rotation.y=movendo?Math.sin(tempo*.3)*.15:0;
-const state=statusModelos.get(ativo.tipo);document.querySelector('#status').textContent=state==='ok'?'GLB real carregado':state==='procedural'?'Reserva detalhada — GLB indisponível':'Carregando modelo 3D';
-window.__truckPreview={tipo:ativo.tipo,status:state||'loading',rodas:ativo.rodasTruck?.length||0,bandeiras:ativo.bandeirasTruck?.length||0,vel:ativo.s.vel,procedural:!!ativo.modeloProcedural};
+const state=statusModelos.get(ativo.tipo);document.querySelector('#status').textContent=state==='ok'?'GLB '+(origemModelos.get(ativo.tipo)==='v2'?'V2':('original ('+(origemModelos.get(ativo.tipo)||'local')+')'))+' carregado':state==='procedural'?'Reserva detalhada — GLB indisponível':'Carregando modelo 3D';
+window.__truckPreview={tipo:ativo.tipo,status:state||'loading',rodas:ativo.rodasTruck?.length||0,bandeiras:ativo.bandeirasTruck?.length||0,vel:ativo.s.vel,procedural:!!ativo.modeloProcedural,origem:origemModelos.get(ativo.tipo)||'indefinida'};
 controls.update();renderer.render(scene,camera)}requestAnimationFrame(frame);
