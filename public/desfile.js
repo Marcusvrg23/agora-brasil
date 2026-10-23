@@ -4,7 +4,7 @@ import {dressAvatar,animateAvatar,updateAvatarMixers,poseAvatar,aplicarPoseAtual
 
 // Multidão exclusivamente visual, determinística e local.
 // Instâncias são desenhadas em lotes; jamais entram no WebSocket, votos ou contagem online.
-import {CARTAZES,QUANTIDADES,NOMES,quantidadeInicial,posicaoFigurante} from './desfile-dados.mjs';
+import {CARTAZES,QUANTIDADES,NOMES,quantidadeInicial,posicaoFigurante,varianteFigurante,CARTAZ_POR_PERFIL} from './desfile-dados.mjs';
 function cartazTexture({text,cor,tinta}){
  const c=document.createElement('canvas');c.width=512;c.height=284;
  const ctx=c.getContext('2d');ctx.fillStyle=cor;ctx.fillRect(0,0,c.width,c.height);
@@ -15,6 +15,44 @@ function cartazTexture({text,cor,tinta}){
  ctx.fillText(text,256,142);
  const tex=new THREE.CanvasTexture(c);tex.colorSpace=THREE.SRGBColorSpace;tex.anisotropy=2;
  return tex;
+}
+function lookDaSemente(i){
+ const b=BOT_SEEDS[i];
+ return {base:b.base,team:b.team,outfit:i%2?'terno-faixa':'camisa',
+  pele:i%3===0?'#a76a48':'#c99a74',cabelo:'#292320',
+  calca:'#242a39',terno:'#28324a',acessorio:'nenhum',cabeloEstilo:'auto'};
+}
+function criarPlaca(spec){
+ const grupo=new THREE.Group();grupo.name='cartaz-em-mãos';
+ const madeira=new THREE.Mesh(new THREE.CylinderGeometry(.02,.02,1.25,6),
+  new THREE.MeshLambertMaterial({color:'#7a5536'}));
+ madeira.position.y=.62;grupo.add(madeira);
+ const tex=cartazTexture(spec);
+ const board=new THREE.Mesh(new THREE.PlaneGeometry(1.28,.71),
+  new THREE.MeshBasicMaterial({map:tex,side:THREE.DoubleSide}));
+ board.position.y=1.35;grupo.add(board);
+ return {grupo,board,tex};
+}
+function encaixarPlaca(avatar,placa){
+ avatar.updateMatrixWorld(true);
+ const hand=maoDoAvatar(avatar,'D');
+ if(hand){
+  const position=new THREE.Vector3();
+  hand.mao.getWorldPosition(position);
+  placa.grupo.position.copy(position);
+ }else{
+  // Mesma posição sobre o avatar original quando a malha remota não expõe ossos.
+  placa.grupo.position.copy(avatar.position).add(new THREE.Vector3(.28,1.05,.25));
+ }
+ placa.grupo.rotation.set(0,avatar.rotation.y,0);
+}
+function criarEtiqueta(nome){
+ const c=document.createElement('canvas');c.width=256;c.height=64;
+ const g=c.getContext('2d');g.fillStyle='#0a2039e8';g.fillRect(0,5,256,52);
+ g.fillStyle='#fff';g.textAlign='center';g.font='bold 27px system-ui';g.fillText(nome,128,41);
+ const texture=new THREE.CanvasTexture(c);
+ const sprite=new THREE.Sprite(new THREE.SpriteMaterial({map:texture,transparent:true,depthWrite:false}));
+ sprite.scale.set(2.25,.56,1);return sprite;
 }
 function buildCrowd(scene,renderer,quantidade,{mobile=false}={}){
  const root=new THREE.Group();root.name='figurantes-mesmos-6-modelos';scene.add(root);
@@ -41,7 +79,7 @@ function buildCrowd(scene,renderer,quantidade,{mobile=false}={}){
  for(let i=0;i<6;i++)for(let k=0;k<LIMIT/6;k++){
   const avatar=new THREE.Group();avatar.scale.setScalar(.84);
   dressAvatar(avatar,lookDaSemente(i));avatar.visible=false;root.add(avatar);
-  const item=CARTAZES[BOT_SEEDS[i].team==='vermelho'?i===0?0:i===3?1:2:i===1?3:i===2?4:5];
+  const item=CARTAZES[CARTAZ_POR_PERFIL[i]];
   const sign=criarPlaca(item);
   sign.grupo.visible=false;root.add(sign.grupo);
   const label=criarEtiqueta(NOMES[k%NOMES.length]);label.visible=false;root.add(label);
@@ -55,7 +93,7 @@ function buildCrowd(scene,renderer,quantidade,{mobile=false}={}){
  const stageAvatars=Array.from({length:6},(_,i)=>{
   const avatar=new THREE.Group();avatar.scale.setScalar(.84);
   dressAvatar(avatar,lookDaSemente(i));stage.add(avatar);
-  const item=CARTAZES[BOT_SEEDS[i].team==='vermelho'?i===0?0:i===3?1:2:i===1?3:i===2?4:5];
+  const item=CARTAZES[CARTAZ_POR_PERFIL[i]];
   const sign=criarPlaca(item);stage.add(sign.grupo);
   return {avatar,sign};
  });
