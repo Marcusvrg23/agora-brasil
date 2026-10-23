@@ -73,7 +73,7 @@ function criarEtiqueta(nome){
 function buildCrowd(scene,renderer,quantidade,{mobile=false}={}){
  const root=new THREE.Group();root.name='figurantes-mesmos-6-modelos';scene.add(root);
  const facade=new THREE.Group();root.add(facade);
- const white=new THREE.Object3D(), sprites=[], groups=Array.from({length:6},()=>[]);
+ const groups=Array.from({length:6},()=>[]);
  for(let id=0;id<quantidade;id++)groups[varianteFigurante(id)].push(id);
  const dummy=new THREE.Object3D();
  const tex=[null,null,null,null,null,null];
@@ -91,16 +91,12 @@ function buildCrowd(scene,renderer,quantidade,{mobile=false}={}){
  for(let i=0;i<6;i++)for(let k=0;k<LIMIT/6;k++){
   const avatar=new THREE.Group();avatar.scale.setScalar(.84);
   dressAvatar(avatar,lookDaSemente(i));avatar.visible=false;root.add(avatar);
-  const sign=criarPlaca(CARTAZES[i<3?0:3]); // substituído pelo texto da variante abaixo
   const item=CARTAZES[BOT_SEEDS[i].team==='vermelho'?i===0?0:i===3?1:2:i===1?3:i===2?4:5];
-  const replacement=cartazTexture(item);
-  sign.board.material.map.dispose();sign.board.material.map=replacement;sign.tex=replacement;
-  sign.board.material.needsUpdate=true;
+  const sign=criarPlaca(item);
   sign.grupo.visible=false;root.add(sign.grupo);
   const label=criarEtiqueta(NOMES[k%NOMES.length]);label.visible=false;root.add(label);
   avatars.push({i,id:-1,avatar,sign,label});
  }
- const map=new Map(avatars.map((a,i)=>[a,i]));
  const stage=new THREE.Scene();
  stage.add(new THREE.HemisphereLight('#ffffff','#86909d',2.25));
  const lamp=new THREE.DirectionalLight('#fff2de',2.1);lamp.position.set(-3,6,7);stage.add(lamp);
@@ -115,7 +111,7 @@ function buildCrowd(scene,renderer,quantidade,{mobile=false}={}){
  });
  const target=new THREE.WebGLRenderTarget(384,640,{format:THREE.RGBAFormat,depthBuffer:true});
  const pixels=new Uint8Array(384*640*4);
- let destroyed=false,prepared=false;
+ let destroyed=false,prepared=false,renderCount=0,lastRender=0;
  function renderTextures(){
   if(destroyed)return;
   const previousTarget=renderer.getRenderTarget();
@@ -154,10 +150,9 @@ function buildCrowd(scene,renderer,quantidade,{mobile=false}={}){
  }
  // A primeira captura já usa o avatar original procedural; a seguinte usa o GLB do mesmo
  // personagem, após o carregamento. Assim, jamais substituímos por caixas ou esferas.
- let renderAfter=0;
  function update(t,camera){
-  if(!prepared||t-renderAfter>9&&renderAfter===0){
-   renderTextures();renderAfter=t;
+  if(renderCount<3&&(renderCount===0||t-lastRender>(renderCount===1?3:8))){
+   renderTextures();lastRender=t;renderCount++;
   }
   const nearby=Array.from({length:6},()=>[]);
   const radius=mobile?35:55,rad2=radius*radius;
@@ -211,10 +206,6 @@ function buildCrowd(scene,renderer,quantidade,{mobile=false}={}){
    }
    m.instanceMatrix.needsUpdate=true;
   }
- }
- let attempts=0;
- function finishSprites(t){
-  update(t,window.__agoraCamera||new THREE.PerspectiveCamera());
  }
  function dispose(){
   destroyed=true;scene.remove(root);target.dispose();
@@ -270,8 +261,9 @@ function buildCaravan(scene){
   for(const c of cars){c.paint.dispose();c.cab.material.dispose();c.pole.material.dispose();c.flag.material.dispose();c.tex.dispose();}
  }};
 }
-export function iniciarDesfile(scene,{mobile=false,alto=false,param=null}={}){
- let quantidade=quantidadeInicial({mobile,alto,param}),crowd=buildCrowd(scene,quantidade);
+export function iniciarDesfile(scene,{renderer,mobile=false,alto=false,param=null}={}){
+ if(!renderer)throw new Error('O desfile necessita do renderer para usar os modelos originais.');
+ let quantidade=quantidadeInicial({mobile,alto,param}),crowd=buildCrowd(scene,renderer,quantidade,{mobile});
  const cars=buildCaravan(scene);
  // Nomes reais na interface, mas rótulo global informa que não são participantes conectados.
  const labels=Array.from({length:20},(_,idx)=>{
@@ -280,12 +272,12 @@ export function iniciarDesfile(scene,{mobile=false,alto=false,param=null}={}){
  let accumulator=0,lastView=0,frames=0,dtSum=0,lastReduce=-100;
  function setQuantidade(n){
   if(!QUANTIDADES.includes(n))return false;
-  crowd.dispose();quantidade=n;crowd=buildCrowd(scene,n);
+  crowd.dispose();quantidade=n;crowd=buildCrowd(scene,renderer,n,{mobile});
   for(const l of labels)l.visible=false;
   return true;
  }
  function update(dt,t,camera){
-  accumulator+=dt;if(accumulator>=.12){crowd.update(t);cars.update(t);accumulator=0;}
+  accumulator+=dt;if(accumulator>=.12){crowd.update(t,camera);cars.update(t);accumulator=0;}
   // Reduz o número de figurantes se o FPS cair de modo sustentado; não afeta usuários reais.
   dtSum+=dt;frames++;
   let reduced=false;
