@@ -17,7 +17,7 @@ test('cartaz 3D: sincronização autorizada, limites e estado ao entrar',async(t
    ws.on('error',fail);
    ws.on('message',chunk=>msgs.push(JSON.parse(String(chunk))));
    ws.on('open',()=>{
-    ws.send(JSON.stringify({type:'join',name,room:'5300108'}));
+    ws.send(JSON.stringify({type:'join',name:nome,room:'5300108'}));
     ok({ws,msgs,send:o=>ws.send(JSON.stringify(o)),async wait(pred,timeout=2500){
      const start=Date.now();
      while(Date.now()-start<timeout){
