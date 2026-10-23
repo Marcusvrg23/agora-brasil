@@ -21,6 +21,12 @@ test('multidão de 2.000 distribui os dois grupos sem contar como usuários reai
   assert.ok(!pos.has(key),'figurantes não podem ocupar posições idênticas');
   pos.add(key);
  }
+ const setores=[{red:0,yellow:0},{red:0,yellow:0}];
+ for(let id=0;id<2000;id++){
+  const p=posicaoFigurante(id,3,2000),side=p.x<0?0:1;
+  if(p.team===0)setores[side].red++;else setores[side].yellow++;
+ }
+ assert.ok(setores.every(s=>s.red>0&&s.yellow>0),'as duas cores devem coexistir em ambas as alas');
  assert.deepEqual(contagens,[1000,1000]);
  assert.equal(pos.size,2000);
 });
