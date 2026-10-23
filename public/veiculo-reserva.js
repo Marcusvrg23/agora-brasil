@@ -33,10 +33,11 @@ function roda(root,name,x,y,z,r,materials){
  return wheel;
 }
 function quad(root,name,points,m){
- const verts=[],faces=[0,1,2,0,2,3];
- for(const p of points)verts.push(...p);
+ const verts=[],faces=[0,1,2,0,2,3],pivot=points[0];
+ for(const p of points)verts.push(p[0]-pivot[0],p[1]-pivot[1],p[2]-pivot[2]);
  const g=new THREE.BufferGeometry();g.setAttribute('position',new THREE.Float32BufferAttribute(verts,3));g.setIndex(faces);g.computeVertexNormals();
- const o=make(root,g,m,name);o.material.side=THREE.DoubleSide;return o;
+ // O pivô na haste garante que animar Bandeira_* não faça o tecido orbitar a cabine.
+ const o=make(root,g,m,name,...pivot);o.material.side=THREE.DoubleSide;return o;
 }
 
 export function criarCarroReserva(){
