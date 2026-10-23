@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 import {ondulacaoBandeira} from './movimento.mjs';
-import {rodaNomeada,bandeiraNomeada,giroDaRoda,afastamentoModelo} from './veiculo-visual.mjs';
+import {rodaNomeada,bandeiraNomeada,giroDaRoda,afastamentoModelo,pecaIsolada} from './veiculo-visual.mjs';
 import {criarCarroReserva,criarCaminhaoReserva} from './veiculo-reserva.js';
 import {GLTFLoader} from 'https://cdn.jsdelivr.net/npm/three@0.169.0/examples/jsm/loaders/GLTFLoader.js';
 // Veículos e montaria do modo PvP. Modelos semi-realistas gerados no Higgsfield (sam_3_3d, a partir de
@@ -199,10 +199,15 @@ export class Veiculo{
      if(!encontrados.has(pivot.uuid)){
       encontrados.add(pivot.uuid);this.rodasTruck.push(o);
       const size=new THREE.Box3().setFromObject(o).getSize(new THREE.Vector3());
-      this.animPneus.push({pivot,raio:THREE.MathUtils.clamp(size.y*.5,.28,1.4)});
+      // Nos GLBs antigos todas as rodas podem estar fundidas em UMA malha.
+      // Girá-la faria os pneus orbitarem o caminhão em vez de rodarem no eixo.
+      if(pecaIsolada(size))this.animPneus.push({pivot,raio:THREE.MathUtils.clamp(size.y*.5,.28,1.4)});
      }
     }
-    if(this.cfg.truck&&bandeiraNomeada(o.name)){o.userData.indice=this.bandeirasTruck.length;this.bandeirasTruck.push(o)}
+    if(this.cfg.truck&&bandeiraNomeada(o.name)){
+     const tamanho=new THREE.Box3().setFromObject(o).getSize(new THREE.Vector3());
+     if(pecaIsolada(tamanho,{limite:3.0})){o.userData.indice=this.bandeirasTruck.length;this.bandeirasTruck.push(o)}
+    }
    });
    this.corpo.add(holder);this.modelo=holder;
   // ponto (x,y,z) nas coordenadas do modelo normalizado → coordenadas locais do corpo
