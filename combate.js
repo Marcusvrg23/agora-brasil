@@ -14,10 +14,10 @@ const ARMAS = {
   'missil-heli': { dano: 75, raio: 6, alcance: 500, recarga: 1400, veiculo: ['helicoptero'] },
   'missil-caca': { dano: 95, raio: 8, alcance: 900, recarga: 1700, veiculo: ['caca'] },
   mordida: { dano: 60, alcance: 9, recarga: 1100, veiculo: ['trex'], corpo: true },
-  atropelar: { dano: 45, alcance: 7, recarga: 900, veiculo: ['carro', 'moto'], corpo: true },
+  atropelar: { dano: 45, alcance: 7, recarga: 900, veiculo: ['carro', 'moto', 'caminhao-lula', 'caminhao-bolsonaro'], corpo: true },
 };
 const VEICULOS = {
-  carro: { vida: 260 }, moto: { vida: 160 }, helicoptero: { vida: 420 }, caca: { vida: 360 }, trex: { vida: 650 },
+  carro: { vida: 260 }, moto: { vida: 160 }, helicoptero: { vida: 420 }, caca: { vida: 360 }, trex: { vida: 650 }, 'caminhao-lula': { vida: 620 }, 'caminhao-bolsonaro': { vida: 620 },
 };
 const VOADORES = new Set(['helicoptero', 'caca']);
 const BASES = { vermelho: { x: -70, z: 120 }, amarelo: { x: 70, z: 120 } };
@@ -43,6 +43,7 @@ const GARAGEM = [
   ['helicoptero', -55, 560, Math.PI], ['helicoptero', 55, 560, Math.PI],
   ['caca', -60, 700, Math.PI], ['caca', 60, 700, Math.PI],
   ['trex', 0, 330, Math.PI],
+  ['caminhao-lula', -52, 72, 0], ['caminhao-bolsonaro', 52, 72, Math.PI],
 ].map(([tipo, x, z, ry], i) => ({ id: 'v' + i, tipo, x, z, ry }));
 
 const d3 = (a, b) => Math.hypot(a.x - b.x, (a.y || 0) - (b.y || 0), a.z - b.z);

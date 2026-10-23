@@ -1,4 +1,5 @@
 import * as THREE from 'three';
+import {temposCorrida,modoLocomocao} from './movimento.mjs';
 import {GLTFLoader} from 'https://cdn.jsdelivr.net/npm/three@0.169.0/examples/jsm/loaders/GLTFLoader.js';
 import {clone as cloneSkinned} from 'https://cdn.jsdelivr.net/npm/three@0.169.0/examples/jsm/utils/SkeletonUtils.js';
 
@@ -158,7 +159,7 @@ export function dressAvatar(group,lookIn){
  const neckTop=new THREE.Group();neckTop.position.set(0,L*.99,0);torso.add(neckTop);
  part(new THREE.CylinderGeometry(.052*k,.06*k,.13*k,14),pele,0,.03*k,0,neckTop);
  const R=.128*k;
- const head=new THREE.Group();head.position.set(0,.1*k+R*1.05,.01*k);neckTop.add(head);
+ const head=new THREE.Group();head.name='avatar-head';head.position.set(0,.1*k+R*1.05,.01*k);neckTop.add(head);
  if(C.curva)head.rotation.x=-C.curva*1.3;
  const headMat=new THREE.MeshPhysicalMaterial({map:faceTexture(look.pele,look.cabelo,tipo),roughness:.6,sheen:.3,sheenColor:new THREE.Color('#ffd7c2')});
  const cranio=part(new THREE.SphereGeometry(R,40,30),headMat,0,0,0,head);cranio.scale.set(.88,1.16,.98);
@@ -263,6 +264,26 @@ function loadBase(tipo){
 // (24 ossos com os mesmos nomes). Os rigs sem animação trazem um "clip0" de um quadro só (pose parada),
 // que é ignorado. Na cópia, fica só a rotação dos ossos e o movimento do quadril, ajustado à altura de cada corpo.
 let walkBase=null;
+let genuineRunBase=null;
+function sharedRun(){
+ if(!genuineRunBase)genuineRunBase=new GLTFLoader().loadAsync('/assets/anims/run-higgsfield.glb')
+  .then(g=>({clip:g.animations.find(a=>/run|corr/i.test(a.name))||g.animations[0]||null,scene:g.scene})).catch(e=>{console.warn('Run GLB unavailable',e);return null});
+ return genuineRunBase;
+}
+function runPara(base, model){
+ if(!base?.clip)return null;
+ const bones=new Map();model.traverse(o=>{if(o.isBone)bones.set(o.name,o)});
+ const tracks=base.clip.tracks.filter(t=>t.name.endsWith('.quaternion') && bones.has(t.name.slice(0,-'.quaternion'.length))).map(t=>{
+  const name=t.name.slice(0,-'.quaternion'.length);
+  const src=base.scene.getObjectByName(name),dst=bones.get(name);
+  if(!src||!dst)return t.clone();
+  const inv=src.quaternion.clone().invert(),rest=dst.quaternion.clone(),vals=Float32Array.from(t.values);
+  const q=new THREE.Quaternion();
+  for(let i=0;i<vals.length;i+=4){q.fromArray(vals,i).premultiply(inv).premultiply(rest).normalize().toArray(vals,i)}
+  return new THREE.QuaternionKeyframeTrack(t.name,t.times,vals);
+ });
+ return tracks.length>=8?new THREE.AnimationClip('Run',base.clip.duration,tracks):null;
+}
 function sharedWalk(){
  if(!walkBase)walkBase=loadBase('homem').then(g=>{
   const clip=g&&g.animations.find(a=>/walk|andar/i.test(a.name));
@@ -333,7 +354,30 @@ async function applyBase(group,look){
  const hips=model.getObjectByName('Hips');
  const mixer=new THREE.AnimationMixer(model);
  const action=mixer.clipAction(walkPara(base,hips?hips.position:null));
- holder.userData.mixer=mixer;holder.userData.walk=action;holder.userData.andando=false;
+ const runClip=runPara(await sharedRun(),model);
+  const run=runClip?mixer.clipAction(runClip):null;
+  if(!run)console.warn('Animação Run indisponível ou incompatível: mantendo caminhada normal.');
+ holder.userData.mixer=mixer;holder.userData.walk=action;holder.userData.run=run;holder.userData.locomotion=null;holder.userData.andando=false;
+}
+
+// Corrida com clip independente: mesma hierarquia/esqueleto da caminhada original.
+// Intensifica os movimentos articulares sem alterar montarias ou animações PvP.
+function criarClipCorrida(base,hipsAlvo){
+ const walk=walkPara(base,hipsAlvo);
+ const tracks=walk.tracks.map(tr=>{
+  if(!tr.name.endsWith('.quaternion')||!/(?:UpLeg|Leg|Arm|ForeArm)/.test(tr.name)){const copy=tr.clone();copy.times=temposCorrida(tr.times);return copy}
+  const vals=Float32Array.from(tr.values);
+  const start=new THREE.Quaternion().fromArray(vals,0);
+  const q=new THREE.Quaternion(),delta=new THREE.Quaternion(),boost=new THREE.Quaternion(),identity=new THREE.Quaternion();
+  const strength=/Leg|UpLeg/.test(tr.name)?1.32:1.24;
+  for(let i=0;i<vals.length;i+=4){
+   q.fromArray(vals,i);delta.copy(start).invert().multiply(q);
+   boost.copy(identity).slerp(delta,Math.min(1.5,strength));
+   start.clone().multiply(boost).normalize().toArray(vals,i);
+  }
+  return new THREE.QuaternionKeyframeTrack(tr.name,temposCorrida(tr.times),vals);
+ });
+ return new THREE.AnimationClip('corrida',walk.duration*.74,tracks);
 }
 
 // Caminhada procedural: balança pernas e braços; parado, respira de leve.
@@ -342,11 +386,16 @@ export function animateAvatar(group,moving,t,ritmo=1){
  const {legs,arms,rig,imported,baseModel,mixer,clips}=group.userData;
  if(!imported&&baseModel){
   const walk=baseModel.userData.walk;
-  if(walk){ // com esqueleto: anima de verdade; parado volta à pose inicial
-   walk.timeScale=ritmo;
-   // andando: entra a caminhada; parado: a caminhada some aos poucos e o boneco volta à pose em pé
-   if(moving&&!baseModel.userData.andando){baseModel.userData.andando=true;walk.reset();walk.paused=false;walk.setEffectiveWeight(1);walk.fadeIn(.2).play()}
-   if(!moving&&baseModel.userData.andando){baseModel.userData.andando=false;walk.fadeOut(.3)}
+  if(walk){
+   const run=baseModel.userData.run;
+   const target=modoLocomocao(moving,ritmo)==='idle'?null:(modoLocomocao(moving,ritmo)==='run'?(run||walk):walk);
+   const current=baseModel.userData.locomotion||null;
+   if(current!==target){
+    current?.fadeOut(.18);
+    if(target){target.reset();target.enabled=true;target.setEffectiveWeight(1);target.fadeIn(.18).play()}
+    baseModel.userData.locomotion=target;
+   }
+   if(target)target.timeScale=target===walk?Math.max(.75,ritmo/1.35):1;
    return;
   }
   // Sem esqueleto: passo com leve balanço.
@@ -356,7 +405,7 @@ export function animateAvatar(group,moving,t,ritmo=1){
  }
  if(imported){
   if(mixer&&clips){
-   const want=moving?(clips.walk||clips.idle):(clips.idle||clips.walk);
+   const want=moving?(ritmo>=2?(clips.run||clips.walk||clips.idle):(clips.walk||clips.run||clips.idle)):(clips.idle||clips.walk||clips.run);
    if(want&&group.userData.current!==want){group.userData.current?.fadeOut(.2);want.reset().fadeIn(.2).play();group.userData.current=want}
   }
   if(!mixer)imported.position.y=moving?Math.abs(Math.sin(t*9))*.08:0;
@@ -396,9 +445,9 @@ export async function importModel(group,file){
  if(gltf.animations.length){
   const mixer=new THREE.AnimationMixer(model);
   const find=re=>gltf.animations.find(c=>re.test(c.name));
-  const walk=find(/walk|andar|run|correr/i),idle=find(/idle|parad|stand/i)||gltf.animations[0];
+  const walk=find(/walk|andar/i),run=find(/run|correr|sprint/i),idle=find(/idle|parad|stand/i)||gltf.animations[0];
   group.userData.mixer=mixer;
-  group.userData.clips={walk:walk&&mixer.clipAction(walk),idle:idle&&mixer.clipAction(idle)};
+  group.userData.clips={walk:walk&&mixer.clipAction(walk),run:run&&mixer.clipAction(run),idle:idle&&mixer.clipAction(idle)};
  }
  return {nome:file.name,animacoes:gltf.animations.map(a=>a.name)};
 }

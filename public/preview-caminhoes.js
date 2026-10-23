@@ -1,0 +1,22 @@
+import * as THREE from 'three';
+import {OrbitControls} from 'https://cdn.jsdelivr.net/npm/three@0.169.0/examples/jsm/controls/OrbitControls.js';
+import {Veiculo,statusModelos} from './veiculos.js';
+const scene=new THREE.Scene();scene.background=new THREE.Color('#102d32');
+const canvas=document.querySelector('#viewer');const renderer=new THREE.WebGLRenderer({canvas,antialias:true,powerPreference:'low-power'});renderer.setPixelRatio(Math.min(window.devicePixelRatio||1,1.25));
+const camera=new THREE.PerspectiveCamera(45,1,.1,150);camera.position.set(23,16,25);
+const controls=new OrbitControls(camera,canvas);controls.target.set(0,3.5,0);controls.enableDamping=true;controls.update();
+scene.add(new THREE.HemisphereLight('#ecfaff','#315854',2.4));const sun=new THREE.DirectionalLight('#fff4e4',3);sun.position.set(10,25,16);scene.add(sun);
+const ground=new THREE.Mesh(new THREE.PlaneGeometry(110,110),new THREE.MeshStandardMaterial({color:'#215e53',roughness:1}));ground.rotation.x=-Math.PI/2;ground.position.y=-.02;scene.add(ground);
+const efeitos={faiscas(){},pegadas(){},poeira(){},chama(){},escapamento(){},fumacaRastro(){}};
+const make=tipo=>new Veiculo(scene,{id:'demo',tipo,x:0,y:0,z:0,ry:0,vida:620,max:620,motorista:null},efeitos);
+let ativo=make('caminhao-lula'),movendo=false,tempo=0,prev=performance.now();
+const selects=[['lula','caminhao-lula'],['bolsonaro','caminhao-bolsonaro']];
+for(const [id,tipo] of selects)document.querySelector('#'+id).addEventListener('click',()=>{ativo.remover();ativo=make(tipo);tempo=0;for(const [button] of selects)document.querySelector('#'+button).classList.toggle('active',button===id)});
+document.querySelector('#ligar').addEventListener('click',e=>{movendo=!movendo;e.currentTarget.classList.toggle('active',movendo);e.currentTarget.textContent=movendo?'Parar movimento':'Simular movimento'});
+function frame(now){requestAnimationFrame(frame);const dt=Math.min(.04,(now-prev)/1000);prev=now;tempo+=dt;
+const w=canvas.clientWidth,h=canvas.clientHeight;
+if(w&&h&&(canvas.width!==Math.round(w*renderer.getPixelRatio())||canvas.height!==Math.round(h*renderer.getPixelRatio()))){renderer.setSize(w,h,false);camera.aspect=w/h;camera.updateProjectionMatrix()}
+ativo.s.vel=movendo?10:0;ativo.s.acel=0;ativo.local=true;ativo.animar(dt,tempo,camera);ativo.raiz.rotation.y=movendo?Math.sin(tempo*.3)*.15:0;
+const state=statusModelos.get(ativo.tipo);document.querySelector('#status').textContent=state==='ok'?'GLB real carregado':state==='procedural'?'Fallback procedimental':'Carregando modelo 3D';
+window.__truckPreview={tipo:ativo.tipo,status:state||'loading',rodas:ativo.rodasTruck?.length||0,bandeiras:ativo.bandeirasTruck?.length||0,vel:ativo.s.vel};
+controls.update();renderer.render(scene,camera)}requestAnimationFrame(frame);

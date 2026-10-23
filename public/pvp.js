@@ -11,9 +11,9 @@ import {som,motorVeiculo,alternarSom,somLigado} from './som.js';
 // (Congresso, Planalto, STF, ministérios) não sofrem dano, os projéteis só explodem neles.
 
 const NOMES_ARMA={espada:'espada',arco:'flecha',bomba:'bomba',metralhadora:'metralhadora','missil-heli':'míssil','missil-caca':'míssil',mordida:'mordida de T-rex',atropelar:'atropelamento'};
-const ICONE={espada:'🗡️',arco:'🏹',bomba:'💣',carro:'🏎️',moto:'🏍️',helicoptero:'🚁',caca:'✈️',trex:'🦖'};
+const ICONE={espada:'🗡️',arco:'🏹',bomba:'💣',carro:'🏎️',moto:'🏍️',helicoptero:'🚁',caca:'✈️',trex:'🦖','caminhao-lula':'🚚','caminhao-bolsonaro':'🚚'};
 const COR_ITEM={espada:'#7cc4ff',arco:'#7ee08a',bomba:'#ff9c4a'};
-const DICAS_VEIC={carro:'W/S acelera e freia · A/D vira · Shift turbo · H buzina · atropela inimigos',moto:'W/S acelera e freia · A/D vira · Shift turbo · H buzina',
+const DICAS_VEIC={'caminhao-lula':'W/S acelera ou freia · A/D direção · Shift reforço · E sai','caminhao-bolsonaro':'W/S acelera ou freia · A/D direção · Shift reforço · E sai',carro:'W/S acelera e freia · A/D vira · Shift turbo · H buzina · atropela inimigos',moto:'W/S acelera e freia · A/D vira · Shift turbo · H buzina',
  helicoptero:'Espaço/C sobe e desce · W/S frente/trás · A/D gira · Clique/F metralhadora · G míssil',caca:'W/S potência · A/D inclina · Espaço/C sobe e desce · Clique/F míssil (trava no alvo da mira)',
  trex:'W anda · Shift corre · A/D vira · Clique/F mordida · R rugido'};
 
@@ -517,7 +517,7 @@ export function iniciarPvP(o){
    motorVeiculo(meuV.tipo,Math.min(1,Math.abs(meuV.s.vel)/(meuV.tipo==='caca'?125:40)+(meuV.tipo==='helicoptero'?meuV.s.motor*.4:0)));
    if(local.segura&&meuV.tipo==='helicoptero')metralhadora(meuV,performance.now());
    // atropelar inimigos
-   if((meuV.tipo==='carro'||meuV.tipo==='moto')&&Math.abs(meuV.s.vel)>8){
+   if((meuV.tipo==='carro'||meuV.tipo==='moto'||TIPOS[meuV.tipo].truck)&&Math.abs(meuV.s.vel)>8){
     for(const [id,jj] of est.jogadores){if(!jj.vivo||!inimigo(id)||jj.veiculo)continue;const av=avatarDe(id);if(!av)continue;
      if(Math.hypot(av.position.x-meuV.s.x,av.position.z-meuV.s.z)<TIPOS[meuV.tipo].raio+.6&&performance.now()-(local.atropelos.get(id)||0)>1000){local.atropelos.set(id,performance.now());send({type:'pvp-ataque',arma:'atropelar',alvo:id});efeitos.impacto(av.position.x,1,av.position.z)}}
    }

@@ -3,6 +3,8 @@ import {OrbitControls} from 'https://cdn.jsdelivr.net/npm/three@0.169.0/examples
 import {buildCity,resolveCollision} from './cidade.js';
 import {iniciarTeloes,iniciarFormulario} from './teloes.js';
 import {iniciarPvP} from './pvp.js';
+import {PHOTO_PROFILES} from './personagens.mjs';
+import {aplicarRostoLocal,limparRostoLocal} from './foto-avatar.js';
 import {iniciarBots} from './bots.js';
 import {dressAvatar,animateAvatar,importModel,removeImported,sanitizeLook,TEAM_COLORS,BASES,baseStatus,updateAvatarMixers,ESTILOS_CABELO,THUMB_CDN} from './avatar.js';
 
@@ -241,20 +243,27 @@ function paintCards(){
  }));
 }
 function readCreator(){
+ limparRostoLocal(player);limparRostoLocal(previewAvatar);
+
  myLook=sanitizeLook(Object.fromEntries(LOOK_KEYS.map(k=>[k,creator[k].value])));
  paintCards();
  setTimeout(baseNotice,1500);
  dressAvatar(player,myLook);dressAvatar(previewAvatar,myLook);saveLook();
  if(entered)send({type:'look',look:myLook});
 }
-// Prévia giratória do personagem no painel.
+ // Prévia giratória do personagem no painel.
 const previewRenderer=new THREE.WebGLRenderer({canvas:creator.preview,antialias:true,alpha:true});
 previewRenderer.outputColorSpace=THREE.SRGBColorSpace;
 const previewScene=new THREE.Scene();
 previewScene.add(new THREE.HemisphereLight('#ffffff','#556b4f',2.4));
 const previewSun=new THREE.DirectionalLight('#fff3df',2);previewSun.position.set(2,4,3);previewScene.add(previewSun);
 const previewCam=new THREE.PerspectiveCamera(30,1,.1,50);previewCam.position.set(0,1.5,6.2);previewCam.lookAt(0,1.15,0);
-const previewAvatar=new THREE.Group();previewScene.add(previewAvatar);dressAvatar(previewAvatar,myLook);
+ const previewAvatar=new THREE.Group();previewScene.add(previewAvatar);dressAvatar(previewAvatar,myLook);
+ const photoStatus=document.querySelector('#face-photo-status');
+ const photoCards=document.querySelector('#photo-profiles');
+ for(const profile of PHOTO_PROFILES){const btn=document.createElement('button');btn.type='button';btn.className='photo-profile';btn.textContent=profile.nome+' · '+profile.descricao;btn.addEventListener('click',()=>{myLook=sanitizeLook({...profile.look});dressAvatar(player,myLook);dressAvatar(previewAvatar,myLook);limparRostoLocal(player);limparRostoLocal(previewAvatar);saveLook();fillCreator();if(entered)send({type:'look',look:myLook});photoStatus.textContent=profile.nome+' selecionado. Você pode importar uma foto para o rosto.';});photoCards.append(btn)}
+ document.querySelector('#face-photo').addEventListener('change',async(e)=>{const file=e.target.files[0];if(!file)return;try{await aplicarRostoLocal(player,file);await aplicarRostoLocal(previewAvatar,file);photoStatus.textContent='Foto aplicada localmente. Outros jogadores verão o boneco personalizado sem a foto.'}catch(err){photoStatus.textContent=err.message}finally{e.target.value=''}});
+ document.querySelector('#clear-face-photo').addEventListener('click',()=>{limparRostoLocal(player);limparRostoLocal(previewAvatar);photoStatus.textContent='Rosto local removido.'});
 const floor=new THREE.Mesh(new THREE.CircleGeometry(.9,32),new THREE.MeshStandardMaterial({color:'#1e403e'}));floor.rotation.x=-Math.PI/2;previewScene.add(floor);
 function renderPreview(t){
  const w=creator.preview.clientWidth,h=creator.preview.clientHeight;

@@ -1,0 +1,57 @@
+name: Evidencias 3D e testes - Agora Brasil
+on:
+  push:
+    branches: [feat/caminhoes-personagens-corrida-higgsfield]
+    paths:
+      - '.github/workflows/visual-smoke.yml'
+      - 'public/avatar.js'
+      - 'public/veiculos.js'
+      - 'public/movimento.mjs'
+      - 'public/preview-caminhoes.*'
+      - 'test/movimento.test.mjs'
+      - 'public/preview-corrida.*'
+      - 'public/assets/bases/homem.glb'
+      - 'screenshots/animacao-corrida-validada.mp4'
+      - 'test/personagens.test.mjs'
+      - 'public/montaria.mjs'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  evidencias:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - name: Conferir sintaxe dos scripts 3D
+        run: |
+          node --check public/avatar.js
+          node --check public/preview-corrida.js
+          node --check public/app.js
+          node --check public/veiculos.js
+          node --check public/preview-caminhoes.js
+      - name: Testar personagens e montaria
+        run: node --test test/personagens.test.mjs test/montaria.test.mjs test/movimento.test.mjs
+      - name: Validar vídeo e modelo local
+        run: |
+          test -s public/assets/bases/homem.glb
+          test -s screenshots/animacao-corrida-validada.mp4
+          test -s screenshots/preview-run.png
+          node -e "const fs=require('node:fs');const b=fs.readFileSync('screenshots/animacao-corrida-validada.mp4');if(b.length<50000||b.toString('ascii',4,8)!=='ftyp'||!b.includes(Buffer.from('moov')))process.exit(1);console.log('MP4 ok, bytes='+b.length)"
+      - name: Disponibilizar vídeo e screenshots reais
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: agora-brasil-animacao-validada
+          path: |
+            screenshots/animacao-corrida-validada.mp4
+            screenshots/preview-idle.png
+            screenshots/preview-walk.png
+            screenshots/preview-run.png
+            screenshots/01-home.png
+            screenshots/02-jogando.png
+            screenshots/03-criador.png
+          retention-days: 30
