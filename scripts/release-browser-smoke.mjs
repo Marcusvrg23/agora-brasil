@@ -32,6 +32,7 @@ try{
  await page.waitForFunction(()=>document.querySelector('#figuras-info')?.textContent.includes('186 figurantes'),{timeout:30000});
  await page.click('#enter');
  await page.waitForFunction(()=>document.body.classList.contains('jogando'),{timeout:15000});
+ await page.click('[data-hud-panel="hud-cartaz"]');
  await page.type('#cartaz-input','PAZ E DIALOGO');await page.click('#cartaz-btn');
  await page.waitForFunction(()=>document.querySelector('#cartaz-status')?.textContent.includes('aparecendo'),{timeout:15000});
  await page.screenshot({path:evidence+'/desktop-manifestacao.png'});
@@ -42,7 +43,7 @@ try{
  if(original!==resumed)throw Error('Reconexão mudou identidade');
  result.scenarios.push({name:'desktop: manifestação, cartaz e reconexão automática',ok:true,idPreserved:true});
  await page.evaluate(()=>{if(document.fullscreenElement)return document.exitFullscreen()});
- await page.click('#sair-jogo');
+ await page.click('[data-hud-panel="hud-settings"]');await page.click('#sair-jogo');
  await page.waitForFunction(()=>!document.body.classList.contains('jogando'));
  await page.setViewport({width:390,height:844,deviceScaleFactor:1,isMobile:true,hasTouch:true});
  await page.click('#enter-visitor');

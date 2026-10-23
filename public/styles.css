@@ -99,38 +99,87 @@
 
 .npc-legend{position:absolute;top:104px;left:29px;background:#0a253ad9;color:#a1ffdb;border:1px solid #63d9b377;border-radius:8px;padding:6px 11px;font:600 11px system-ui;pointer-events:none;z-index:4}@media(max-width:620px){.npc-legend{top:100px;left:14px;font-size:9px}}
 
-body.jogando .topbar,body.jogando .sidebar{display:none}
+/* In-game controls occupy three disjoint zones: toolbar, one panel, bottom movement. */
+body.jogando .topbar,body.jogando .sidebar,body.jogando .scene-label,
+body.jogando .world-footer,body.jogando .world-tips,body.jogando .npc-legend{display:none}
 body.jogando main{display:block;min-height:100dvh}
 body.jogando .world-wrap{width:100%;height:100dvh;min-height:100dvh}
-body.jogando .scene-label{top:95px}
-body.jogando .world-footer{display:none}
-body.jogando .npc-legend{top:167px}
-#game-hud[hidden]{display:none}
-#game-hud{position:absolute;z-index:70;top:9px;left:10px;right:10px;pointer-events:none;color:#e8fff3;font:12px system-ui}
-#game-hud .game-toolbar,#game-hud #vitorias,#game-hud .eleicao-info,#game-hud #jogo-chat{pointer-events:auto;background:#061827da;border:1px solid #55d7af65;border-radius:10px;padding:8px;margin-bottom:5px}
-#game-hud .game-toolbar{display:flex;align-items:center;gap:9px;flex-wrap:wrap}
-#game-hud button{border:1px solid #64b9ac;border-radius:7px;background:#164237;color:#e4fff6;padding:7px 11px;cursor:pointer}
-#game-hud input[type=checkbox]{accent-color:#58e8b7}
+#game-hud[hidden],#game-hud .hud-panel[hidden]{display:none!important}
+#game-hud{position:absolute;z-index:70;top:max(8px,env(safe-area-inset-top));left:max(10px,env(safe-area-inset-left));right:max(10px,env(safe-area-inset-right));pointer-events:none;color:#e8fff3;font:12px system-ui;--toolbar-height:92px}
+#game-hud button,#game-hud input,#game-hud select{font:inherit;min-height:36px;border:1px solid #64b9ac;border-radius:8px;background:#12322f;color:#e4fff6;padding:6px 10px}
+#game-hud button{cursor:pointer}
+#game-hud button:focus-visible,#joystick:focus-visible{outline:3px solid #f4c20d;outline-offset:2px}
+#game-hud button:disabled,#game-hud input:disabled{opacity:.45;cursor:default}
+#game-hud .game-toolbar{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:5px 12px;align-items:center;padding:7px 9px;background:#061827ee;border:1px solid #55d7af65;border-radius:12px;pointer-events:auto}
+.hud-session{display:flex;gap:10px;align-items:center;min-width:0}
+#hud-player-name{max-width:130px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#hud-online{color:#9de8cb;white-space:nowrap;font-size:11px}
+#hud-score{margin-left:auto}
+#hud-score .pvp-placar{position:static;transform:none;border:0;box-shadow:none;background:none;margin:0;padding:0;gap:6px;font-size:16px}
+#hud-score .pvp-placar small{display:none}
+#hud-tabs{grid-column:1/-1;display:flex;gap:5px;align-items:center}
+#hud-tabs [aria-expanded=true]{background:#3c9575;color:#fff}
+#hud-simulation{margin-left:auto;color:#acbec2;font-size:10px;text-align:right}
+#game-hud.hud-collapsed #hud-tabs{display:flex}
+#game-hud.hud-collapsed #hud-tabs button{display:none}
+#hud-panels{position:absolute;top:calc(var(--toolbar-height) + 7px);left:0;width:min(320px,100%)}
+#game-hud .hud-panel{pointer-events:auto;border:1px solid #55d7af65;border-radius:12px;background:#061827f5;padding:10px;max-height:calc(100dvh - var(--toolbar-height) - 230px);overflow:auto;overscroll-behavior:contain}
+#jogo-chat{display:flex;gap:5px;margin:0}
+#jogo-chat input{min-width:0;flex:1;width:100%}
+#hud-chat-messages{max-height:100px;overflow:auto;margin-bottom:6px;word-break:break-word}
+#hud-chat-messages:empty{display:none}
+#hud-chat-messages .system{display:none}
+#hud-chat-messages .message{margin:0 0 5px;font-size:11px}
+#hud-chat-messages time{display:none}
+#cartaz-toolbar{display:grid;grid-template-columns:1fr auto;gap:6px}
+#cartaz-toolbar label,#cartaz-toolbar input,#cartaz-status{grid-column:1/-1}
+#cartaz-toolbar input{width:100%;min-width:0}
+#cartaz-status{font-size:11px;color:#b9cfce;line-height:1.4}
+.hud-setting{display:flex;gap:8px;align-items:center;justify-content:space-between;margin-bottom:8px;font-size:11px}
+#game-hud input[type=checkbox]{min-height:0;accent-color:#58e8b7}
+#hud-settings-actions{display:flex;flex-wrap:wrap;gap:5px}
+#vitorias,.eleicao-info{margin-top:8px;color:#b3c9c5;font-size:10px;line-height:1.5}
 #game-hud a{color:#85ead1}
-#game-hud #jogo-chat{display:flex;max-width:450px;gap:5px}
-#game-hud #jogo-chat input{flex:1;min-width:0;background:#102b37;border:1px solid #547f86;border-radius:6px;color:white;padding:7px}
-#game-hud .eleicao-info{max-width:630px;font-size:10px}
-@media(max-width:620px){#game-hud{left:5px;right:5px;font-size:10px}#game-hud .game-toolbar{gap:4px;padding:5px}#game-hud button{padding:6px}body.jogando .scene-label{top:210px}body.jogando .npc-legend{top:285px}}
+#hud-settings-actions .pvp-som{position:static}
+body.jogando .pvp-base{bottom:max(18px,env(safe-area-inset-bottom));left:14px;width:min(260px,40%)}
+body.jogando .pvp-feed{top:115px;right:12px;max-width:min(260px,35%);font-size:11px}
+body.jogando .pvp-aviso{bottom:200px;max-width:80%;white-space:normal;text-align:center}
+body.observando .pvp-base,body.observando .pvp-acoes,body.observando .pvp-aviso{display:none}
+.mobile-controls{display:none}
+#joystick{position:relative;display:grid;place-items:center;width:112px;height:112px;border:1px solid #82d6bd88;border-radius:50%;background:#071b28b8;touch-action:none;user-select:none}
+.joystick-thumb{display:block;width:48px;height:48px;border-radius:50%;background:#85e4c8;border:3px solid #c1ffed;box-shadow:0 3px 12px #0008;pointer-events:none}
+#mobile-run{position:absolute;left:124px;bottom:0;width:52px;height:44px;font:600 11px system-ui;border-radius:12px}
+#mobile-run[aria-pressed=true]{background:#43d5a8;color:#071e1b}
+@media(pointer:coarse),(max-width:900px){
+ body.jogando .mobile-controls{display:block;position:absolute;right:auto;left:max(14px,env(safe-area-inset-left));bottom:max(18px,env(safe-area-inset-bottom));z-index:75}
+ body.jogando .pvp-acoes{display:grid;grid-template-columns:44px 44px;gap:6px;left:auto;right:max(14px,env(safe-area-inset-right));bottom:max(18px,env(safe-area-inset-bottom))}
+ .pvp-acoes button{width:44px;height:44px;font-size:16px}
+ body.jogando .pvp-base{bottom:calc(max(18px,env(safe-area-inset-bottom)) + 130px);left:14px;right:14px;width:auto;display:flex;flex-direction:row;align-items:flex-end;gap:6px;pointer-events:none}
+ .pvp-vida{width:140px;flex:none;padding:5px 8px}
+ .pvp-vida span{font-size:9px}.pvp-vida b{font-size:13px}
+ .pvp-slot{max-width:calc(100% - 146px);padding:5px 8px;min-width:0}
+ .pvp-slot b{font-size:11px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.pvp-slot small{display:none}
+ body.jogando .pvp-aviso{bottom:195px;font-size:11px}
+ body.jogando .pvp-feed{top:112px;max-width:32%}
+}
+@media(max-width:620px){
+ #game-hud{left:max(6px,env(safe-area-inset-left));right:max(6px,env(safe-area-inset-right));font-size:11px}
+ #game-hud .game-toolbar{gap:4px;padding:5px 6px}
+ #game-hud button{min-height:40px;padding:5px 8px}
+ .hud-session{gap:6px}#hud-player-name{max-width:72px;font-size:10px}#hud-online{font-size:10px}
+ #hud-score .pvp-placar{font-size:13px;gap:4px}
+ #hud-simulation{font-size:8px;max-width:95px;line-height:1.4}
+ #hud-panels{width:min(290px,100%)}
+ #game-hud .hud-panel{padding:8px;max-height:calc(100dvh - var(--toolbar-height) - 230px)}
+ #hud-minimize{font-size:10px!important}
+}
+@media(max-height:480px) and (orientation:landscape){
+ #hud-tabs{grid-column:auto;grid-row:1;justify-content:flex-end}
+ #game-hud .game-toolbar{grid-template-columns:minmax(160px,1fr) auto auto}
+ #hud-minimize{grid-column:3;grid-row:1}
+ #game-hud .hud-panel{max-height:calc(100dvh - var(--toolbar-height) - 210px)}
+}
 
 .photo-profiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:8px;margin:8px 0 14px}.photo-profile{min-height:62px;padding:10px;border:1px solid #53716a;border-radius:12px;color:inherit;background:#16332d;cursor:pointer;text-align:left;font-size:12px}.photo-profile:hover,.photo-profile:focus-visible{outline:2px solid #65d9bb;background:#205047}.creator #clear-face-photo{margin:5px 0 12px}
 
-/* Desfile e cartazes: controles compactos para celular, sem bloquear movimentação. */
-#game-hud #cartaz-toolbar{display:flex;align-items:center;flex-wrap:wrap;gap:5px;padding:6px;max-width:600px;background:#061827de;border:1px solid #55d7af65;border-radius:10px;pointer-events:auto}
-#cartaz-toolbar label{font-weight:600;font-size:11px}
-#cartaz-toolbar input{flex:1 1 150px;min-width:90px;background:#102b37;border:1px solid #547f86;border-radius:6px;color:#fff;padding:7px}
-#cartaz-status{color:#b9cfce;font-size:10px}
-#game-hud #multidao-quantidade{color:#ebfff5;background:#102b37;border:1px solid #547f86;border-radius:6px;padding:4px;max-width:105px}
-#game-hud .game-toolbar label{white-space:nowrap}
-@media(max-width:620px){
- #game-hud #cartaz-toolbar{max-width:min(100%,380px);gap:3px;padding:4px}
- #cartaz-toolbar label{flex:0 0 100%;font-size:9px}
- #cartaz-toolbar input{flex-basis:110px;width:90px;font-size:11px}
- #cartaz-toolbar button{font-size:10px;padding:5px 6px}
- #cartaz-status{display:none}
- #game-hud #multidao-quantidade{max-width:76px}
-}
+body.observando .pvp-base,body.observando .pvp-acoes,body.observando .pvp-aviso{display:none!important}

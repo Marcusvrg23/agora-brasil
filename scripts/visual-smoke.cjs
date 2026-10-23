@@ -19,7 +19,7 @@ const fs=require('node:fs');
     await page.waitForTimeout(3500);
     await page.screenshot({path:'screenshots/02-jogo-desktop.png',timeout:9000,animations:'disabled'}).catch(e=>console.log('CAPTURE_WARN gameplay',e.message));
     console.log('MULTIPLAYER_SMOKE',{status:await page.locator('#live-count').textContent(),hud:await page.locator('#game-hud').isVisible()});
-    await page.locator('#sair-jogo').click();
+    await page.locator('[data-hud-panel="hud-settings"]').click();await page.locator('#sair-jogo').click();
     await page.locator('#creator-panel').scrollIntoViewIfNeeded();
     await page.waitForTimeout(1500);
     await page.screenshot({path:'screenshots/03-criador-personagens.png',timeout:9000,animations:'disabled'}).catch(e=>console.log('CAPTURE_WARN creator',e.message));

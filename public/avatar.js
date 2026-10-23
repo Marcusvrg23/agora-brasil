@@ -1,4 +1,5 @@
 import * as THREE from 'three';
+import {POSE_CARTAZ} from './cartaz-config.mjs';
 import {temposCorrida,modoLocomocao} from './movimento.mjs';
 import {GLTFLoader} from 'https://cdn.jsdelivr.net/npm/three@0.169.0/examples/jsm/loaders/GLTFLoader.js';
 import {clone as cloneSkinned} from 'https://cdn.jsdelivr.net/npm/three@0.169.0/examples/jsm/utils/SkeletonUtils.js';
@@ -516,7 +517,7 @@ const P={
 };
 function alvos(nome,k){
  switch(nome){
-  case 'cartaz':return {bracoD:P.cartazD,bracoE:P.cartazE};
+  case 'cartaz':return {bracoD:POSE_CARTAZ.bracoD.map(direction=>V(...direction))};
   case 'espada':return {bracoD:P.espada};
   case 'golpe':return {bracoD:chaves(P.golpe,k)};
   case 'arco':return {bracoE:P.arcoE};
@@ -560,7 +561,7 @@ function desfazerPose(group){
  group.userData._tocados=null;
 }
 // Ajusta as mãos depois do mixer atualizar os ossos; preserva caminhada/corrida originais.
-export function aplicarPoseAtual(group){aplicarPose(group);}
+export function aplicarPoseAtual(group){desfazerPose(group);aplicarPose(group);}
 // Mão para prender itens: o osso da mão (com esqueleto) ou a ponta do antebraço (boneco).
 export function maoDoAvatar(group,lado='D'){
  const cad=corpoAtivo(group);const m=cad?.['braco'+lado];

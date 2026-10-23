@@ -1,0 +1,70 @@
+{
+  "source": "public/bot-paths.mjs + public/avatar.js BASE_CDN; six identities, four GLB bases",
+  "network": {
+    "policy": "enforced",
+    "hostAllowed": false,
+    "host": "d8j0ntlcm91z4.cloudfront.net"
+  },
+  "models": [
+    {
+      "name": "Lia",
+      "base": "mulher",
+      "team": "vermelho",
+      "expectedLocal": "public/assets/bases/mulher.glb",
+      "sourceUrl": "https://d8j0ntlcm91z4.cloudfront.net/user_3KLobL96cAs3bokj0G7CRMHMham/hf_20261021_035345_d9a45351-2fb7-4851-a39b-d9344ccbf900.glb",
+      "localExists": false,
+      "runtimeGLB": false,
+      "runtimeWalkRun": false
+    },
+    {
+      "name": "Caio",
+      "base": "homem",
+      "team": "amarelo",
+      "expectedLocal": "public/assets/bases/homem.glb",
+      "sourceUrl": "https://d8j0ntlcm91z4.cloudfront.net/user_3KLobL96cAs3bokj0G7CRMHMham/hf_20261020_215339_5b3afe7f-0a9f-4ddb-8aa1-741495549426.glb",
+      "localExists": true,
+      "runtimeGLB": true,
+      "runtimeWalkRun": true
+    },
+    {
+      "name": "Bia",
+      "base": "mulher",
+      "team": "amarelo",
+      "expectedLocal": "public/assets/bases/mulher.glb",
+      "sourceUrl": "https://d8j0ntlcm91z4.cloudfront.net/user_3KLobL96cAs3bokj0G7CRMHMham/hf_20261021_035345_d9a45351-2fb7-4851-a39b-d9344ccbf900.glb",
+      "localExists": false,
+      "runtimeGLB": false,
+      "runtimeWalkRun": false
+    },
+    {
+      "name": "Rafa",
+      "base": "idoso",
+      "team": "vermelho",
+      "expectedLocal": "public/assets/bases/idoso.glb",
+      "sourceUrl": "https://d8j0ntlcm91z4.cloudfront.net/user_3KLobL96cAs3bokj0G7CRMHMham/hf_20261021_035348_ac51b268-b3d6-4f59-96e0-90d8321b8b11.glb",
+      "localExists": false,
+      "runtimeGLB": false,
+      "runtimeWalkRun": false
+    },
+    {
+      "name": "Ivo",
+      "base": "homem",
+      "team": "vermelho",
+      "expectedLocal": "public/assets/bases/homem.glb",
+      "sourceUrl": "https://d8j0ntlcm91z4.cloudfront.net/user_3KLobL96cAs3bokj0G7CRMHMham/hf_20261020_215339_5b3afe7f-0a9f-4ddb-8aa1-741495549426.glb",
+      "localExists": true,
+      "runtimeGLB": true,
+      "runtimeWalkRun": true
+    },
+    {
+      "name": "Nina",
+      "base": "idosa",
+      "team": "amarelo",
+      "expectedLocal": "public/assets/bases/idosa.glb",
+      "sourceUrl": "https://d8j0ntlcm91z4.cloudfront.net/user_3KLobL96cAs3bokj0G7CRMHMham/hf_20261021_035350_129869ee-bac0-4d0c-a62d-5f3ce1127f18.glb",
+      "localExists": false,
+      "runtimeGLB": false,
+      "runtimeWalkRun": false
+    }
+  ]
+}

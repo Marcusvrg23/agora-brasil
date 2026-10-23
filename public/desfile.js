@@ -1,4 +1,5 @@
 import * as THREE from 'three';
+import {criarCartaz3D} from './cartaz-3d.js';
 import {BOT_SEEDS} from './bot-paths.mjs';
 import {dressAvatar,animateAvatar,updateAvatarMixers,poseAvatar,aplicarPoseAtual,maoDoAvatar} from './avatar.js';
 
@@ -23,16 +24,11 @@ function lookDaSemente(i){
   calca:'#242a39',terno:'#28324a',acessorio:'nenhum',cabeloEstilo:'auto'};
 }
 export function criarPlaca(spec){
- const grupo=new THREE.Group();grupo.name='cartaz-em-mãos';
- const madeira=new THREE.Mesh(new THREE.CylinderGeometry(.02,.02,1.25,6),
-  new THREE.MeshLambertMaterial({color:'#7a5536'}));
- madeira.position.y=.62;grupo.add(madeira);
  const tex=cartazTexture(spec);
- const board=new THREE.Mesh(new THREE.PlaneGeometry(1.28,.71),
-  new THREE.MeshBasicMaterial({map:tex,side:THREE.DoubleSide}));
- board.position.y=1.35;grupo.add(board);
+ const {group:grupo,board}=criarCartaz3D(tex);
  return {grupo,board,tex};
 }
+
 export function encaixarPlaca(avatar,placa){
  avatar.updateMatrixWorld(true);
  const hand=maoDoAvatar(avatar,'D');

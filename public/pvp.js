@@ -46,12 +46,13 @@ export function iniciarPvP(o){
  <div class="pvp-acoes"><button data-k="e" type="button" aria-label="Pegar ou entrar">E</button><button data-k="f" type="button" aria-label="Usar item">⚔</button><button data-k=" " type="button" aria-label="Subir">▲</button><button data-k="c" type="button" aria-label="Descer">▼</button></div>
  <button class="pvp-som" type="button" aria-label="Som">${somLigado()?'🔊':'🔇'}</button>`;
  wrap.append(hud);
+ const score=hud.querySelector('.pvp-placar');
  const $=s=>hud.querySelector(s);
  $('.pvp-som').addEventListener('click',e=>{e.currentTarget.textContent=alternarSom()?'🔊':'🔇'});
  function feed(html){const d=document.createElement('div');d.innerHTML=html;$('.pvp-feed').prepend(d);setTimeout(()=>d.remove(),7000);while($('.pvp-feed').children.length>5)$('.pvp-feed').lastChild.remove()}
  const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
  const tag=(id)=>`<b style="color:${TEAM_COLORS[timeDe(id)]||'#fff'}">${esc(nomeDe(id))}</b>`;
- function pintarPlacar(){$('.vm').textContent=est.placar.vermelho;$('.am').textContent=est.placar.amarelo;$('.meta').textContent=est.vitoria}
+ function pintarPlacar(){score.querySelector('.vm').textContent=est.placar.vermelho;score.querySelector('.am').textContent=est.placar.amarelo;score.querySelector('.meta').textContent=est.vitoria}
  function pintarVida(){const j=eu();if(!j)return;const v=Math.max(0,j.vida);$('.pvp-vida i').style.width=v+'%';$('.pvp-vida i').style.background=v>50?'#43d5a8':v>25?'#f4c20d':'#e05a4f';$('.pvp-vida b').textContent=v}
  function pintarSlot(){
   const j=eu(),s=$('.pvp-slot');if(!j){s.hidden=true;return}
