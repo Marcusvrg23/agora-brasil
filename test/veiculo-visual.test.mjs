@@ -35,7 +35,8 @@ test('corrida separada do walk e fallback visual de reserva disponíveis',()=>{
  const anim=readFileSync(new URL('../public/avatar.js',import.meta.url),'utf8');
  const reserva=readFileSync(new URL('../public/veiculo-reserva.js',import.meta.url),'utf8');
  assert.match(anim,/sharedRun\(\)/);
- assert.match(anim,/target===walk\?1:1/);
+ assert.match(anim,/if\(target\)target\.timeScale=1/);
+ assert.match(anim,/run-sprint-v2\.glb/);
  assert.doesNotMatch(anim,/target===walk\?Math\.max/);
  assert.match(reserva,/export function criarCarroReserva/);
  assert.match(reserva,/export function criarCaminhaoReserva/);

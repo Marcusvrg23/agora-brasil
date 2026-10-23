@@ -267,24 +267,50 @@ function loadBase(tipo){
 let walkBase=null;
 let genuineRunBase=null;
 function sharedRun(){
- if(!genuineRunBase)genuineRunBase=new GLTFLoader().loadAsync('/assets/anims/run-higgsfield.glb')
-  .then(g=>({clip:g.animations.find(a=>/run|corr/i.test(a.name))||g.animations[0]||null,scene:g.scene})).catch(e=>{console.warn('Run GLB unavailable',e);return null});
+ if(!genuineRunBase)genuineRunBase=new GLTFLoader()
+  .loadAsync('/assets/anims/run-sprint-v2.glb')
+  .then(g=>({clip:g.animations.find(a=>/sprint|run|corr/i.test(a.name))||g.animations[0]||null,scene:g.scene,source:'Sprint V2 - rig original'}))
+  .catch(e=>{
+   console.warn('Sprint V2 indisponível, tentando animação anterior',e);
+   return new GLTFLoader().loadAsync('/assets/anims/run-higgsfield.glb')
+    .then(g=>({clip:g.animations.find(a=>/run|corr/i.test(a.name))||g.animations[0]||null,scene:g.scene,source:'Run anterior'}))
+    .catch(e2=>{console.warn('Nenhum arquivo Run disponível',e2);return null});
+  });
  return genuineRunBase;
 }
 function runPara(base, model){
  // Reject static 1-frame clips; they make a character glide instead of running.
  if(!base?.clip || !Number.isFinite(base.clip.duration) || base.clip.duration < .25)return null;
  const bones=new Map();model.traverse(o=>{if(o.isBone)bones.set(o.name,o)});
- const tracks=base.clip.tracks.filter(t=>t.name.endsWith('.quaternion') && bones.has(t.name.slice(0,-'.quaternion'.length))).map(t=>{
-  const name=t.name.slice(0,-'.quaternion'.length);
-  const src=base.scene.getObjectByName(name),dst=bones.get(name);
-  if(!src||!dst)return t.clone();
-  const inv=src.quaternion.clone().invert(),rest=dst.quaternion.clone(),vals=Float32Array.from(t.values);
-  const q=new THREE.Quaternion();
-  for(let i=0;i<vals.length;i+=4){q.fromArray(vals,i).premultiply(inv).premultiply(rest).normalize().toArray(vals,i)}
-  return new THREE.QuaternionKeyframeTrack(t.name,t.times,vals);
- });
- return tracks.length>=8 && tracks.some(t=>t.times.length>=3)?new THREE.AnimationClip('Run',base.clip.duration,tracks):null;
+ const tracks=[];
+ for(const t of base.clip.tracks){
+  if(t.name.endsWith('.quaternion')){
+   const name=t.name.slice(0,-'.quaternion'.length);
+   const src=base.scene.getObjectByName(name),dst=bones.get(name);
+   if(!dst||!src)continue;
+   const inv=src.quaternion.clone().invert(),rest=dst.quaternion.clone(),vals=Float32Array.from(t.values);
+   const q=new THREE.Quaternion();
+   for(let i=0;i<vals.length;i+=4)q.fromArray(vals,i).premultiply(inv).premultiply(rest).normalize().toArray(vals,i);
+   tracks.push(new THREE.QuaternionKeyframeTrack(t.name,t.times,vals));
+  }else if(t.name==='Hips.position'){
+   const src=base.scene.getObjectByName('Hips'),dst=bones.get('Hips');
+   if(!src||!dst)continue;
+   const vals=Float32Array.from(t.values);
+   // No arquivo antigo a posição do quadril era descartada. Agora preservar a
+   // oscilação de impulso e aterrissagem, relativa à pose do próprio modelo.
+   // Root X/Z permanece fixo: posição de jogo é controlada pelo multiplayer.
+   const srcRest=src.position.y, dstRest=dst.position.y;
+   const clampDelta=Math.max(.02,Math.abs(srcRest)*.13);
+   for(let i=0;i<vals.length;i+=3){
+    vals[i]=dst.position.x;
+    vals[i+1]=dstRest+THREE.MathUtils.clamp(vals[i+1]-srcRest,-clampDelta,clampDelta);
+    vals[i+2]=dst.position.z;
+   }
+   tracks.push(new THREE.VectorKeyframeTrack('Hips.position',t.times,vals));
+  }
+ }
+ return tracks.filter(t=>t.name.endsWith('.quaternion')).length>=8&&tracks.some(t=>t.times.length>=3)
+   ?new THREE.AnimationClip(base.clip.name||'Sprint_V2',base.clip.duration,tracks):null;
 }
 function sharedWalk(){
  if(!walkBase)walkBase=loadBase('homem').then(g=>{
@@ -362,7 +388,7 @@ async function applyBase(group,look){
  const walk=walkClip?mixer.clipAction(walkClip):null;
  const run=runClip?mixer.clipAction(runClip):null;
  if(!run)console.warn('Run independente indisponível: não acelere o Walk para fingir corrida.');
- holder.userData.mixer=mixer;holder.userData.walk=walk;holder.userData.run=run;
+ holder.userData.mixer=mixer;holder.userData.walk=walk;holder.userData.run=run;holder.userData.runSource=run?runBase?.source||'GLB':null;
  holder.userData.locomotion=null;holder.userData.andando=false;
 }
 
@@ -385,7 +411,7 @@ export function animateAvatar(group,moving,t,ritmo=1){
    }
    // Clipes fazem o contato dos pés; não acrescentar "pulo" ou balanço artificial.
    baseModel.position.y=0;baseModel.rotation.z=0;
-   if(target)target.timeScale=target===walk?1:1;
+   if(target)target.timeScale=1;
    return;
   }
   baseModel.position.y=0;baseModel.rotation.z=0;
