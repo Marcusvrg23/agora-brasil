@@ -14,6 +14,7 @@ function duelo() {
   r.c.entrar('a', 'vermelho', { x: 0, z: 100 });
   r.c.entrar('b', 'amarelo', { x: 2, z: 100 });
   r.passar(4000);
+  r.c.definirPvP('a',true);r.c.definirPvP('b',true);
   return r;
 }
 function darItem(c, id, item) { c.jogadores.get(id).item = item; }
