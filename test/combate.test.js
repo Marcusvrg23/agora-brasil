@@ -192,3 +192,17 @@ test('vitória com o placar máximo e nova partida depois', () => {
   assert.equal(c.vencedor, null);
   assert.deepEqual(c.placar, { vermelho: 0, amarelo: 0 });
 });
+
+test('carros e caminhões não atravessam o Congresso por atualizações de rede',()=>{
+ const {c}=novo();
+ for(const tipo of ['carro','caminhao-lula','caminhao-bolsonaro']){
+  const v=c.veiculos.find(x=>x.tipo===tipo);
+  c.entrar('piloto-'+tipo,'vermelho',{x:v.x,z:v.z});
+  assert.equal(c.entrarVeiculo('piloto-'+tipo,v.id),true);
+  const antes={x:v.x,z:v.z};
+  assert.equal(c.moverVeiculo('piloto-'+tipo,{x:0,y:0,z:-180,ry:0}),null,'corpo principal '+tipo);
+  assert.deepEqual({x:v.x,z:v.z},antes,'servidor não deve retransmitir posição inválida');
+  assert.equal(c.moverVeiculo('piloto-'+tipo,{x:-10,y:0,z:-240,ry:0}),null,'torres '+tipo);
+  assert.ok(c.moverVeiculo('piloto-'+tipo,{x:125,y:0,z:-170,ry:0}), 'via lateral continua livre '+tipo);
+ }
+});
