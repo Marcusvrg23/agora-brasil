@@ -492,6 +492,8 @@ function chaves(lista,k){ // [[k, [d1,d2]], ...] → interpolação suave
  return lista[lista.length-1][1];
 }
 const P={
+ cartazD:[V(-.18,.24,.96),V(.02,.4,.91)],
+ cartazE:[V(.18,-.3,.94),V(-.04,.3,.95)],
  espada:[V(-.25,-.85,.45),V(-.05,-.1,1)],
  golpe:[[0,[V(-.25,-.85,.45),V(-.05,-.1,1)]],[.3,[V(-.35,.85,-.35),V(-.15,.9,.4)]],[.55,[V(.2,-.3,.95),V(.6,-.35,.7)]],[1,[V(-.25,-.85,.45),V(-.05,-.1,1)]]],
  arcoE:[V(.15,-.75,.6),V(0,-.2,1)],
@@ -514,6 +516,7 @@ const P={
 };
 function alvos(nome,k){
  switch(nome){
+  case 'cartaz':return {bracoD:P.cartazD,bracoE:P.cartazE};
   case 'espada':return {bracoD:P.espada};
   case 'golpe':return {bracoD:chaves(P.golpe,k)};
   case 'arco':return {bracoE:P.arcoE};
@@ -556,6 +559,8 @@ function desfazerPose(group){
  for(let i=t.length-1;i>=0;i--)t[i][0].quaternion.copy(t[i][1]);
  group.userData._tocados=null;
 }
+// Ajusta as mãos depois do mixer atualizar os ossos; preserva caminhada/corrida originais.
+export function aplicarPoseAtual(group){aplicarPose(group);}
 // Mão para prender itens: o osso da mão (com esqueleto) ou a ponta do antebraço (boneco).
 export function maoDoAvatar(group,lado='D'){
  const cad=corpoAtivo(group);const m=cad?.['braco'+lado];

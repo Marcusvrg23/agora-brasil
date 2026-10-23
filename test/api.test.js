@@ -46,7 +46,9 @@ test('API dos telões: pedido, consulta do dono, moderação e publicação', as
   assert.equal(pol.status, 400);
 });
 
-test('PvP pela rede: estado ao entrar, pegar item e ataque validado no servidor', async () => {
+test('PvP pela rede: estado ao entrar, pegar item e ataque validado no servidor', async (t) => {
+  let a,b;
+  t.after(()=>{a?.ws.terminate();b?.ws.terminate();});
   const { WebSocket } = require('ws');
   const { combates } = require('../server');
   const url = base.replace('http', 'ws');
@@ -59,7 +61,7 @@ test('PvP pela rede: estado ao entrar, pegar item e ataque validado no servidor'
     });
     return new Promise((ok) => ws.on('open', () => { ws.send(JSON.stringify({ type: 'join', room: '5300108', name: nome, look: { team } })); ok({ ws, msgs, espera, send: (d) => ws.send(JSON.stringify(d)) }); }));
   }
-  const a = await cliente('Ana', 'vermelho'), b = await cliente('Beto', 'amarelo');
+  a = await cliente('Ana', 'vermelho');b = await cliente('Beto', 'amarelo');
   const { estado } = await a.espera((m) => m.type === 'pvp');
   assert.ok(estado.veiculos.some((v) => v.tipo === 'caca'));
   assert.ok(estado.pickups.some((p) => p.item === 'arco'));
@@ -72,6 +74,10 @@ test('PvP pela rede: estado ao entrar, pegar item e ataque validado no servidor'
   const idA = [...c.jogadores.values()].find((j) => j.team === 'vermelho').id;
   const idB = [...c.jogadores.values()].find((j) => j.team === 'amarelo').id;
   assert.equal(c.jogadores.get(idA).item, 'espada');
+  a.send({ type:'modo-pvp', ativo:true });
+  b.send({ type:'modo-pvp', ativo:true });
+  await b.espera(m=>m.type==='jogador'&&m.jogador.id===idA&&m.jogador.pvp);
+  await a.espera(m=>m.type==='jogador'&&m.jogador.id===idB&&m.jogador.pvp);
   for (const j of c.jogadores.values()) j.protegidoAte = 0;
   b.send({ type: 'move', x: p.x + 1, z: p.z });
   await new Promise((r) => setTimeout(r, 120));

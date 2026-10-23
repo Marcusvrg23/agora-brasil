@@ -15,6 +15,14 @@ jobs:
       - uses: actions/setup-node@v4
         with: {node-version: '22'}
       - run: npm install
-      - run: npm test
-      - run: node --check server.js
-      - run: node --check public/app.js
+      - name: Verificar sintaxe do servidor e módulos 3D
+        run: |
+          node --check server.js
+          node --check public/app.js
+          node --check public/desfile.js
+          node --check public/desfile-dados.mjs
+          node --check public/cartazes.js
+      - name: Testar desfile, posicionamento e cartazes com limite de tempo
+        run: node --test --test-timeout=15000 --test-force-exit test/desfile.test.mjs test/cartazes.test.js
+      - name: Rodar suíte completa (tempo limitado e liberação de handles)
+        run: timeout 80s node --test --test-timeout=12000 --test-force-exit

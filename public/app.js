@@ -6,6 +6,8 @@ import {iniciarPvP} from './pvp.js';
 import {PHOTO_PROFILES} from './personagens.mjs';
 import {aplicarRostoLocal,limparRostoLocal} from './foto-avatar.js';
 import {iniciarBots} from './bots.js';
+import {iniciarDesfile} from './desfile.js';
+import {iniciarCartazes} from './cartazes.js';
 import {dressAvatar,animateAvatar,importModel,removeImported,sanitizeLook,TEAM_COLORS,BASES,baseStatus,updateAvatarMixers,ESTILOS_CABELO,THUMB_CDN} from './avatar.js';
 
 const canvas=document.querySelector('#world');
@@ -33,6 +35,22 @@ const clock=new THREE.Clock();
 // Cidade desenhada em código (cidade.js), em metros reais.
 const city=buildCity(scene,renderer,camera,{qualidade:QUALIDADE});
 const npcs=iniciarBots(scene,(x,z)=>resolveCollision(x,z,city.colliders),city.limites);
+const desfile=iniciarDesfile(scene,{
+ renderer,
+ mobile:/Mobi|Android|iPhone|iPad/i.test(navigator.userAgent)||matchMedia('(pointer:coarse)').matches,
+ alto:QUALIDADE==='alto',param:new URLSearchParams(location.search).get('figurantes')
+});
+const selecionarMultidao=document.querySelector('#multidao-quantidade');
+const avisoFigurantes=document.querySelector('#figuras-info');
+function informarMultidao(){
+ selecionarMultidao.value=String(desfile.count);
+ avisoFigurantes.textContent='SIMULAÇÃO 3D · '+(desfile.count+npcs.count)+' figurantes virtuais · usuários reais: contador online';
+}
+selecionarMultidao.addEventListener('change',()=>{
+ const valor=Number(selecionarMultidao.value);
+ desfile.setQuantidade(valor);informarMultidao();
+});
+informarMultidao();
 modelStatus.textContent='Esplanada em código · gráficos '+(QUALIDADE==='alto'?'altos':'leves');
 const teloes=iniciarTeloes(city);iniciarFormulario();
 const AVATAR_ESCALA=.84; // bonecos de 2,15 m → ~1,80 m na escala da cidade
@@ -70,6 +88,7 @@ function remoteAvatar(id,x,z,label,look) {
  peers.set(id,mesh);etiqueta(id,label||'Jogador');return mesh;
 }
 
+const cartazes=iniciarCartazes({scene,player,peers,send,meuId:()=>myId});
 // Telão da tribuna: desenha o estado do debate num canvas.
 const telaoCanvas=document.createElement('canvas');telaoCanvas.width=1024;telaoCanvas.height=384;
 const telaoTexture=new THREE.CanvasTexture(telaoCanvas);telaoTexture.colorSpace=THREE.SRGBColorSpace;
@@ -147,6 +166,7 @@ function connect(){
  socket.onmessage=(event)=>{
   let data;try{data=JSON.parse(event.data)}catch{return}
   if(pvp.mensagem(data))return;
+  if(cartazes.mensagem(data))return;
   if(data.type==='hello')myId=data.id;
   if(data.type==='joined'){
    entered=true;player.visible=true;seguirJogador(true);etiqueta(myId,name);
@@ -178,7 +198,7 @@ function connect(){
   }
  };
  socket.onclose=()=>{
-  entered=false;document.body.classList.remove('jogando');document.querySelector('#game-hud').hidden=true;renderDebate(null);pvp.reset();live.classList.remove('connected');status.textContent='Desconectado';count.textContent='0 online';
+  entered=false;cartazes.reset();document.body.classList.remove('jogando');document.querySelector('#game-hud').hidden=true;renderDebate(null);pvp.reset();live.classList.remove('connected');status.textContent='Desconectado';count.textContent='0 online';
  };
  socket.onerror=()=>{status.textContent='Sem conexão'};
 }
@@ -410,6 +430,7 @@ function animate(){
  for(const [id,tag] of tags){const avatar=id===myId?player:peers.get(id);if(avatar){tag.position.set(avatar.position.x,avatar.position.y+2.6,avatar.position.z)}}
  for(const avatar of [player,...peers.values()]){const b=avatar.userData.balao;if(!b)continue;if(now>avatar.userData.balaoAte){scene.remove(b);b.material.map.dispose();b.material.dispose();avatar.userData.balao=null}else b.position.set(avatar.position.x,avatar.position.y+3.7,avatar.position.z)}
  npcs.update(dt,t);
+ if(desfile.update(dt,Date.now()/1000,camera))informarMultidao();
  animateAvatar(player,entered&&playerMoving,t,correndo?2.3:1.35);
  updateAvatarMixers(player,dt);
  for(const p of peers.values()){
@@ -417,6 +438,7 @@ function animate(){
   if(tg){p.position.x+=(tg.x-p.position.x)*Math.min(1,dt*10);p.position.z+=(tg.z-p.position.z)*Math.min(1,dt*10)}
   animateAvatar(p,now-p.userData.lastMove<260,t,p.userData.ritmo||1.35);updateAvatarMixers(p,dt);
  }
+ cartazes.update();
  pvp.update(dt,t);
  renderPreview(t);
  controls.update();
