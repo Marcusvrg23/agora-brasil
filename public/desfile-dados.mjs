@@ -21,12 +21,12 @@ export function quantidadeInicial({mobile=false,alto=false,param=null}={}){
  return mobile?180:(alto?600:300);
 }
 export function posicaoFigurante(id,t=0,total=600){
- const lado=id%2===0?-1:1,faixa=Math.floor(id/2)%10,fileira=Math.floor(id/20);
- // 20 colunas e até 100 fileiras, com representantes de ambas as cores alternados.
+ const lado=Math.floor(id/2)%2===0?-1:1,faixa=Math.floor(id/4)%5,fileira=Math.floor(id/20);
+ // Cada ala possui ambas as cores lado a lado; não representa uma contagem real de apoiadores.
  // Distribuir o total evita sobreposição entre pessoas mesmo no perfil de 2.000.
  const linhas=Math.max(1,Math.ceil(total/20)),espaco=Math.max(120,Math.min(420,linhas*4.2));
  const passo=linhas>1?espaco/(linhas-1):0;
- const x=lado*(8+faixa*3.65)+Math.sin(id*2.19)*.65;
+ const x=lado*(8+faixa*6.15)+(id%2===0?-1.0:1.0)+Math.sin(id*2.19)*.28;
  const z=-80+fileira*passo+Math.sin(id*1.37)*.45;
  const wobble=Math.sin(t*.48+id*.71),drift=Math.sin(t*.12+id*.17)*2.6;
  return {x:x+drift, z:z+wobble*1.5,team:id%2};
