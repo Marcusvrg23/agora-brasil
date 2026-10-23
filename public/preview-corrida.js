@@ -40,10 +40,15 @@ updateAvatarMixers(avatar,dt);
 avatar.position.y=0;
 avatar.rotation.y=Math.sin(time*.26)*.12;
 const holder=avatar.userData.baseModel;
-const rigged=Boolean(holder?.userData.run);
+const runAction=holder?.userData.run;
+const clip=runAction?.getClip();
+const hipsTrack=clip?.tracks.find(t=>t.name==='Hips.position');
+const hipsRange=hipsTrack?Math.max(...Array.from(hipsTrack.values).filter((_,i)=>i%3===1))-Math.min(...Array.from(hipsTrack.values).filter((_,i)=>i%3===1)):0;
+const rigged=Boolean(runAction);
 const fallback=baseStatus.get('homem')==='faltando';
-document.querySelector('#rig-status').innerHTML=rigged?'<strong>Esqueleto original carregado</strong><div>Walk + corrida independente, com transição entre clipes e mesmo rig.</div>':fallback?'<strong>Boneco procedural ativo</strong><div>O modelo esquelético remoto não carregou; mostrando movimento de reserva.</div>':'<strong>Carregando rig...</strong><div>Verificando personagem e animações.</div>';
-window.__avatarPreviewStatus={mode,rigged,fallback,elapsed};
+const source=holder?.userData.runSource||'não carregada';
+document.querySelector('#rig-status').innerHTML=rigged?'<strong>Corrida: '+source+'</strong><div>Clip: '+clip.name+' · '+clip.tracks.length+' canais · quadril '+hipsRange.toFixed(1)+' unidades de rig. Walk original preservado.</div>':fallback?'<strong>Boneco procedural ativo</strong><div>O modelo esquelético remoto não carregou; mostrando movimento de reserva.</div>':'<strong>Carregando rig...</strong><div>Verificando personagem e animações.</div>';
+window.__avatarPreviewStatus={mode,rigged,fallback,elapsed,source,clipName:clip?.name||null,trackCount:clip?.tracks.length||0,hipsRange,clipDuration:clip?.duration||0};
 renderer.render(scene,camera);
 }
 requestAnimationFrame(animate);
