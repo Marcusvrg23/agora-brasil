@@ -4,7 +4,10 @@
 
 Base exata: `e4bc322ae986643987ceac99873bf64b0fe7dedb`.
 Branch: `investigation/original-assets-mobile-20261023`; head final no PR em rascunho
-encadeado à branch `integration/multiplayer-release-20261023`. As correções anteriores
+[#9](https://github.com/Marcusvrg23/agora-brasil/pull/9), encadeado à branch
+`integration/multiplayer-release-20261023`. Head de implementação e evidências
+ensaiado: `ec8214e257737a2b2ab9e6a148346d240693db22`; o commit seguinte atualiza
+somente documentação/metadados. As correções anteriores
 não foram refeitas. Código do jogo, servidor, seis identidades, GLBs, animações,
 materiais e protocolo estão sem delta contra essa base. Sem merge/deploy/produção.
 
@@ -70,8 +73,11 @@ recebe 403 no CONNECT (`assets-mobile/github-api-network.txt`). `gh auth status`
 informa token inválido, mas essa mensagem isolada não comprova validade da
 credencial quando a API está bloqueada. Não foi usado editor que regravasse arquivos
 para contornar a restrição. A descrição revisável está em
-`assets-mobile/PR-DESCRIPTION.md`; publicação de metadados pelo conector GitHub será
-registrada com o resultado real. O PR histórico #8 permanece preservado.
+`assets-mobile/PR-DESCRIPTION.md`. **PR #9 criado em rascunho via conector GitHub,
+com descrição completa e capturas publicadas**, confirmado por leitura do retorno
+remoto (`assets-mobile/github-pr.json`). O bloqueio da CLI foi registrado e não
+impediu a publicação da descrição pelo conector. O PR histórico #8 permanece
+preservado; nenhum arquivo do jogo foi comprometido.
 
 ### Bloqueios objetivos
 

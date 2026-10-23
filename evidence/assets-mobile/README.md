@@ -2,6 +2,8 @@
 
 Base: `e4bc322ae986643987ceac99873bf64b0fe7dedb`.
 Branch: `investigation/original-assets-mobile-20261023`; head remoto consta no PR.
+PR: [#9, rascunho](https://github.com/Marcusvrg23/agora-brasil/pull/9).
+Head de implementação ensaiado: `ec8214e257737a2b2ab9e6a148346d240693db22`.
 **Homologação mobile física: NÃO REALIZADA. Staging público: NÃO IMPLANTADO.**
 
 | Evidência | O que demonstra |
@@ -16,6 +18,7 @@ Branch: `investigation/original-assets-mobile-20261023`; head remoto consta no P
 | `browser.json`, `browser-console.txt` | execução final HTTPS/WSS real em loopback, cenário WebGL, poses e controles; zero exceções JS, requests remotos falhos registrados |
 | `screenshots.json` | dimensões, estado e SHA-256 das sete capturas finais |
 | `first-run.json`, `first-run-console.txt`, `first-run-failure.png` | falha inicial do harness ao trocar isMobile/recarregar; não é falha dos GLBs ou aprovação funcional |
+| `github-cli.txt`, `github-api-network.txt`, `github-pr.json` | CLI bloqueada no CONNECT para api.github.com; PR #9/descrição publicados com sucesso pelo conector |
 
 Todos os screenshots são de navegador realmente executado, sem composição ou
 substituição de modelos. Usam qualidade leve, 180 figurantes solicitados mais seis

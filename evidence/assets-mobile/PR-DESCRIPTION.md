@@ -22,5 +22,7 @@ O `ok` do smoke é funcional e não aprova todos os assets nem FPS mobile.
 
 Relatório: `evidence/RELEASE.md`; evidências: `evidence/assets-mobile/README.md`;
 plano: `docs/HOMOLOGACAO-MOBILE.md`. O uso da CLI para metadados continua bloqueado
-pela rede; resultado do conector GitHub será registrado no relatório sem alterar
-arquivos do jogo. **Manter em rascunho, sem merge ou deploy.**
+pela rede; a descrição completa foi publicada pelo conector GitHub no
+[PR #9](https://github.com/Marcusvrg23/agora-brasil/pull/9), confirmado em rascunho.
+Head de implementação ensaiado: `ec8214e257737a2b2ab9e6a148346d240693db22`.
+Nenhum arquivo do jogo alterado. **Manter em rascunho, sem merge ou deploy.**
