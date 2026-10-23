@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 import {POSE_CARTAZ} from './cartaz-config.mjs';
-import {temposCorrida,modoLocomocao} from './movimento.mjs';
+import {modoLocomocao} from './movimento.mjs';
 import {GLTFLoader} from 'https://cdn.jsdelivr.net/npm/three@0.169.0/examples/jsm/loaders/GLTFLoader.js';
 import {clone as cloneSkinned} from 'https://cdn.jsdelivr.net/npm/three@0.169.0/examples/jsm/utils/SkeletonUtils.js';
 
@@ -272,7 +272,8 @@ function sharedRun(){
  return genuineRunBase;
 }
 function runPara(base, model){
- if(!base?.clip)return null;
+ // Reject static 1-frame clips; they make a character glide instead of running.
+ if(!base?.clip || !Number.isFinite(base.clip.duration) || base.clip.duration < .25)return null;
  const bones=new Map();model.traverse(o=>{if(o.isBone)bones.set(o.name,o)});
  const tracks=base.clip.tracks.filter(t=>t.name.endsWith('.quaternion') && bones.has(t.name.slice(0,-'.quaternion'.length))).map(t=>{
   const name=t.name.slice(0,-'.quaternion'.length);
@@ -283,7 +284,7 @@ function runPara(base, model){
   for(let i=0;i<vals.length;i+=4){q.fromArray(vals,i).premultiply(inv).premultiply(rest).normalize().toArray(vals,i)}
   return new THREE.QuaternionKeyframeTrack(t.name,t.times,vals);
  });
- return tracks.length>=8?new THREE.AnimationClip('Run',base.clip.duration,tracks):null;
+ return tracks.length>=8 && tracks.some(t=>t.times.length>=3)?new THREE.AnimationClip('Run',base.clip.duration,tracks):null;
 }
 function sharedWalk(){
  if(!walkBase)walkBase=loadBase('homem').then(g=>{
@@ -350,35 +351,19 @@ async function applyBase(group,look){
  // Com esqueleto: todos usam a mesma caminhada, ajustada ao quadril de cada corpo.
  let skinned=false;model.traverse(o=>{if(o.isSkinnedMesh)skinned=true});
  if(!skinned)return;
- const base=await sharedWalk();
- if(!base||group.userData.baseModel!==holder)return;
+ // Walk e Run são clipes independentes. Um GLB ausente não bloqueia o outro.
+ const [base,runBase]=await Promise.all([sharedWalk(),sharedRun()]);
+ if(group.userData.baseModel!==holder)return; // usuário trocou de personagem durante o carregamento
  const hips=model.getObjectByName('Hips');
+ const walkClip=base?walkPara(base,hips?hips.position:null):null;
+ const runClip=runPara(runBase,model);
+ if(!walkClip&&!runClip){console.warn('Nenhum clipe de locomoção compatível para',tipo);return}
  const mixer=new THREE.AnimationMixer(model);
- const action=mixer.clipAction(walkPara(base,hips?hips.position:null));
- const runClip=runPara(await sharedRun(),model);
-  const run=runClip?mixer.clipAction(runClip):null;
-  if(!run)console.warn('Animação Run indisponível ou incompatível: mantendo caminhada normal.');
- holder.userData.mixer=mixer;holder.userData.walk=action;holder.userData.run=run;holder.userData.locomotion=null;holder.userData.andando=false;
-}
-
-// Corrida com clip independente: mesma hierarquia/esqueleto da caminhada original.
-// Intensifica os movimentos articulares sem alterar montarias ou animações PvP.
-function criarClipCorrida(base,hipsAlvo){
- const walk=walkPara(base,hipsAlvo);
- const tracks=walk.tracks.map(tr=>{
-  if(!tr.name.endsWith('.quaternion')||!/(?:UpLeg|Leg|Arm|ForeArm)/.test(tr.name)){const copy=tr.clone();copy.times=temposCorrida(tr.times);return copy}
-  const vals=Float32Array.from(tr.values);
-  const start=new THREE.Quaternion().fromArray(vals,0);
-  const q=new THREE.Quaternion(),delta=new THREE.Quaternion(),boost=new THREE.Quaternion(),identity=new THREE.Quaternion();
-  const strength=/Leg|UpLeg/.test(tr.name)?1.32:1.24;
-  for(let i=0;i<vals.length;i+=4){
-   q.fromArray(vals,i);delta.copy(start).invert().multiply(q);
-   boost.copy(identity).slerp(delta,Math.min(1.5,strength));
-   start.clone().multiply(boost).normalize().toArray(vals,i);
-  }
-  return new THREE.QuaternionKeyframeTrack(tr.name,temposCorrida(tr.times),vals);
- });
- return new THREE.AnimationClip('corrida',walk.duration*.74,tracks);
+ const walk=walkClip?mixer.clipAction(walkClip):null;
+ const run=runClip?mixer.clipAction(runClip):null;
+ if(!run)console.warn('Run independente indisponível: não acelere o Walk para fingir corrida.');
+ holder.userData.mixer=mixer;holder.userData.walk=walk;holder.userData.run=run;
+ holder.userData.locomotion=null;holder.userData.andando=false;
 }
 
 // Caminhada procedural: balança pernas e braços; parado, respira de leve.
@@ -386,22 +371,24 @@ export function animateAvatar(group,moving,t,ritmo=1){
  desfazerPose(group);
  const {legs,arms,rig,imported,baseModel,mixer,clips}=group.userData;
  if(!imported&&baseModel){
-  const walk=baseModel.userData.walk;
-  if(walk){
-   const run=baseModel.userData.run;
-   const target=modoLocomocao(moving,ritmo)==='idle'?null:(modoLocomocao(moving,ritmo)==='run'?(run||walk):walk);
+  const walk=baseModel.userData.walk,run=baseModel.userData.run;
+  if(walk||run){
+   const mode=modoLocomocao(moving,ritmo);
+   // Nunca transformar Walk em corrida acelerada. Se Run falhar, manter Walk normal
+   // e reportar no preview; a correção verdadeira depende do clipe independente.
+   const target=mode==='idle'?null:(mode==='run'?(run||walk):(walk||run));
    const current=baseModel.userData.locomotion||null;
    if(current!==target){
-    current?.fadeOut(.18);
-    if(target){target.reset();target.enabled=true;target.setEffectiveWeight(1);target.fadeIn(.18).play()}
+    current?.fadeOut(.22);
+    if(target){target.reset();target.enabled=true;target.setEffectiveWeight(1);target.fadeIn(.22).play()}
     baseModel.userData.locomotion=target;
    }
-   if(target)target.timeScale=target===walk?Math.max(.75,ritmo/1.35):1;
+   // Clipes fazem o contato dos pés; não acrescentar "pulo" ou balanço artificial.
+   baseModel.position.y=0;baseModel.rotation.z=0;
+   if(target)target.timeScale=target===walk?1:1;
    return;
   }
-  // Sem esqueleto: passo com leve balanço.
-  baseModel.position.y=moving?Math.abs(Math.sin(t*9))*.06:0;
-  baseModel.rotation.z=moving?Math.sin(t*9)*.04:0;
+  baseModel.position.y=0;baseModel.rotation.z=0;
   return;
  }
  if(imported){
@@ -414,16 +401,30 @@ export function animateAvatar(group,moving,t,ritmo=1){
  }
  if(!legs)return;
  const {knees,elbows,torso,curva}=group.userData;
- const f=t*8.5*ritmo,sw=moving?Math.sin(f):0;
- legs[0].rotation.x=sw*.55;legs[1].rotation.x=-sw*.55;
- // joelho dobra quando a perna volta
- knees[0].rotation.x=moving?Math.max(0,-Math.sin(f-.9))*.9+.05:0;
- knees[1].rotation.x=moving?Math.max(0,Math.sin(f-.9))*.9+.05:0;
- arms[0].rotation.x=-sw*.5;arms[1].rotation.x=sw*.5;
- elbows[0].rotation.x=-.18-(moving?Math.max(0,sw)*.35:0);elbows[1].rotation.x=-.18-(moving?Math.max(0,-sw)*.35:0);
- torso.rotation.y=sw*.07;torso.rotation.x=curva+(moving?.04:0);
+ const mode=modoLocomocao(moving,ritmo);
+ const prev=group.userData.lastLocomotionT??t;
+ const dt=Math.max(0,Math.min(.05,t-prev));
+ group.userData.lastLocomotionT=t;
+ const blendTarget=mode==='run'?1:0;
+ const blend=THREE.MathUtils.damp(group.userData.runBlend||0,blendTarget,10,dt);
+ group.userData.runBlend=blend;
+ const walkCadence=8.7,runCadence=14.6;
+ // Integrar a fase evita salto instantâneo da passada ao alternar Walk / Run.
+ group.userData.gaitPhase=(group.userData.gaitPhase||0)+dt*(walkCadence+(runCadence-walkCadence)*blend);
+ const f=group.userData.gaitPhase,sw=moving?Math.sin(f):0;
+ const stride=.51+blend*.30;
+ legs[0].rotation.x=sw*stride;legs[1].rotation.x=-sw*stride;
+ // Na corrida há elevação de joelho, perna de apoio e braço com cotovelo dobrado.
+ knees[0].rotation.x=moving?Math.max(0,-Math.sin(f-.8))*(.68+blend*.46)+.03:0;
+ knees[1].rotation.x=moving?Math.max(0,Math.sin(f-.8))*(.68+blend*.46)+.03:0;
+ arms[0].rotation.x=-sw*(.38+blend*.25);
+ arms[1].rotation.x=sw*(.38+blend*.25);
+ elbows[0].rotation.x=-.18-blend*.78-(moving?Math.max(0,sw)*.18:0);
+ elbows[1].rotation.x=-.18-blend*.78-(moving?Math.max(0,-sw)*.18:0);
+ torso.rotation.y=sw*(.055+blend*.035);
+ torso.rotation.x=curva+(moving?.035:0)+blend*.14; // leve inclinação para frente
  const breath=Math.sin(t*1.8)*.006;
- rig.position.y=moving?Math.abs(Math.cos(f))*.035:breath;
+ rig.position.y=moving?Math.abs(Math.sin(f))*(.02+blend*.024):breath;
  torso.scale.set(1+breath*.6,1,1+breath*1.2);
 }
 

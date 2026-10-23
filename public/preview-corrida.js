@@ -21,6 +21,7 @@ let mode='idle';let auto=false;
 function select(next){mode=next;document.querySelector('#mode-label').textContent=labels[next];for(const b of document.querySelectorAll('[data-mode]'))b.setAttribute('aria-pressed',String(b.dataset.mode===next));}
 document.querySelectorAll('[data-mode]').forEach(b=>b.addEventListener('click',()=>{auto=false;select(b.dataset.mode)}));
 window.setPreviewMode=select;window.previewModel=avatar;
+window.__avatarPreviewScene={scene,camera,renderer,paused:false};
 const params=new URLSearchParams(location.search);
 if(params.has('demo'))auto=true;
 function size(){const w=canvas.clientWidth||900,h=canvas.clientHeight||600;
@@ -29,12 +30,14 @@ if(canvas.width!==pw||canvas.height!==ph){renderer.setSize(w,h,false);camera.asp
 let last=performance.now(),elapsed=0;
 function animate(now){
 requestAnimationFrame(animate);
+if(window.__avatarPreviewScene.paused)return;
 const dt=Math.min(.06,(now-last)/1000||0);last=now;elapsed+=dt;size();
 if(auto){const cycle=elapsed%11;select(cycle<2?'idle':cycle<5?'walk':cycle<9?'run':'idle')}
 const time=now/1000;
 animateAvatar(avatar,mode!=='idle',time,mode==='run'?2.3:1.35);
 updateAvatarMixers(avatar,dt);
-avatar.position.y=mode==='run'?Math.sin(time*15)*.012:0;
+// O clipe deve mostrar o contato real, sem deslocamento vertical artificial na prévia.
+avatar.position.y=0;
 avatar.rotation.y=Math.sin(time*.26)*.12;
 const holder=avatar.userData.baseModel;
 const rigged=Boolean(holder?.userData.run);

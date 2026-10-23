@@ -1,0 +1,44 @@
+{
+  "at": "2026-10-23T11:48:42.624Z",
+  "ok": true,
+  "vehicles": [
+    {
+      "tipo": "caminhao-lula",
+      "status": "ok",
+      "rodas": 1,
+      "bandeiras": 1,
+      "vel": 0,
+      "procedural": false,
+      "origem": "original"
+    },
+    {
+      "tipo": "caminhao-bolsonaro",
+      "status": "ok",
+      "rodas": 1,
+      "bandeiras": 1,
+      "vel": 0,
+      "procedural": false,
+      "origem": "original"
+    },
+    {
+      "tipo": "carro",
+      "status": "procedural",
+      "rodas": 4,
+      "bandeiras": 0,
+      "vel": 0,
+      "procedural": true,
+      "origem": "procedural"
+    }
+  ],
+  "run": {
+    "mode": "run",
+    "rigged": true,
+    "fallback": false,
+    "elapsed": 1.8675000000000004
+  },
+  "errors": [],
+  "limitations": [
+    "Chromium + SwiftShader emulado; não equivale a Safari em iPhone físico."
+  ],
+  "browser": "Chrome/154.0.8037.57"
+}

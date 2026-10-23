@@ -1,0 +1,27 @@
+BROWSER CONSOLE Failed to load resource: the server responded with a status of 404 (Not Found)
+BROWSER CONSOLE Failed to load resource: the server responded with a status of 404 (Not Found)
+BROWSER CONSOLE Failed to load resource: the server responded with a status of 404 (Not Found)
+BROWSER CONSOLE Failed to load resource: the server responded with a status of 404 (Not Found)
+BROWSER CONSOLE Failed to load resource: the server responded with a status of 404 (Not Found)
+BROWSER CONSOLE Failed to load resource: the server responded with a status of 404 (Not Found)
+BROWSER CONSOLE Failed to load resource: the server responded with a status of 404 (Not Found)
+BROWSER CONSOLE Failed to load resource: the server responded with a status of 404 (Not Found)
+BROWSER CONSOLE Failed to load resource: the server responded with a status of 404 (Not Found)
+BROWSER CONSOLE Failed to load resource: the server responded with a status of 404 (Not Found)
+BROWSER CONSOLE Failed to load resource: the server responded with a status of 404 (Not Found)
+BROWSER CONSOLE Failed to load resource: the server responded with a status of 404 (Not Found)
+BROWSER CONSOLE Failed to load resource: net::ERR_TUNNEL_CONNECTION_FAILED
+BROWSER CONSOLE Failed to load resource: net::ERR_TUNNEL_CONNECTION_FAILED
+BROWSER CONSOLE Failed to load resource: net::ERR_TUNNEL_CONNECTION_FAILED
+BROWSER CONSOLE Failed to load resource: net::ERR_TUNNEL_CONNECTION_FAILED
+BROWSER CONSOLE Failed to load resource: net::ERR_TUNNEL_CONNECTION_FAILED
+BROWSER CONSOLE Failed to load resource: net::ERR_TUNNEL_CONNECTION_FAILED
+BROWSER CONSOLE Failed to load resource: net::ERR_TUNNEL_CONNECTION_FAILED
+BROWSER CONSOLE Failed to load resource: net::ERR_TUNNEL_CONNECTION_FAILED
+BROWSER CONSOLE Failed to load resource: net::ERR_TUNNEL_CONNECTION_FAILED
+BROWSER CONSOLE Failed to load resource: net::ERR_TUNNEL_CONNECTION_FAILED
+BROWSER CONSOLE Failed to load resource: net::ERR_TUNNEL_CONNECTION_FAILED
+BROWSER CONSOLE Failed to load resource: net::ERR_TUNNEL_CONNECTION_FAILED
+BROWSER CONSOLE Failed to load resource: the server responded with a status of 404 (Not Found)
+MUNDO {"overlay":"SIMULAÇÃO 3D · 186 figurantes virtuais · usuários reais: contador online","quantity":"180","webgl":true}
+PASSOU: canvas WebGL, 6 modelos originais, seletor de multidão, conexão multiplayer e cartaz sincronizado

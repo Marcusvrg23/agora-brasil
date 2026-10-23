@@ -1,0 +1,261 @@
+{
+  "at": "2026-10-23T11:45:17.602Z",
+  "ok": false,
+  "vehicles": [
+    {
+      "tipo": "caminhao-lula",
+      "status": "ok",
+      "rodas": 4,
+      "bandeiras": 3,
+      "vel": 0,
+      "procedural": false,
+      "origem": "v2",
+      "box": {
+        "min": [
+          -1.9395169142899218,
+          1.1102230246251565e-16,
+          -8.5
+        ],
+        "max": [
+          1.9395169142899216,
+          6.8128422897485486,
+          8.5
+        ],
+        "size": [
+          3.8790338285798436,
+          6.8128422897485486,
+          17
+        ]
+      },
+      "meshes": [
+        {
+          "name": "Static_crimson",
+          "vertices": 44,
+          "vertexColors": true,
+          "color": "ffffff",
+          "roughness": 1,
+          "metalness": 1
+        },
+        {
+          "name": "Static_glass",
+          "vertices": 12,
+          "vertexColors": true,
+          "color": "ffffff",
+          "roughness": 1,
+          "metalness": 1
+        },
+        {
+          "name": "Static_charcoal",
+          "vertices": 272,
+          "vertexColors": true,
+          "color": "ffffff",
+          "roughness": 1,
+          "metalness": 1
+        },
+        {
+          "name": "Static_steel",
+          "vertices": 604,
+          "vertexColors": true,
+          "color": "ffffff",
+          "roughness": 1,
+          "metalness": 1
+        },
+        {
+          "name": "Static_chrome",
+          "vertices": 660,
+          "vertexColors": true,
+          "color": "ffffff",
+          "roughness": 1,
+          "metalness": 1
+        },
+        {
+          "name": "Static_light",
+          "vertices": 268,
+          "vertexColors": true,
+          "color": "ffffff",
+          "roughness": 1,
+          "metalness": 1
+        },
+        {
+          "name": "Static_amber",
+          "vertices": 40,
+          "vertexColors": true,
+          "color": "ffffff",
+          "roughness": 1,
+          "metalness": 1
+        },
+        {
+          "name": "Static_red",
+          "vertices": 1384,
+          "vertexColors": true,
+          "color": "ffffff",
+          "roughness": 1,
+          "metalness": 1
+        },
+        {
+          "name": "Static_cream",
+          "vertices": 1368,
+          "vertexColors": true,
+          "color": "ffffff",
+          "roughness": 1,
+          "metalness": 1
+        },
+        {
+          "name": "Static_shade",
+          "vertices": 336,
+          "vertexColors": true,
+          "color": "ffffff",
+          "roughness": 1,
+          "metalness": 1
+        },
+        {
+          "name": "Bandeira_roof_0",
+          "vertices": 60,
+          "vertexColors": true,
+          "color": "ffffff",
+          "roughness": 1,
+          "metalness": 1
+        },
+        {
+          "name": "Bandeira_roof_1",
+          "vertices": 60,
+          "vertexColors": true,
+          "color": "ffffff",
+          "roughness": 1,
+          "metalness": 1
+        },
+        {
+          "name": "Bandeira_cab",
+          "vertices": 60,
+          "vertexColors": true,
+          "color": "ffffff",
+          "roughness": 1,
+          "metalness": 1
+        },
+        {
+          "name": "Pneu_0_L",
+          "vertices": 374,
+          "vertexColors": true,
+          "color": "ffffff",
+          "roughness": 1,
+          "metalness": 1
+        },
+        {
+          "name": "Pneu_1_R",
+          "vertices": 374,
+          "vertexColors": true,
+          "color": "ffffff",
+          "roughness": 1,
+          "metalness": 1
+        },
+        {
+          "name": "Pneu_2_L",
+          "vertices": 374,
+          "vertexColors": true,
+          "color": "ffffff",
+          "roughness": 1,
+          "metalness": 1
+        },
+        {
+          "name": "Pneu_3_R",
+          "vertices": 374,
+          "vertexColors": true,
+          "color": "ffffff",
+          "roughness": 1,
+          "metalness": 1
+        }
+      ],
+      "radii": [
+        0.28,
+        0.28,
+        0.28,
+        0.28
+      ],
+      "animatedWheels": 4,
+      "wheelCenterDrift": 1.1102230246251565e-16,
+      "wheelSpinDelta": [
+        0.7142857142857143,
+        0.7142857142857143,
+        0.7142857142857143,
+        0.7142857142857143
+      ],
+      "flags": [
+        {
+          "name": "Bandeira_roof_0",
+          "rotation": [
+            -0.015785245246032892,
+            0,
+            0,
+            "XYZ"
+          ],
+          "localBounds": {
+            "min": [
+              -0.009099327027797699,
+              0.04399999976158142,
+              0
+            ],
+            "max": [
+              0.009295759722590446,
+              0.08266666531562805,
+              0.06333333253860474
+            ]
+          }
+        },
+        {
+          "name": "Bandeira_roof_1",
+          "rotation": [
+            -0.043090110335217195,
+            0,
+            0,
+            "XYZ"
+          ],
+          "localBounds": {
+            "min": [
+              -0.009099327027797699,
+              0.04399999976158142,
+              0
+            ],
+            "max": [
+              0.009295759722590446,
+              0.08266666531562805,
+              0.06333333253860474
+            ]
+          }
+        },
+        {
+          "name": "Bandeira_cab",
+          "rotation": [
+            -0.03642446954009787,
+            0,
+            0,
+            "XYZ"
+          ],
+          "localBounds": {
+            "min": [
+              -0.009099327027797699,
+              0.04399999976158142,
+              0
+            ],
+            "max": [
+              0.009295759722590446,
+              0.08266666531562805,
+              0.06333333253860474
+            ]
+          }
+        }
+      ],
+      "version": 2,
+      "mobile": false
+    }
+  ],
+  "locomotion": [],
+  "errors": [],
+  "requestFailures": [],
+  "limitations": [
+    "Chromium/SwiftShader; viewport mobile emulado, sem homologação de GPU móvel/Safari/iPhone físico."
+  ],
+  "origin": "http://127.0.0.1:46775",
+  "browser": "Chrome/154.0.8037.57",
+  "cdnTransport": "curl pelo proxy do ambiente, TLS verificado, módulos sem alteração",
+  "error": "AssertionError [ERR_ASSERTION]: raio das rodas medido em metros após escala de 17m\n    at file:///workspace/agora-brasil/scripts/trucks-v2-browser-qa.mjs:64:12"
+}

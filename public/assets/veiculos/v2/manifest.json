@@ -1,0 +1,20 @@
+[
+  {
+    "name": "caminhao-vermelho-v2",
+    "bytes": 221764,
+    "triangles": 12144,
+    "mesh_count": 17,
+    "wheel_count": 4,
+    "flag_count": 3,
+    "sha256": "2fe02f6c88a4c100e7457f6b108b9d7d098810e02107eb6da8ae69e821d87c80"
+  },
+  {
+    "name": "caminhao-verde-v2",
+    "bytes": 223896,
+    "triangles": 13496,
+    "mesh_count": 20,
+    "wheel_count": 6,
+    "flag_count": 3,
+    "sha256": "0cec66bff2f09b3152b7834b87f63afa64add2eee719d15070a9f227f2dab0a0"
+  }
+]
