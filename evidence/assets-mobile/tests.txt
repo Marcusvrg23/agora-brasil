@@ -1,0 +1,86 @@
+
+> agora-brasil@0.6.0 test
+> node --test
+
+✔ calcula o valor pelo preço do telão e número de dias (2.656985ms)
+✔ recusa conteúdo político-eleitoral (0.969394ms)
+✔ valida telão, dias, título e e-mail (0.420983ms)
+✔ fluxo completo: pago → moderação → no ar → encerrado (1.258137ms)
+✔ recusa pela moderação e chave do dono (0.594705ms)
+✔ imagem: aceita PNG real, recusa arquivo falso (0.972497ms)
+✔ limite de 5 pedidos por hora por IP e persistência em arquivo (1.232611ms)
+✔ API dos telões: pedido, consulta do dono, moderação e publicação (119.058351ms)
+✔ PvP pela rede: estado ao entrar, pegar item e ataque validado no servidor (286.41845ms)
+✔ NPCs sempre identificados e nao representam humanos conectados (5.463652ms)
+✔ cartaz 3D: sincronização autorizada, limites e estado ao entrar (2423.399129ms)
+✔ espada fere só o time adversário e respeita a recarga (3.75011ms)
+✔ sem o item na mão não há ataque; espada de longe não alcança (0.378138ms)
+✔ cada flecha acerta uma vez só (bilhete) (1.939626ms)
+✔ bomba é gasta, explode no ponto e o dano cai com a distância (0.525738ms)
+✔ explosão longe de quem lançou é recusada (0.306197ms)
+✔ morte soma ponto ao time, renasce na base com proteção (2.194146ms)
+✔ tribuna do debate é zona segura (0.269499ms)
+✔ pegar item exige estar perto e o item volta depois (0.389913ms)
+✔ veículo: entra, dirige, só o motorista move; armas do veículo certo (1.307098ms)
+✔ mísseis danificam veículo antes do piloto e não aplicam dano duplo na explosão (1.182795ms)
+✔ míssil destrói veículo inimigo e fere o motorista; prédios não têm vida (0.892671ms)
+✔ vitória com o placar máximo e nova partida depois (0.485241ms)
+✔ time e traje aceitam só valores conhecidos (1.780308ms)
+✔ debate só começa com dois na fila (0.785044ms)
+✔ prefere adversário do outro time (0.379036ms)
+✔ só o orador da vez pode falar (1.322626ms)
+✔ votação: debatedores não votam e cada um vota uma vez (1.577329ms)
+✔ debatedor que sai perde por W.O. (0.362865ms)
+✔ depois do resultado, próximo par da fila entra (0.352781ms)
+✔ visual do personagem: cores hex e acessórios validados (0.567767ms)
+✔ densidades são progressivas e o celular usa perfil seguro (2.842463ms)
+✔ multidão de 2.000 distribui os dois grupos sem contar como usuários reais (9.422454ms)
+✔ cartazes padrão descrevem ambos os grupos e evitam simular contagem real (0.29871ms)
+✔ as seis identidades do desfile usam exatamente as mesmas bases dos seis NPCs existentes (4.578395ms)
+✔ cinco veículos possuem poses diferentes (1.637791ms)
+✔ embarque suave, monotônico e sem teleporte final (1.100303ms)
+✔ ritmos de animação distintos e dependentes da velocidade (0.369768ms)
+✔ exibição externa segura para montarias abertas (0.208259ms)
+✔ correr acelera todos os keyframes sem alterar o comprimento original (2.062359ms)
+✔ transições parado, andando, correndo via Shift (2.137492ms)
+✔ rodas giram por distância e bandeiras oscilam sem NaN (0.352818ms)
+✔ caminhões reais constam na garagem e têm estado de vida (0.573494ms)
+✔ clientes independentes: salas isolam posição, chat e cartaz; entrada tardia recebe estado (164.02808ms)
+✔ veículo: disputa concorrente tem um motorista, movimento e liberação sincronizados (118.181521ms)
+✔ visitante observa sem entrar no combate nem modificar itens, veículos, cartazes ou debate (115.24605ms)
+✔ reconexão com bilhete restaura identidade, posição, cartaz e inventário sem duplicação (79.779672ms)
+✔ reenvio de join não cura jogador nem remove inventário e bilhete não cruza salas (19.520817ms)
+✔ heartbeat encerra socket sem pong e reconexão substitui transporte ainda aberto (92.500375ms)
+✔ mensagem grande é recusada sem derrubar outros clientes (31.034282ms)
+✔ capacidade padrão limita sala a 100 e permite retomada no limite (966.284251ms)
+✔ auditoria preserva o homem original, rig, material, textura e caminhada (6.651628ms)
+✔ HTML de erro e GLB truncado não são aceitos como modelo (1.801409ms)
+✔ hash, tamanho e licença são obrigatórios antes da instalação (8.777872ms)
+✔ limite de tamanho e recursos externos são recusados (0.542259ms)
+✔ importação falha sem escrever e nunca sobrescreve um original (88.466456ms)
+✔ importação recusa destino fora do diretório de bases (0.655378ms)
+✔ manifesto preserva as seis identidades e não inventa hash dos três ausentes (3.598708ms)
+✔ servidor entrega bytes originais com MIME GLB e 404 para arquivo ausente (192.959805ms)
+✔ três perfis distintos e com looks compatíveis (0.903559ms)
+✔ valida arquivos de retrato antes do processamento local (0.297877ms)
+✔ remove marcacao html e caracteres de controle (5.023212ms)
+✔ limita texto (0.184847ms)
+✔ sala Brasilia default (0.31474ms)
+✔ aceita codigos municipais IBGE (0.326855ms)
+✔ descarta codigo arbitrario (0.250629ms)
+✔ analógico mantém zona morta e intensidade proporcional ao deslocamento (3.353698ms)
+✔ analógico limita diagonais e rejeita medidas inválidas (0.336286ms)
+✔ cartaz é segurado por uma mão, com braço estendido e haste curta (0.4557ms)
+ℹ tests 69
+ℹ suites 0
+ℹ pass 69
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 6983.606686
+npm notice
+npm notice New major version of npm available! 11.9.0 -> 12.2.1
+npm notice Changelog: https://github.com/npm/cli/releases/tag/v12.2.1
+npm notice To update run: npm install -g npm@12.2.1
+npm notice

@@ -1,0 +1,13 @@
+{
+  "at": "2026-10-23T06:17:57.274093+00:00",
+  "baseCommit": "e4bc322ae986643987ceac99873bf64b0fe7dedb",
+  "branch": "investigation/original-assets-mobile-20261023",
+  "node": "v24.19.0",
+  "network": {
+    "mode": "restricted",
+    "cdnHost": "d8j0ntlcm91z4.cloudfront.net",
+    "cdnHostAllowed": false,
+    "vpnConfigured": false
+  },
+  "note": "environment_status: observations_current=true, policy.state=enforced; no secrets/outbound identities configured"
+}

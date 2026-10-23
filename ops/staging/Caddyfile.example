@@ -1,0 +1,10 @@
+# Prepared example only. No deploy or DNS changes are performed by this repository.
+# Supply a NEW staging hostname and a bcrypt password hash outside version control.
+{$AGORA_STAGING_DOMAIN} {
+    basic_auth {
+        homologador {$AGORA_STAGING_PASSWORD_HASH}
+    }
+    # Node must bind only loopback, port 8080, with a separate DATA_DIR.
+    # Caddy forwards WebSocket Upgrade automatically on the same HTTPS origin.
+    reverse_proxy 127.0.0.1:8080
+}

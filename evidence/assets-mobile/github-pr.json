@@ -1,0 +1,16 @@
+{
+  "at": "2026-10-23T06:26:39Z",
+  "url": "https://github.com/Marcusvrg23/agora-brasil/pull/9",
+  "number": 9,
+  "draft": true,
+  "state": "open",
+  "merged": false,
+  "base": "integration/multiplayer-release-20261023",
+  "baseSha": "e4bc322ae986643987ceac99873bf64b0fe7dedb",
+  "head": "investigation/original-assets-mobile-20261023",
+  "headAtCreation": "ec8214e257737a2b2ab9e6a148346d240693db22",
+  "method": "GitHub connector create_pull_request",
+  "bodyPublished": true,
+  "previousPR8Edited": false,
+  "cliBlocked": "CONNECT 403 for api.github.com; connector used successfully"
+}

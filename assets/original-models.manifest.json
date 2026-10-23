@@ -1,0 +1,83 @@
+{
+  "schemaVersion": 1,
+  "baseCommit": "e4bc322ae986643987ceac99873bf64b0fe7dedb",
+  "note": "Hashes de arquivos ausentes não foram inventados. MIT do código não concede automaticamente direitos dos assets. Aprovação exige registro do titular/conta e termos aplicáveis.",
+  "assets": [
+    {
+      "id": "mulher",
+      "localPath": "public/assets/bases/mulher.glb",
+      "sourceUrl": "https://d8j0ntlcm91z4.cloudfront.net/user_3KLobL96cAs3bokj0G7CRMHMham/hf_20261021_035345_d9a45351-2fb7-4851-a39b-d9344ccbf900.glb",
+      "bytes": null,
+      "sha256": null,
+      "license": {
+        "status": "pending",
+        "evidence": null
+      }
+    },
+    {
+      "id": "homem",
+      "localPath": "public/assets/bases/homem.glb",
+      "sourceUrl": "https://d8j0ntlcm91z4.cloudfront.net/user_3KLobL96cAs3bokj0G7CRMHMham/hf_20261020_215339_5b3afe7f-0a9f-4ddb-8aa1-741495549426.glb",
+      "bytes": 2478984,
+      "sha256": "5e90a942da4a573417463cb1b38f7e288be6410948881c5b90cf9d7c75c2d156",
+      "license": {
+        "status": "pending",
+        "evidence": null
+      }
+    },
+    {
+      "id": "idoso",
+      "localPath": "public/assets/bases/idoso.glb",
+      "sourceUrl": "https://d8j0ntlcm91z4.cloudfront.net/user_3KLobL96cAs3bokj0G7CRMHMham/hf_20261021_035348_ac51b268-b3d6-4f59-96e0-90d8321b8b11.glb",
+      "bytes": null,
+      "sha256": null,
+      "license": {
+        "status": "pending",
+        "evidence": null
+      }
+    },
+    {
+      "id": "idosa",
+      "localPath": "public/assets/bases/idosa.glb",
+      "sourceUrl": "https://d8j0ntlcm91z4.cloudfront.net/user_3KLobL96cAs3bokj0G7CRMHMham/hf_20261021_035350_129869ee-bac0-4d0c-a62d-5f3ce1127f18.glb",
+      "bytes": null,
+      "sha256": null,
+      "license": {
+        "status": "pending",
+        "evidence": null
+      }
+    }
+  ],
+  "identities": [
+    {
+      "name": "Lia",
+      "base": "mulher",
+      "team": "vermelho"
+    },
+    {
+      "name": "Caio",
+      "base": "homem",
+      "team": "amarelo"
+    },
+    {
+      "name": "Bia",
+      "base": "mulher",
+      "team": "amarelo"
+    },
+    {
+      "name": "Rafa",
+      "base": "idoso",
+      "team": "vermelho"
+    },
+    {
+      "name": "Ivo",
+      "base": "homem",
+      "team": "vermelho"
+    },
+    {
+      "name": "Nina",
+      "base": "idosa",
+      "team": "amarelo"
+    }
+  ]
+}

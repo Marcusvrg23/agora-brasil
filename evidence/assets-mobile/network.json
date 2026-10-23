@@ -1,0 +1,36 @@
+{
+  "at": "2026-10-23T06:08:26.064070+00:00",
+  "networkPermission": true,
+  "requests": [
+    {
+      "base": "mulher",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3KLobL96cAs3bokj0G7CRMHMham/hf_20261021_035345_d9a45351-2fb7-4851-a39b-d9344ccbf900.glb",
+      "curlExit": 56,
+      "httpCode": "000",
+      "stderr": "curl: (56) CONNECT tunnel failed, response 403\n",
+      "headers": "HTTP/1.1 403 Forbidden\ncontent-length: 16\ncontent-type: text/plain\ndate: Fri, 23 Oct 2026 06:08:25 GMT\nserver: envoy\nconnection: close\n\n",
+      "bodyBytes": null,
+      "bodyPreview": null
+    },
+    {
+      "base": "idoso",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3KLobL96cAs3bokj0G7CRMHMham/hf_20261021_035348_ac51b268-b3d6-4f59-96e0-90d8321b8b11.glb",
+      "curlExit": 56,
+      "httpCode": "000",
+      "stderr": "curl: (56) CONNECT tunnel failed, response 403\n",
+      "headers": "HTTP/1.1 403 Forbidden\ncontent-length: 16\ncontent-type: text/plain\ndate: Fri, 23 Oct 2026 06:08:25 GMT\nserver: envoy\nconnection: close\n\n",
+      "bodyBytes": null,
+      "bodyPreview": null
+    },
+    {
+      "base": "idosa",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3KLobL96cAs3bokj0G7CRMHMham/hf_20261021_035350_129869ee-bac0-4d0c-a62d-5f3ce1127f18.glb",
+      "curlExit": 56,
+      "httpCode": "000",
+      "stderr": "curl: (56) CONNECT tunnel failed, response 403\n",
+      "headers": "HTTP/1.1 403 Forbidden\ncontent-length: 16\ncontent-type: text/plain\ndate: Fri, 23 Oct 2026 06:08:25 GMT\nserver: envoy\nconnection: close\n\n",
+      "bodyBytes": null,
+      "bodyPreview": null
+    }
+  ]
+}

@@ -1,0 +1,69 @@
+{
+  "scope": "Chromium + SwiftShader; viewport/touch emulation; local self-signed HTTPS/WSS only",
+  "physicalDeviceTested": false,
+  "screenshots": [
+    {
+      "file": "desktop-idle.png",
+      "width": 1000,
+      "height": 700,
+      "emulated": false,
+      "state": "idle",
+      "bytes": 1013586,
+      "sha256": "f5f2dc894f767c0af4358b7b4a5e8d18bd0b056ae7a47776e7c7f2ea3a50f0f9"
+    },
+    {
+      "file": "desktop-walk.png",
+      "width": 1000,
+      "height": 700,
+      "emulated": false,
+      "state": "walk",
+      "bytes": 1010680,
+      "sha256": "97cd0d0cac9f00844b4adafe427230d8cbf77b0b724a8793db4fe56e61d5393b"
+    },
+    {
+      "file": "desktop-run.png",
+      "width": 1000,
+      "height": 700,
+      "emulated": false,
+      "state": "run",
+      "bytes": 1007330,
+      "sha256": "5f93d1558cdf7cb3b6dde4c405ec3c44240a3b5c76c087e9ad28c9c9c83215b1"
+    },
+    {
+      "file": "iphone-13-emulated.png",
+      "width": 390,
+      "height": 844,
+      "emulated": true,
+      "state": "player with GLB + sign",
+      "bytes": 464192,
+      "sha256": "f6388abda0f8eb86ff6b3e437c021162fd1fd4a672556c374c1580700a374009"
+    },
+    {
+      "file": "iphone-se-emulated.png",
+      "width": 320,
+      "height": 568,
+      "emulated": true,
+      "state": "player with GLB + sign",
+      "bytes": 229756,
+      "sha256": "9edff26147f51d1bae47cb6f5b6f5db207bfed0d079110482cdad7e12fe81665"
+    },
+    {
+      "file": "iphone-landscape-emulated.png",
+      "width": 844,
+      "height": 390,
+      "emulated": true,
+      "state": "player with GLB + sign",
+      "bytes": 449255,
+      "sha256": "60c1f7fd2b9edc670eec11f165d4f94b1ad8343191a009f54ca6036a7ebc9913"
+    },
+    {
+      "file": "iphone-visitor-emulated.png",
+      "width": 390,
+      "height": 844,
+      "emulated": true,
+      "state": "visitor",
+      "bytes": 472803,
+      "sha256": "897e71415f61d422c8a658134739680c81aa9e5882fd0ee2136f0a2a9f24dca1"
+    }
+  ]
+}

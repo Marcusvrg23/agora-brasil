@@ -6,11 +6,13 @@
   "scripts": {
     "start": "node server.js",
     "test": "node --test",
-    "check": "node --check server.js && node --check combate.js && node --check public/app.js && node --check scripts/local-load.cjs && node --check scripts/release-browser-smoke.mjs && node --check public/avatar.js && node --check public/cartazes.js && node --check public/cartaz-3d.js && node --check public/cartaz-config.mjs && node --check public/desfile.js && node --check public/bots.js && node --check public/pvp.js && node --check public/hud.mjs && node --check public/joystick.mjs && node --check scripts/visual-demo-qa.mjs && node --check scripts/hud-layout-qa.mjs",
+    "check": "node --check server.js && node --check combate.js && node --check public/app.js && node --check scripts/local-load.cjs && node --check scripts/release-browser-smoke.mjs && node --check public/avatar.js && node --check public/cartazes.js && node --check public/cartaz-3d.js && node --check public/cartaz-config.mjs && node --check public/desfile.js && node --check public/bots.js && node --check public/pvp.js && node --check public/hud.mjs && node --check public/joystick.mjs && node --check scripts/visual-demo-qa.mjs && node --check scripts/hud-layout-qa.mjs && node --check scripts/original-assets.mjs && node --check scripts/mobile-readiness-qa.mjs && node --check test/original-assets.test.mjs",
     "test:ws": "node --test test/multiplayer.test.js test/cartazes.test.js",
     "test:load:local": "node scripts/local-load.cjs",
     "test:visual:layout": "node scripts/hud-layout-qa.mjs",
-    "test:visual:demo": "node scripts/visual-demo-qa.mjs"
+    "test:visual:demo": "node scripts/visual-demo-qa.mjs",
+    "assets:audit": "node scripts/original-assets.mjs audit",
+    "test:mobile:readiness": "node scripts/mobile-readiness-qa.mjs"
   },
   "engines": {
     "node": ">=20"

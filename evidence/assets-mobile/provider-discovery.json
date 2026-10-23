@@ -1,0 +1,14 @@
+{
+  "at": "2026-10-23T06:20:06.597288+00:00",
+  "tool": "higgsfield.scene_builder_3d_list_projects",
+  "readOnly": true,
+  "projects": [
+    {
+      "id": "8d210c77-c6d3-44e7-a501-d1ae77c03928",
+      "name": "Agora Brasil - Corrida 3D Rig Humanoide",
+      "role": "owner"
+    }
+  ],
+  "nextCursor": null,
+  "scope": "Somente projetos 3D Jutsu expostos pela conexão atual; não é inventário de todos os arquivos da conta. Nenhum projeto correspondente aos três GLBs pendentes foi localizado nesta listagem. Sem exportar, gerar ou modificar cenas."
+}
