@@ -65,7 +65,7 @@ function buildCrowd(scene,renderer,quantidade,{mobile=false}={}){
   for(let id=0;id<n;id++)groups[varianteFigurante(id)].push(id);
   mesh=groups.map((ids,i)=>{
    const plane=new THREE.InstancedMesh(
-    new THREE.PlaneGeometry(1.30,2.82),
+    new THREE.PlaneGeometry(1.69,2.82),
     new THREE.MeshBasicMaterial({map:tex[i],color:'#ffffff',transparent:true,alphaTest:.08,depthWrite:false,side:THREE.DoubleSide}),
     ids.length
    );
