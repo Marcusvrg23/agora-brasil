@@ -3,7 +3,7 @@ import {OrbitControls} from 'https://cdn.jsdelivr.net/npm/three@0.169.0/examples
 import {Veiculo,statusModelos,origemModelos} from './veiculos.js';
 const scene=new THREE.Scene();scene.background=new THREE.Color('#102d32');
 const canvas=document.querySelector('#viewer');const renderer=new THREE.WebGLRenderer({canvas,antialias:true,powerPreference:'low-power'});renderer.setPixelRatio(Math.min(window.devicePixelRatio||1,1.25));
-const camera=new THREE.PerspectiveCamera(45,1,.1,150);camera.position.set(23,16,25);
+const camera=new THREE.PerspectiveCamera(45,1,.1,150);camera.position.set(18,13,20);
 const controls=new OrbitControls(camera,canvas);controls.target.set(0,3.5,0);controls.enableDamping=true;controls.update();
 scene.add(new THREE.HemisphereLight('#ecfaff','#315854',2.4));const sun=new THREE.DirectionalLight('#fff4e4',3);sun.position.set(10,25,16);scene.add(sun);
 const ground=new THREE.Mesh(new THREE.PlaneGeometry(110,110),new THREE.MeshStandardMaterial({color:'#215e53',roughness:1}));ground.rotation.x=-Math.PI/2;ground.position.y=-.02;scene.add(ground);
@@ -11,7 +11,7 @@ const efeitos={faiscas(){},pegadas(){},poeira(){},chama(){},escapamento(){},fuma
 const make=tipo=>new Veiculo(scene,{id:'demo',tipo,x:0,y:0,z:0,ry:0,vida:620,max:620,motorista:null},efeitos);
 let ativo=make('caminhao-lula'),movendo=false,tempo=0,prev=performance.now();
 const selects=[['lula','caminhao-lula'],['bolsonaro','caminhao-bolsonaro'],['carro','carro']];
-for(const [id,tipo] of selects)document.querySelector('#'+id).addEventListener('click',()=>{ativo.remover();ativo=make(tipo);tempo=0;const truck=tipo!=='carro';controls.target.set(0,truck?3.5:1.1,0);camera.position.set(truck?23:7.7,truck?16:4.2,truck?25:8.5);controls.update();for(const [button] of selects)document.querySelector('#'+button).classList.toggle('active',button===id)});
+for(const [id,tipo] of selects)document.querySelector('#'+id).addEventListener('click',()=>{ativo.remover();ativo=make(tipo);tempo=0;const truck=tipo!=='carro';controls.target.set(0,truck?3.5:1.1,0);camera.position.set(truck?18:5.7,truck?13:3.1,truck?20:6.5);controls.update();for(const [button] of selects)document.querySelector('#'+button).classList.toggle('active',button===id)});
 document.querySelector('#ligar').addEventListener('click',e=>{movendo=!movendo;e.currentTarget.classList.toggle('active',movendo);e.currentTarget.textContent=movendo?'Parar movimento':'Simular movimento'});
 function frame(now){requestAnimationFrame(frame);const dt=Math.min(.04,(now-prev)/1000);prev=now;tempo+=dt;
 const w=canvas.clientWidth,h=canvas.clientHeight;
