@@ -1,0 +1,54 @@
+{
+  "at": "2026-10-23T23:58:38.543Z",
+  "scope": "Rendered original GLB and skinning; game scale .84, floor 0; inferred forward translation from game speed, not physical motion capture",
+  "ok": true,
+  "physicalDeviceTested": false,
+  "modes": [
+    {
+      "mode": "walk",
+      "clip": "caminhada",
+      "duration": 4.199999809265137,
+      "timeScale": 1,
+      "gameScale": 0.84,
+      "floorY": 0,
+      "contactToleranceM": 0.02,
+      "support": {
+        "minGapM": -0.03060022096751531,
+        "maxGapM": 0.012332186282355776,
+        "nearFloorFrames": 86,
+        "totalFrames": 121
+      },
+      "stanceDrift": {
+        "method": "Finite difference of a fixed set of foot-weighted vertices during two consecutive near-floor phases; add nominal +Z player speed. Diagnostic estimate, not live-video tracking.",
+        "nominalSpeedMps": 3.2,
+        "intervals": 169,
+        "meanMps": 3.071099826167887,
+        "maxMps": 5.718437889951027
+      }
+    },
+    {
+      "mode": "run",
+      "clip": "Sprint_V2_RealStride",
+      "duration": 0.8600000143051147,
+      "timeScale": 1,
+      "gameScale": 0.84,
+      "floorY": 0,
+      "contactToleranceM": 0.02,
+      "support": {
+        "minGapM": 0.015466043136867546,
+        "maxGapM": 0.05802642823628509,
+        "nearFloorFrames": 23,
+        "totalFrames": 121
+      },
+      "stanceDrift": {
+        "method": "Finite difference of a fixed set of foot-weighted vertices during two consecutive near-floor phases; add nominal +Z player speed. Diagnostic estimate, not live-video tracking.",
+        "nominalSpeedMps": 7.5,
+        "intervals": 23,
+        "meanMps": 7.48098035550634,
+        "maxMps": 11.353165271220337
+      }
+    }
+  ],
+  "browser": "Chrome/154.0.8037.57",
+  "footSlideApproved": false
+}

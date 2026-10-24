@@ -1,0 +1,88 @@
+
+> agora-brasil@0.6.0 test
+> node --test
+
+✔ test/anuncios.test.js (66.39109ms)
+node:internal/test_runner/harness:124
+      throw err;
+      ^
+
+Error: listen EPERM: operation not permitted 127.0.0.1
+    at Server.setupListenHandle [as _listen2] (node:net:2145:21)
+    at listenInCluster (node:net:2224:12)
+    at node:net:2448:7
+    at process.processTicksAndRejections (node:internal/process/task_queues:90:21)
+Emitted 'error' event on WebSocketServer instance at:
+    at Server.emit (node:events:509:28)
+    at emitErrorNT (node:net:2203:8)
+    at process.processTicksAndRejections (node:internal/process/task_queues:90:21) {
+  code: 'EPERM',
+  errno: -1,
+  syscall: 'listen',
+  address: '127.0.0.1'
+}
+
+Node.js v24.19.0
+✖ test/api.test.js (63.353819ms)
+✔ test/bots.test.mjs (45.41069ms)
+✖ test/cartazes.test.js (70.91439ms)
+✔ test/combate.test.js (56.548921ms)
+✔ test/corrida-sprint-v2.test.mjs (51.595831ms)
+✔ test/debate.test.js (67.869535ms)
+✔ test/desfile.test.mjs (59.018221ms)
+✔ test/montaria.test.mjs (52.469516ms)
+✔ test/movimento.test.mjs (49.172856ms)
+node:internal/test_runner/harness:124
+      throw err;
+      ^
+
+Error: listen EPERM: operation not permitted 127.0.0.1
+    at Server.setupListenHandle [as _listen2] (node:net:2145:21)
+    at listenInCluster (node:net:2224:12)
+    at node:net:2448:7
+    at process.processTicksAndRejections (node:internal/process/task_queues:90:21)
+Emitted 'error' event on WebSocketServer instance at:
+    at Server.emit (node:events:521:24)
+    at emitErrorNT (node:net:2203:8)
+    at process.processTicksAndRejections (node:internal/process/task_queues:90:21) {
+  code: 'EPERM',
+  errno: -1,
+  syscall: 'listen',
+  address: '127.0.0.1'
+}
+
+Node.js v24.19.0
+✖ test/multiplayer.test.js (61.163524ms)
+✖ test/original-assets.test.mjs (119.04876ms)
+✔ test/personagens.test.mjs (48.289252ms)
+✔ test/ragdoll-experimental.test.mjs (49.998512ms)
+✔ test/server.test.js (62.788924ms)
+✔ test/trucks-v2.test.mjs (53.400319ms)
+✔ test/veiculo-visual.test.mjs (52.015791ms)
+✔ test/visual-controls.test.mjs (51.324929ms)
+ℹ tests 18
+ℹ suites 0
+ℹ pass 14
+ℹ fail 4
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 1123.904193
+
+✖ failing tests:
+
+test at test/api.test.js:1:1
+✖ test/api.test.js (63.353819ms)
+  'test failed'
+
+test at test/cartazes.test.js:1:1
+✖ test/cartazes.test.js (70.91439ms)
+  'test failed'
+
+test at test/multiplayer.test.js:1:1
+✖ test/multiplayer.test.js (61.163524ms)
+  'test failed'
+
+test at test/original-assets.test.mjs:1:1
+✖ test/original-assets.test.mjs (119.04876ms)
+  'test failed'

@@ -1,0 +1,73 @@
+PASS veículo {"version":1,"mobile":false,"name":"vermelho","wheels":1,"radius":0.730000137981077,"flagAnchorDrift":0.00952736249702475}
+PASS veículo {"version":1,"mobile":false,"name":"verde","wheels":1,"radius":0.730000137981077,"flagAnchorDrift":0.011365915954881432}
+PASS veículo {"version":2,"mobile":false,"name":"vermelho","wheels":4,"radius":0.7670087350660502,"flagAnchorDrift":8.881784197001252e-16}
+PASS veículo {"version":2,"mobile":false,"name":"verde","wheels":6,"radius":0.7670087350660502,"flagAnchorDrift":8.881784197001252e-16}
+PASS veículo {"version":1,"mobile":true,"name":"vermelho","wheels":1,"radius":0.730000137981077,"flagAnchorDrift":0.010578257957124531}
+PASS veículo {"version":1,"mobile":true,"name":"verde","wheels":1,"radius":0.730000137981077,"flagAnchorDrift":0.009445759730080343}
+PASS veículo {"version":2,"mobile":true,"name":"vermelho","wheels":4,"radius":0.7670087350660502,"flagAnchorDrift":8.881784197001252e-16}
+PASS veículo {"version":2,"mobile":true,"name":"verde","wheels":6,"radius":0.7670087350660502,"flagAnchorDrift":8.881784197001252e-16}
+{
+  "ok": false,
+  "browser": "Chrome/154.0.8037.57",
+  "vehicles": [
+    {
+      "version": 1,
+      "tipo": "caminhao-lula",
+      "mobile": false,
+      "wheels": 1,
+      "drift": 1.1102230246251565e-16
+    },
+    {
+      "version": 1,
+      "tipo": "caminhao-bolsonaro",
+      "mobile": false,
+      "wheels": 1,
+      "drift": 1.1102230246251565e-16
+    },
+    {
+      "version": 2,
+      "tipo": "caminhao-lula",
+      "mobile": false,
+      "wheels": 4,
+      "drift": 1.1102230246251565e-16
+    },
+    {
+      "version": 2,
+      "tipo": "caminhao-bolsonaro",
+      "mobile": false,
+      "wheels": 6,
+      "drift": 1.1102230246251565e-16
+    },
+    {
+      "version": 1,
+      "tipo": "caminhao-lula",
+      "mobile": true,
+      "wheels": 1,
+      "drift": 1.1102230246251565e-16
+    },
+    {
+      "version": 1,
+      "tipo": "caminhao-bolsonaro",
+      "mobile": true,
+      "wheels": 1,
+      "drift": 1.1102230246251565e-16
+    },
+    {
+      "version": 2,
+      "tipo": "caminhao-lula",
+      "mobile": true,
+      "wheels": 4,
+      "drift": 1.1102230246251565e-16
+    },
+    {
+      "version": 2,
+      "tipo": "caminhao-bolsonaro",
+      "mobile": true,
+      "wheels": 6,
+      "drift": 1.1102230246251565e-16
+    }
+  ],
+  "locomotion": [],
+  "error": "TimeoutError: Navigation timeout of 30000 ms exceeded\n    at new Deferred (file:///tmp/agora-qa-tools/node_modules/puppeteer-core/lib/puppeteer/util/Deferred.js:57:34)\n    at Deferred.create (file:///tmp/agora-qa-tools/node_modules/puppeteer-core/lib/puppeteer/util/Deferred.js:18:16)\n    at new LifecycleWatcher (file:///tmp/agora-qa-tools/node_modules/puppeteer-core/lib/puppeteer/cdp/LifecycleWatcher.js:70:46)\n    at CdpFrame.goto (file:///tmp/agora-qa-tools/node_modules/puppeteer-core/lib/puppeteer/cdp/Frame.js:152:29)\n    at CdpFrame.<anonymous> (file:///tmp/agora-qa-tools/node_modules/puppeteer-core/lib/puppeteer/util/decorators.js:101:27)\n    at CdpPage.goto (file:///tmp/agora-qa-tools/node_modules/puppeteer-core/lib/puppeteer/api/Page.js:582:43)\n    at file:///workspace/agora-brasil/scripts/trucks-v2-browser-qa.mjs:89:13",
+  "errors": []
+}

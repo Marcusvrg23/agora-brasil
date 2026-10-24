@@ -1,0 +1,18 @@
+✔ pacote isolado contém hashes, preserva assets e inicia sem dados de produção (845.641085ms)
+ℹ tests 1
+ℹ suites 0
+ℹ pass 1
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 1047.848701
+� skipped 0
+ℹ todo 0
+ℹ duration_ms 65115.038457
+
+✖ failing tests:
+
+test at test/preview-package.test.mjs:1:1
+✖ test/preview-package.test.mjs (65099.198742ms)
+  'Promise resolution is still pending but the event loop has already resolved'

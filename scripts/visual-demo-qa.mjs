@@ -2,8 +2,9 @@ import fs from 'node:fs';
 import {createRequire} from 'node:module';
 import {X509Certificate,createHash} from 'node:crypto';
 import puppeteer from 'puppeteer-core';
+import {configureQaCdn} from './qa-cdn-transport.mjs';
 const require=createRequire(import.meta.url),{server}=require('../server.js');
-const out='evidence/visual';fs.mkdirSync(out,{recursive:true});
+const out=process.env.QA_OUTPUT||'evidence/visual';fs.mkdirSync(out,{recursive:true});
 const continuing=process.argv.includes('--controls-only');
 const result=continuing?JSON.parse(fs.readFileSync(out+'/layout-and-pose.json','utf8')):{at:new Date().toISOString(),ok:false,viewports:[],poses:[],density:[],errors:[],requests:[],limitations:['Browser viewport emulation and SwiftShader do not certify physical mobile performance.']};
 if(continuing){delete result.error;result.continuationAt=new Date().toISOString();}
@@ -16,6 +17,7 @@ try{
  browser=await puppeteer.launch({headless:true,executablePath:process.env.CHROME_BIN||'/usr/bin/chromium',args,protocolTimeout:90000});
  result.browser=await browser.version();
  const page=await browser.newPage();page.setDefaultTimeout(20000);
+ await configureQaCdn(page);
  page.on('pageerror',e=>{result.errors.push(e.stack);console.log('PAGE_ERROR',e.message)});
  page.on('requestfailed',r=>result.requests.push({url:r.url(),error:r.failure()?.errorText}));
  await page.evaluateOnNewDocument(()=>{
@@ -50,7 +52,7 @@ try{
   await page.waitForFunction(async({moving,run})=>{const s=(await import('/app.js')).visualSnapshot();return s.player.moving===moving&&(!moving||s.player.running===run);},{},{moving,run});
   const s=await snapshot();
   if(s.player.moving!==moving|| (moving&&s.player.running!==run))throw Error('Locomoção incorreta: '+name);
-  if(moving&&!new RegExp(run?'run':'caminhada','i').test(s.player.locomotion))throw Error('Clip GLB incorreto: '+s.player.locomotion);
+  if(moving&&!new RegExp(run?'sprint|run':'caminhada','i').test(s.player.locomotion))throw Error('Clip GLB incorreto: '+s.player.locomotion);
   result.poses.push({name,...distances(s),player:s.player});
   await page.screenshot({path:`${out}/desktop-cartaz-${name}.png`});
   await page.keyboard.up('w');await page.keyboard.up('Shift');await page.waitForFunction(async()=>!(await import('/app.js')).visualSnapshot().player.moving);

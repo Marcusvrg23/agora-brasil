@@ -1,0 +1,49 @@
+{
+  "at": "2026-10-24T00:03:44.729Z",
+  "ok": true,
+  "vehicles": [
+    {
+      "tipo": "caminhao-lula",
+      "status": "ok",
+      "rodas": 1,
+      "bandeiras": 1,
+      "vel": 0,
+      "procedural": false,
+      "origem": "original"
+    },
+    {
+      "tipo": "caminhao-bolsonaro",
+      "status": "ok",
+      "rodas": 1,
+      "bandeiras": 1,
+      "vel": 0,
+      "procedural": false,
+      "origem": "original"
+    },
+    {
+      "tipo": "carro",
+      "status": "procedural",
+      "rodas": 4,
+      "bandeiras": 0,
+      "vel": 0,
+      "procedural": true,
+      "origem": "procedural"
+    }
+  ],
+  "run": {
+    "mode": "run",
+    "rigged": true,
+    "fallback": false,
+    "elapsed": 1.7198000000000475,
+    "source": "Sprint V2 - rig original",
+    "clipName": "Sprint_V2_RealStride",
+    "trackCount": 21,
+    "hipsRange": 3.5999984741210938,
+    "clipDuration": 0.8600000143051147
+  },
+  "errors": [],
+  "limitations": [
+    "Chromium + SwiftShader emulado; não equivale a Safari em iPhone físico."
+  ],
+  "browser": "Chrome/154.0.8037.57"
+}
