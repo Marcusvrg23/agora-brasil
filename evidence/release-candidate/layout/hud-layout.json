@@ -1,0 +1,1103 @@
+{
+  "scope": "DOM geometry only; full 3D screenshots are separate",
+  "ok": true,
+  "cases": [
+    {
+      "width": 320,
+      "height": 568,
+      "panel": "hud-chat",
+      "boxes": [
+        {
+          "selector": ".game-toolbar",
+          "x": 6,
+          "y": 8,
+          "w": 308,
+          "h": 96
+        },
+        {
+          "selector": ".hud-panel:not([hidden])",
+          "x": 6,
+          "y": 111,
+          "w": 290,
+          "h": 58
+        },
+        {
+          "selector": "#joystick",
+          "x": 14,
+          "y": 438,
+          "w": 112,
+          "h": 112
+        },
+        {
+          "selector": "#mobile-run",
+          "x": 138,
+          "y": 506,
+          "w": 52,
+          "h": 44
+        },
+        {
+          "selector": ".pvp-base",
+          "x": 14,
+          "y": 390,
+          "w": 292,
+          "h": 30
+        },
+        {
+          "selector": ".pvp-acoes",
+          "x": 212,
+          "y": 506,
+          "w": 94,
+          "h": 44
+        }
+      ],
+      "outside": [],
+      "overlaps": [],
+      "panels": 1
+    },
+    {
+      "width": 320,
+      "height": 568,
+      "panel": "hud-cartaz",
+      "boxes": [
+        {
+          "selector": ".game-toolbar",
+          "x": 6,
+          "y": 8,
+          "w": 308,
+          "h": 96
+        },
+        {
+          "selector": ".hud-panel:not([hidden])",
+          "x": 6,
+          "y": 111,
+          "w": 290,
+          "h": 127
+        },
+        {
+          "selector": "#joystick",
+          "x": 14,
+          "y": 438,
+          "w": 112,
+          "h": 112
+        },
+        {
+          "selector": "#mobile-run",
+          "x": 138,
+          "y": 506,
+          "w": 52,
+          "h": 44
+        },
+        {
+          "selector": ".pvp-base",
+          "x": 14,
+          "y": 390,
+          "w": 292,
+          "h": 30
+        },
+        {
+          "selector": ".pvp-acoes",
+          "x": 212,
+          "y": 506,
+          "w": 94,
+          "h": 44
+        }
+      ],
+      "outside": [],
+      "overlaps": [],
+      "panels": 1
+    },
+    {
+      "width": 320,
+      "height": 568,
+      "panel": "hud-settings",
+      "boxes": [
+        {
+          "selector": ".game-toolbar",
+          "x": 6,
+          "y": 8,
+          "w": 308,
+          "h": 96
+        },
+        {
+          "selector": ".hud-panel:not([hidden])",
+          "x": 6,
+          "y": 111,
+          "w": 290,
+          "h": 175
+        },
+        {
+          "selector": "#joystick",
+          "x": 14,
+          "y": 438,
+          "w": 112,
+          "h": 112
+        },
+        {
+          "selector": "#mobile-run",
+          "x": 138,
+          "y": 506,
+          "w": 52,
+          "h": 44
+        },
+        {
+          "selector": ".pvp-base",
+          "x": 14,
+          "y": 390,
+          "w": 292,
+          "h": 30
+        },
+        {
+          "selector": ".pvp-acoes",
+          "x": 212,
+          "y": 506,
+          "w": 94,
+          "h": 44
+        }
+      ],
+      "outside": [],
+      "overlaps": [],
+      "panels": 1
+    },
+    {
+      "width": 375,
+      "height": 667,
+      "panel": "hud-chat",
+      "boxes": [
+        {
+          "selector": ".game-toolbar",
+          "x": 6,
+          "y": 8,
+          "w": 363,
+          "h": 96
+        },
+        {
+          "selector": ".hud-panel:not([hidden])",
+          "x": 6,
+          "y": 111,
+          "w": 290,
+          "h": 58
+        },
+        {
+          "selector": "#joystick",
+          "x": 14,
+          "y": 537,
+          "w": 112,
+          "h": 112
+        },
+        {
+          "selector": "#mobile-run",
+          "x": 138,
+          "y": 605,
+          "w": 52,
+          "h": 44
+        },
+        {
+          "selector": ".pvp-base",
+          "x": 14,
+          "y": 489,
+          "w": 347,
+          "h": 30
+        },
+        {
+          "selector": ".pvp-acoes",
+          "x": 267,
+          "y": 605,
+          "w": 94,
+          "h": 44
+        }
+      ],
+      "outside": [],
+      "overlaps": [],
+      "panels": 1
+    },
+    {
+      "width": 375,
+      "height": 667,
+      "panel": "hud-cartaz",
+      "boxes": [
+        {
+          "selector": ".game-toolbar",
+          "x": 6,
+          "y": 8,
+          "w": 363,
+          "h": 96
+        },
+        {
+          "selector": ".hud-panel:not([hidden])",
+          "x": 6,
+          "y": 111,
+          "w": 290,
+          "h": 127
+        },
+        {
+          "selector": "#joystick",
+          "x": 14,
+          "y": 537,
+          "w": 112,
+          "h": 112
+        },
+        {
+          "selector": "#mobile-run",
+          "x": 138,
+          "y": 605,
+          "w": 52,
+          "h": 44
+        },
+        {
+          "selector": ".pvp-base",
+          "x": 14,
+          "y": 489,
+          "w": 347,
+          "h": 30
+        },
+        {
+          "selector": ".pvp-acoes",
+          "x": 267,
+          "y": 605,
+          "w": 94,
+          "h": 44
+        }
+      ],
+      "outside": [],
+      "overlaps": [],
+      "panels": 1
+    },
+    {
+      "width": 375,
+      "height": 667,
+      "panel": "hud-settings",
+      "boxes": [
+        {
+          "selector": ".game-toolbar",
+          "x": 6,
+          "y": 8,
+          "w": 363,
+          "h": 96
+        },
+        {
+          "selector": ".hud-panel:not([hidden])",
+          "x": 6,
+          "y": 111,
+          "w": 290,
+          "h": 175
+        },
+        {
+          "selector": "#joystick",
+          "x": 14,
+          "y": 537,
+          "w": 112,
+          "h": 112
+        },
+        {
+          "selector": "#mobile-run",
+          "x": 138,
+          "y": 605,
+          "w": 52,
+          "h": 44
+        },
+        {
+          "selector": ".pvp-base",
+          "x": 14,
+          "y": 489,
+          "w": 347,
+          "h": 30
+        },
+        {
+          "selector": ".pvp-acoes",
+          "x": 267,
+          "y": 605,
+          "w": 94,
+          "h": 44
+        }
+      ],
+      "outside": [],
+      "overlaps": [],
+      "panels": 1
+    },
+    {
+      "width": 390,
+      "height": 844,
+      "panel": "hud-chat",
+      "boxes": [
+        {
+          "selector": ".game-toolbar",
+          "x": 6,
+          "y": 8,
+          "w": 378,
+          "h": 96
+        },
+        {
+          "selector": ".hud-panel:not([hidden])",
+          "x": 6,
+          "y": 111,
+          "w": 290,
+          "h": 58
+        },
+        {
+          "selector": "#joystick",
+          "x": 14,
+          "y": 714,
+          "w": 112,
+          "h": 112
+        },
+        {
+          "selector": "#mobile-run",
+          "x": 138,
+          "y": 782,
+          "w": 52,
+          "h": 44
+        },
+        {
+          "selector": ".pvp-base",
+          "x": 14,
+          "y": 666,
+          "w": 362,
+          "h": 30
+        },
+        {
+          "selector": ".pvp-acoes",
+          "x": 282,
+          "y": 782,
+          "w": 94,
+          "h": 44
+        }
+      ],
+      "outside": [],
+      "overlaps": [],
+      "panels": 1
+    },
+    {
+      "width": 390,
+      "height": 844,
+      "panel": "hud-cartaz",
+      "boxes": [
+        {
+          "selector": ".game-toolbar",
+          "x": 6,
+          "y": 8,
+          "w": 378,
+          "h": 96
+        },
+        {
+          "selector": ".hud-panel:not([hidden])",
+          "x": 6,
+          "y": 111,
+          "w": 290,
+          "h": 127
+        },
+        {
+          "selector": "#joystick",
+          "x": 14,
+          "y": 714,
+          "w": 112,
+          "h": 112
+        },
+        {
+          "selector": "#mobile-run",
+          "x": 138,
+          "y": 782,
+          "w": 52,
+          "h": 44
+        },
+        {
+          "selector": ".pvp-base",
+          "x": 14,
+          "y": 666,
+          "w": 362,
+          "h": 30
+        },
+        {
+          "selector": ".pvp-acoes",
+          "x": 282,
+          "y": 782,
+          "w": 94,
+          "h": 44
+        }
+      ],
+      "outside": [],
+      "overlaps": [],
+      "panels": 1
+    },
+    {
+      "width": 390,
+      "height": 844,
+      "panel": "hud-settings",
+      "boxes": [
+        {
+          "selector": ".game-toolbar",
+          "x": 6,
+          "y": 8,
+          "w": 378,
+          "h": 96
+        },
+        {
+          "selector": ".hud-panel:not([hidden])",
+          "x": 6,
+          "y": 111,
+          "w": 290,
+          "h": 175
+        },
+        {
+          "selector": "#joystick",
+          "x": 14,
+          "y": 714,
+          "w": 112,
+          "h": 112
+        },
+        {
+          "selector": "#mobile-run",
+          "x": 138,
+          "y": 782,
+          "w": 52,
+          "h": 44
+        },
+        {
+          "selector": ".pvp-base",
+          "x": 14,
+          "y": 666,
+          "w": 362,
+          "h": 30
+        },
+        {
+          "selector": ".pvp-acoes",
+          "x": 282,
+          "y": 782,
+          "w": 94,
+          "h": 44
+        }
+      ],
+      "outside": [],
+      "overlaps": [],
+      "panels": 1
+    },
+    {
+      "width": 360,
+      "height": 800,
+      "panel": "hud-chat",
+      "boxes": [
+        {
+          "selector": ".game-toolbar",
+          "x": 6,
+          "y": 8,
+          "w": 348,
+          "h": 96
+        },
+        {
+          "selector": ".hud-panel:not([hidden])",
+          "x": 6,
+          "y": 111,
+          "w": 290,
+          "h": 58
+        },
+        {
+          "selector": "#joystick",
+          "x": 14,
+          "y": 670,
+          "w": 112,
+          "h": 112
+        },
+        {
+          "selector": "#mobile-run",
+          "x": 138,
+          "y": 738,
+          "w": 52,
+          "h": 44
+        },
+        {
+          "selector": ".pvp-base",
+          "x": 14,
+          "y": 622,
+          "w": 332,
+          "h": 30
+        },
+        {
+          "selector": ".pvp-acoes",
+          "x": 252,
+          "y": 738,
+          "w": 94,
+          "h": 44
+        }
+      ],
+      "outside": [],
+      "overlaps": [],
+      "panels": 1
+    },
+    {
+      "width": 360,
+      "height": 800,
+      "panel": "hud-cartaz",
+      "boxes": [
+        {
+          "selector": ".game-toolbar",
+          "x": 6,
+          "y": 8,
+          "w": 348,
+          "h": 96
+        },
+        {
+          "selector": ".hud-panel:not([hidden])",
+          "x": 6,
+          "y": 111,
+          "w": 290,
+          "h": 127
+        },
+        {
+          "selector": "#joystick",
+          "x": 14,
+          "y": 670,
+          "w": 112,
+          "h": 112
+        },
+        {
+          "selector": "#mobile-run",
+          "x": 138,
+          "y": 738,
+          "w": 52,
+          "h": 44
+        },
+        {
+          "selector": ".pvp-base",
+          "x": 14,
+          "y": 622,
+          "w": 332,
+          "h": 30
+        },
+        {
+          "selector": ".pvp-acoes",
+          "x": 252,
+          "y": 738,
+          "w": 94,
+          "h": 44
+        }
+      ],
+      "outside": [],
+      "overlaps": [],
+      "panels": 1
+    },
+    {
+      "width": 360,
+      "height": 800,
+      "panel": "hud-settings",
+      "boxes": [
+        {
+          "selector": ".game-toolbar",
+          "x": 6,
+          "y": 8,
+          "w": 348,
+          "h": 96
+        },
+        {
+          "selector": ".hud-panel:not([hidden])",
+          "x": 6,
+          "y": 111,
+          "w": 290,
+          "h": 175
+        },
+        {
+          "selector": "#joystick",
+          "x": 14,
+          "y": 670,
+          "w": 112,
+          "h": 112
+        },
+        {
+          "selector": "#mobile-run",
+          "x": 138,
+          "y": 738,
+          "w": 52,
+          "h": 44
+        },
+        {
+          "selector": ".pvp-base",
+          "x": 14,
+          "y": 622,
+          "w": 332,
+          "h": 30
+        },
+        {
+          "selector": ".pvp-acoes",
+          "x": 252,
+          "y": 738,
+          "w": 94,
+          "h": 44
+        }
+      ],
+      "outside": [],
+      "overlaps": [],
+      "panels": 1
+    },
+    {
+      "width": 412,
+      "height": 915,
+      "panel": "hud-chat",
+      "boxes": [
+        {
+          "selector": ".game-toolbar",
+          "x": 6,
+          "y": 8,
+          "w": 400,
+          "h": 96
+        },
+        {
+          "selector": ".hud-panel:not([hidden])",
+          "x": 6,
+          "y": 111,
+          "w": 290,
+          "h": 58
+        },
+        {
+          "selector": "#joystick",
+          "x": 14,
+          "y": 785,
+          "w": 112,
+          "h": 112
+        },
+        {
+          "selector": "#mobile-run",
+          "x": 138,
+          "y": 853,
+          "w": 52,
+          "h": 44
+        },
+        {
+          "selector": ".pvp-base",
+          "x": 14,
+          "y": 737,
+          "w": 384,
+          "h": 30
+        },
+        {
+          "selector": ".pvp-acoes",
+          "x": 304,
+          "y": 853,
+          "w": 94,
+          "h": 44
+        }
+      ],
+      "outside": [],
+      "overlaps": [],
+      "panels": 1
+    },
+    {
+      "width": 412,
+      "height": 915,
+      "panel": "hud-cartaz",
+      "boxes": [
+        {
+          "selector": ".game-toolbar",
+          "x": 6,
+          "y": 8,
+          "w": 400,
+          "h": 96
+        },
+        {
+          "selector": ".hud-panel:not([hidden])",
+          "x": 6,
+          "y": 111,
+          "w": 290,
+          "h": 127
+        },
+        {
+          "selector": "#joystick",
+          "x": 14,
+          "y": 785,
+          "w": 112,
+          "h": 112
+        },
+        {
+          "selector": "#mobile-run",
+          "x": 138,
+          "y": 853,
+          "w": 52,
+          "h": 44
+        },
+        {
+          "selector": ".pvp-base",
+          "x": 14,
+          "y": 737,
+          "w": 384,
+          "h": 30
+        },
+        {
+          "selector": ".pvp-acoes",
+          "x": 304,
+          "y": 853,
+          "w": 94,
+          "h": 44
+        }
+      ],
+      "outside": [],
+      "overlaps": [],
+      "panels": 1
+    },
+    {
+      "width": 412,
+      "height": 915,
+      "panel": "hud-settings",
+      "boxes": [
+        {
+          "selector": ".game-toolbar",
+          "x": 6,
+          "y": 8,
+          "w": 400,
+          "h": 96
+        },
+        {
+          "selector": ".hud-panel:not([hidden])",
+          "x": 6,
+          "y": 111,
+          "w": 290,
+          "h": 175
+        },
+        {
+          "selector": "#joystick",
+          "x": 14,
+          "y": 785,
+          "w": 112,
+          "h": 112
+        },
+        {
+          "selector": "#mobile-run",
+          "x": 138,
+          "y": 853,
+          "w": 52,
+          "h": 44
+        },
+        {
+          "selector": ".pvp-base",
+          "x": 14,
+          "y": 737,
+          "w": 384,
+          "h": 30
+        },
+        {
+          "selector": ".pvp-acoes",
+          "x": 304,
+          "y": 853,
+          "w": 94,
+          "h": 44
+        }
+      ],
+      "outside": [],
+      "overlaps": [],
+      "panels": 1
+    },
+    {
+      "width": 844,
+      "height": 390,
+      "panel": "hud-chat",
+      "boxes": [
+        {
+          "selector": ".game-toolbar",
+          "x": 10,
+          "y": 8,
+          "w": 824,
+          "h": 52
+        },
+        {
+          "selector": ".hud-panel:not([hidden])",
+          "x": 10,
+          "y": 67,
+          "w": 320,
+          "h": 58
+        },
+        {
+          "selector": "#joystick",
+          "x": 14,
+          "y": 260,
+          "w": 112,
+          "h": 112
+        },
+        {
+          "selector": "#mobile-run",
+          "x": 138,
+          "y": 328,
+          "w": 52,
+          "h": 44
+        },
+        {
+          "selector": ".pvp-base",
+          "x": 14,
+          "y": 212,
+          "w": 816,
+          "h": 30
+        },
+        {
+          "selector": ".pvp-acoes",
+          "x": 736,
+          "y": 328,
+          "w": 94,
+          "h": 44
+        }
+      ],
+      "outside": [],
+      "overlaps": [],
+      "panels": 1
+    },
+    {
+      "width": 844,
+      "height": 390,
+      "panel": "hud-cartaz",
+      "boxes": [
+        {
+          "selector": ".game-toolbar",
+          "x": 10,
+          "y": 8,
+          "w": 824,
+          "h": 52
+        },
+        {
+          "selector": ".hud-panel:not([hidden])",
+          "x": 10,
+          "y": 67,
+          "w": 320,
+          "h": 128
+        },
+        {
+          "selector": "#joystick",
+          "x": 14,
+          "y": 260,
+          "w": 112,
+          "h": 112
+        },
+        {
+          "selector": "#mobile-run",
+          "x": 138,
+          "y": 328,
+          "w": 52,
+          "h": 44
+        },
+        {
+          "selector": ".pvp-base",
+          "x": 14,
+          "y": 212,
+          "w": 816,
+          "h": 30
+        },
+        {
+          "selector": ".pvp-acoes",
+          "x": 736,
+          "y": 328,
+          "w": 94,
+          "h": 44
+        }
+      ],
+      "outside": [],
+      "overlaps": [],
+      "panels": 1
+    },
+    {
+      "width": 844,
+      "height": 390,
+      "panel": "hud-settings",
+      "boxes": [
+        {
+          "selector": ".game-toolbar",
+          "x": 10,
+          "y": 8,
+          "w": 824,
+          "h": 52
+        },
+        {
+          "selector": ".hud-panel:not([hidden])",
+          "x": 10,
+          "y": 67,
+          "w": 320,
+          "h": 128
+        },
+        {
+          "selector": "#joystick",
+          "x": 14,
+          "y": 260,
+          "w": 112,
+          "h": 112
+        },
+        {
+          "selector": "#mobile-run",
+          "x": 138,
+          "y": 328,
+          "w": 52,
+          "h": 44
+        },
+        {
+          "selector": ".pvp-base",
+          "x": 14,
+          "y": 212,
+          "w": 816,
+          "h": 30
+        },
+        {
+          "selector": ".pvp-acoes",
+          "x": 736,
+          "y": 328,
+          "w": 94,
+          "h": 44
+        }
+      ],
+      "outside": [],
+      "overlaps": [],
+      "panels": 1
+    },
+    {
+      "width": 1280,
+      "height": 800,
+      "panel": "hud-chat",
+      "boxes": [
+        {
+          "selector": ".game-toolbar",
+          "x": 10,
+          "y": 8,
+          "w": 1260,
+          "h": 93
+        },
+        {
+          "selector": ".hud-panel:not([hidden])",
+          "x": 10,
+          "y": 108,
+          "w": 320,
+          "h": 58
+        },
+        {
+          "selector": "#joystick",
+          "x": 14,
+          "y": 670,
+          "w": 112,
+          "h": 112
+        },
+        {
+          "selector": "#mobile-run",
+          "x": 138,
+          "y": 738,
+          "w": 52,
+          "h": 44
+        },
+        {
+          "selector": ".pvp-base",
+          "x": 14,
+          "y": 622,
+          "w": 1252,
+          "h": 30
+        },
+        {
+          "selector": ".pvp-acoes",
+          "x": 1172,
+          "y": 738,
+          "w": 94,
+          "h": 44
+        }
+      ],
+      "outside": [],
+      "overlaps": [],
+      "panels": 1
+    },
+    {
+      "width": 1280,
+      "height": 800,
+      "panel": "hud-cartaz",
+      "boxes": [
+        {
+          "selector": ".game-toolbar",
+          "x": 10,
+          "y": 8,
+          "w": 1260,
+          "h": 93
+        },
+        {
+          "selector": ".hud-panel:not([hidden])",
+          "x": 10,
+          "y": 108,
+          "w": 320,
+          "h": 129
+        },
+        {
+          "selector": "#joystick",
+          "x": 14,
+          "y": 670,
+          "w": 112,
+          "h": 112
+        },
+        {
+          "selector": "#mobile-run",
+          "x": 138,
+          "y": 738,
+          "w": 52,
+          "h": 44
+        },
+        {
+          "selector": ".pvp-base",
+          "x": 14,
+          "y": 622,
+          "w": 1252,
+          "h": 30
+        },
+        {
+          "selector": ".pvp-acoes",
+          "x": 1172,
+          "y": 738,
+          "w": 94,
+          "h": 44
+        }
+      ],
+      "outside": [],
+      "overlaps": [],
+      "panels": 1
+    },
+    {
+      "width": 1280,
+      "height": 800,
+      "panel": "hud-settings",
+      "boxes": [
+        {
+          "selector": ".game-toolbar",
+          "x": 10,
+          "y": 8,
+          "w": 1260,
+          "h": 93
+        },
+        {
+          "selector": ".hud-panel:not([hidden])",
+          "x": 10,
+          "y": 108,
+          "w": 320,
+          "h": 175
+        },
+        {
+          "selector": "#joystick",
+          "x": 14,
+          "y": 670,
+          "w": 112,
+          "h": 112
+        },
+        {
+          "selector": "#mobile-run",
+          "x": 138,
+          "y": 738,
+          "w": 52,
+          "h": 44
+        },
+        {
+          "selector": ".pvp-base",
+          "x": 14,
+          "y": 622,
+          "w": 1252,
+          "h": 30
+        },
+        {
+          "selector": ".pvp-acoes",
+          "x": 1172,
+          "y": 738,
+          "w": 94,
+          "h": 44
+        }
+      ],
+      "outside": [],
+      "overlaps": [],
+      "panels": 1
+    }
+  ],
+  "joystick": {
+    "captureOutside": true,
+    "release": true,
+    "cancel": true
+  }
+}

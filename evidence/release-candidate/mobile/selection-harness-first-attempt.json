@@ -1,0 +1,63 @@
+{
+  "at": "2026-10-23T23:57:54.798Z",
+  "ok": false,
+  "scope": "Chromium + SwiftShader; viewport/touch emulation; local self-signed HTTPS/WSS only",
+  "physicalDeviceTested": false,
+  "publicStagingTested": false,
+  "errors": [],
+  "failedRequests": [
+    {
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3KLobL96cAs3bokj0G7CRMHMham/hf_20261020_214605_fadcc2c8-ed85-4ee7-8d46-5a6c03cd4abd.png",
+      "error": "net::ERR_TUNNEL_CONNECTION_FAILED"
+    },
+    {
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3KLobL96cAs3bokj0G7CRMHMham/hf_20261020_214605_df98cea5-b40e-4991-8e9b-30abdb82df67.png",
+      "error": "net::ERR_TUNNEL_CONNECTION_FAILED"
+    },
+    {
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3KLobL96cAs3bokj0G7CRMHMham/hf_20261021_035345_d9a45351-2fb7-4851-a39b-d9344ccbf900.glb",
+      "error": "net::ERR_TUNNEL_CONNECTION_FAILED"
+    },
+    {
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3KLobL96cAs3bokj0G7CRMHMham/hf_20261020_214604_06344de0-261c-47fa-9072-21746ae89e10.png",
+      "error": "net::ERR_TUNNEL_CONNECTION_FAILED"
+    },
+    {
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3KLobL96cAs3bokj0G7CRMHMham/hf_20261020_214605_2272ba5a-4ea6-4f7c-9223-26f6a424a5a9.png",
+      "error": "net::ERR_TUNNEL_CONNECTION_FAILED"
+    },
+    {
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3KLobL96cAs3bokj0G7CRMHMham/hf_20261021_035348_ac51b268-b3d6-4f59-96e0-90d8321b8b11.glb",
+      "error": "net::ERR_TUNNEL_CONNECTION_FAILED"
+    },
+    {
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3KLobL96cAs3bokj0G7CRMHMham/hf_20261021_035350_129869ee-bac0-4d0c-a62d-5f3ce1127f18.glb",
+      "error": "net::ERR_TUNNEL_CONNECTION_FAILED"
+    },
+    {
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3KLobL96cAs3bokj0G7CRMHMham/hf_20261021_054039_72ddea93-584e-4119-8d16-b263c8105194.glb",
+      "error": "net::ERR_TUNNEL_CONNECTION_FAILED"
+    },
+    {
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3KLobL96cAs3bokj0G7CRMHMham/hf_20261021_054042_70284ae2-93ad-4cce-91ef-73ffeac65aec.glb",
+      "error": "net::ERR_TUNNEL_CONNECTION_FAILED"
+    },
+    {
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3KLobL96cAs3bokj0G7CRMHMham/hf_20261021_054045_47f8d46a-b148-48de-a2a0-8c308403abe2.glb",
+      "error": "net::ERR_TUNNEL_CONNECTION_FAILED"
+    },
+    {
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3KLobL96cAs3bokj0G7CRMHMham/hf_20261021_054048_1c7c5a8a-8be6-447a-b4c7-26963ec14352.glb",
+      "error": "net::ERR_TUNNEL_CONNECTION_FAILED"
+    },
+    {
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3KLobL96cAs3bokj0G7CRMHMham/hf_20261021_054051_adf5bcf8-7b4b-4ff9-9397-fde6b58754e4.glb",
+      "error": "net::ERR_TUNNEL_CONNECTION_FAILED"
+    }
+  ],
+  "poses": [],
+  "screenshots": [],
+  "browser": "Chrome/154.0.8037.57",
+  "selection": [],
+  "error": "Error: Element is not a <select> element.\n    at evaluate (evaluate at CdpElementHandle.select (file:///tmp/agora-qa-tools/node_modules/puppeteer-core/lib/puppeteer/api/ElementHandle.js:883:31), <anonymous>:3:26)\n    at #evaluate (file:///tmp/agora-qa-tools/node_modules/puppeteer-core/lib/puppeteer/cdp/ExecutionContext.js:402:19)\n    at async ExecutionContext.evaluate (file:///tmp/agora-qa-tools/node_modules/puppeteer-core/lib/puppeteer/cdp/ExecutionContext.js:288:16)\n    at async IsolatedWorld.evaluate (file:///tmp/agora-qa-tools/node_modules/puppeteer-core/lib/puppeteer/cdp/IsolatedWorld.js:104:16)\n    at async CdpJSHandle.evaluate (file:///tmp/agora-qa-tools/node_modules/puppeteer-core/lib/puppeteer/api/JSHandle.js:154:20)\n    at async CdpElementHandle.evaluate (file:///tmp/agora-qa-tools/node_modules/puppeteer-core/lib/puppeteer/api/ElementHandle.js:344:20)\n    at async CdpElementHandle.select (file:///tmp/agora-qa-tools/node_modules/puppeteer-core/lib/puppeteer/api/ElementHandle.js:883:20)\n    at async CdpElementHandle.<anonymous> (file:///tmp/agora-qa-tools/node_modules/puppeteer-core/lib/puppeteer/api/ElementHandle.js:130:24)\n    at async CdpFrame.select (file:///tmp/agora-qa-tools/node_modules/puppeteer-core/lib/puppeteer/api/Frame.js:831:24)\n    at async file:///workspace/agora-brasil/scripts/mobile-readiness-qa.mjs:60:4"
+}

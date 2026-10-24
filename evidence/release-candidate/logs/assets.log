@@ -1,0 +1,108 @@
+
+> agora-brasil@0.6.0 assets:audit
+> node scripts/original-assets.mjs audit
+
+{
+  "at": "2026-10-23T23:53:08.442Z",
+  "scope": "Offline structural audit; not browser or licensing certification",
+  "assets": [
+    {
+      "id": "mulher",
+      "status": "missing",
+      "bytes": null,
+      "sha256": null,
+      "license": {
+        "status": "pending",
+        "evidence": null
+      }
+    },
+    {
+      "id": "homem",
+      "localPath": "public/assets/bases/homem.glb",
+      "status": "present",
+      "bytes": 2478984,
+      "sha256": "5e90a942da4a573417463cb1b38f7e288be6410948881c5b90cf9d7c75c2d156",
+      "meshes": 1,
+      "materials": [
+        {
+          "name": "Material_0",
+          "pbr": {
+            "baseColorTexture": {
+              "index": 0
+            }
+          },
+          "doubleSided": true
+        }
+      ],
+      "images": 1,
+      "skins": [
+        {
+          "name": "Armature",
+          "joints": 24
+        }
+      ],
+      "bones": [
+        "head_end",
+        "headfront",
+        "Head",
+        "neck",
+        "LeftHand",
+        "LeftForeArm",
+        "LeftArm",
+        "LeftShoulder",
+        "RightHand",
+        "RightForeArm",
+        "RightArm",
+        "RightShoulder",
+        "Spine",
+        "Spine01",
+        "Spine02",
+        "LeftToeBase",
+        "LeftFoot",
+        "LeftLeg",
+        "LeftUpLeg",
+        "RightToeBase",
+        "RightFoot",
+        "RightLeg",
+        "RightUpLeg",
+        "Hips",
+        "char1",
+        "Armature"
+      ],
+      "animations": [
+        "Armature|Casual_Walk|baselayer"
+      ],
+      "extensionsRequired": [],
+      "matchesPin": true,
+      "license": {
+        "status": "pending",
+        "evidence": null
+      }
+    },
+    {
+      "id": "idoso",
+      "status": "missing",
+      "bytes": null,
+      "sha256": null,
+      "license": {
+        "status": "pending",
+        "evidence": null
+      }
+    },
+    {
+      "id": "idosa",
+      "status": "missing",
+      "bytes": null,
+      "sha256": null,
+      "license": {
+        "status": "pending",
+        "evidence": null
+      }
+    }
+  ]
+}
+npm notice
+npm notice New major version of npm available! 11.9.0 -> 12.2.1
+npm notice Changelog: https://github.com/npm/cli/releases/tag/v12.2.1
+npm notice To update run: npm install -g npm@12.2.1
+npm notice

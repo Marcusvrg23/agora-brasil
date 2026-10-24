@@ -1,0 +1,856 @@
+{
+  "at": "2026-10-24T00:15:27.156Z",
+  "ok": true,
+  "scope": "Chromium + SwiftShader; viewport/touch emulation; local self-signed HTTPS/WSS only",
+  "physicalDeviceTested": false,
+  "publicStagingTested": false,
+  "errors": [],
+  "failedRequests": [
+    {
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3KLobL96cAs3bokj0G7CRMHMham/hf_20261021_035350_129869ee-bac0-4d0c-a62d-5f3ce1127f18.glb",
+      "error": "net::ERR_TUNNEL_CONNECTION_FAILED"
+    },
+    {
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3KLobL96cAs3bokj0G7CRMHMham/hf_20261021_035348_ac51b268-b3d6-4f59-96e0-90d8321b8b11.glb",
+      "error": "net::ERR_TUNNEL_CONNECTION_FAILED"
+    },
+    {
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3KLobL96cAs3bokj0G7CRMHMham/hf_20261021_035345_d9a45351-2fb7-4851-a39b-d9344ccbf900.glb",
+      "error": "net::ERR_TUNNEL_CONNECTION_FAILED"
+    },
+    {
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3KLobL96cAs3bokj0G7CRMHMham/hf_20261021_054039_72ddea93-584e-4119-8d16-b263c8105194.glb",
+      "error": "net::ERR_TUNNEL_CONNECTION_FAILED"
+    },
+    {
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3KLobL96cAs3bokj0G7CRMHMham/hf_20261021_054042_70284ae2-93ad-4cce-91ef-73ffeac65aec.glb",
+      "error": "net::ERR_TUNNEL_CONNECTION_FAILED"
+    },
+    {
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3KLobL96cAs3bokj0G7CRMHMham/hf_20261020_214605_fadcc2c8-ed85-4ee7-8d46-5a6c03cd4abd.png",
+      "error": "net::ERR_TUNNEL_CONNECTION_FAILED"
+    },
+    {
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3KLobL96cAs3bokj0G7CRMHMham/hf_20261020_214605_df98cea5-b40e-4991-8e9b-30abdb82df67.png",
+      "error": "net::ERR_TUNNEL_CONNECTION_FAILED"
+    },
+    {
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3KLobL96cAs3bokj0G7CRMHMham/hf_20261020_214604_06344de0-261c-47fa-9072-21746ae89e10.png",
+      "error": "net::ERR_TUNNEL_CONNECTION_FAILED"
+    },
+    {
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3KLobL96cAs3bokj0G7CRMHMham/hf_20261020_214605_2272ba5a-4ea6-4f7c-9223-26f6a424a5a9.png",
+      "error": "net::ERR_TUNNEL_CONNECTION_FAILED"
+    },
+    {
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3KLobL96cAs3bokj0G7CRMHMham/hf_20261021_054045_47f8d46a-b148-48de-a2a0-8c308403abe2.glb",
+      "error": "net::ERR_TUNNEL_CONNECTION_FAILED"
+    },
+    {
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3KLobL96cAs3bokj0G7CRMHMham/hf_20261021_054048_1c7c5a8a-8be6-447a-b4c7-26963ec14352.glb",
+      "error": "net::ERR_TUNNEL_CONNECTION_FAILED"
+    },
+    {
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3KLobL96cAs3bokj0G7CRMHMham/hf_20261021_054051_adf5bcf8-7b4b-4ff9-9397-fde6b58754e4.glb",
+      "error": "net::ERR_TUNNEL_CONNECTION_FAILED"
+    },
+    {
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3KLobL96cAs3bokj0G7CRMHMham/hf_20261020_214605_fadcc2c8-ed85-4ee7-8d46-5a6c03cd4abd.png",
+      "error": "net::ERR_TUNNEL_CONNECTION_FAILED"
+    },
+    {
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3KLobL96cAs3bokj0G7CRMHMham/hf_20261020_214605_df98cea5-b40e-4991-8e9b-30abdb82df67.png",
+      "error": "net::ERR_TUNNEL_CONNECTION_FAILED"
+    },
+    {
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3KLobL96cAs3bokj0G7CRMHMham/hf_20261020_214604_06344de0-261c-47fa-9072-21746ae89e10.png",
+      "error": "net::ERR_TUNNEL_CONNECTION_FAILED"
+    },
+    {
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3KLobL96cAs3bokj0G7CRMHMham/hf_20261020_214605_2272ba5a-4ea6-4f7c-9223-26f6a424a5a9.png",
+      "error": "net::ERR_TUNNEL_CONNECTION_FAILED"
+    },
+    {
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3KLobL96cAs3bokj0G7CRMHMham/hf_20261021_035348_ac51b268-b3d6-4f59-96e0-90d8321b8b11.glb",
+      "error": "net::ERR_TUNNEL_CONNECTION_FAILED"
+    },
+    {
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3KLobL96cAs3bokj0G7CRMHMham/hf_20261021_035345_d9a45351-2fb7-4851-a39b-d9344ccbf900.glb",
+      "error": "net::ERR_TUNNEL_CONNECTION_FAILED"
+    },
+    {
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3KLobL96cAs3bokj0G7CRMHMham/hf_20261021_054039_72ddea93-584e-4119-8d16-b263c8105194.glb",
+      "error": "net::ERR_TUNNEL_CONNECTION_FAILED"
+    },
+    {
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3KLobL96cAs3bokj0G7CRMHMham/hf_20261021_054042_70284ae2-93ad-4cce-91ef-73ffeac65aec.glb",
+      "error": "net::ERR_TUNNEL_CONNECTION_FAILED"
+    },
+    {
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3KLobL96cAs3bokj0G7CRMHMham/hf_20261021_054045_47f8d46a-b148-48de-a2a0-8c308403abe2.glb",
+      "error": "net::ERR_TUNNEL_CONNECTION_FAILED"
+    },
+    {
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3KLobL96cAs3bokj0G7CRMHMham/hf_20261021_035350_129869ee-bac0-4d0c-a62d-5f3ce1127f18.glb",
+      "error": "net::ERR_TUNNEL_CONNECTION_FAILED"
+    },
+    {
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3KLobL96cAs3bokj0G7CRMHMham/hf_20261021_054048_1c7c5a8a-8be6-447a-b4c7-26963ec14352.glb",
+      "error": "net::ERR_TUNNEL_CONNECTION_FAILED"
+    },
+    {
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3KLobL96cAs3bokj0G7CRMHMham/hf_20261021_054051_adf5bcf8-7b4b-4ff9-9397-fde6b58754e4.glb",
+      "error": "net::ERR_TUNNEL_CONNECTION_FAILED"
+    }
+  ],
+  "poses": [],
+  "screenshots": [
+    {
+      "file": "iphone-13-emulated.png",
+      "width": 390,
+      "height": 844,
+      "emulated": true,
+      "state": "player with GLB + sign"
+    },
+    {
+      "file": "iphone-se-emulated.png",
+      "width": 320,
+      "height": 568,
+      "emulated": true,
+      "state": "player with GLB + sign"
+    },
+    {
+      "file": "iphone-landscape-emulated.png",
+      "width": 844,
+      "height": 390,
+      "emulated": true,
+      "state": "player with GLB + sign"
+    },
+    {
+      "file": "iphone-visitor-emulated.png",
+      "width": 390,
+      "height": 844,
+      "emulated": true,
+      "state": "visitor"
+    }
+  ],
+  "desktopScenarioExecuted": false,
+  "browser": "Chrome/154.0.8037.57",
+  "initial": {
+    "entered": true,
+    "role": "participant",
+    "input": {
+      "x": 0,
+      "y": 0,
+      "intensidade": 0,
+      "running": false
+    },
+    "localNameTags": 0,
+    "player": {
+      "position": [
+        0,
+        0,
+        -30
+      ],
+      "moving": false,
+      "running": false,
+      "locomotion": "idle",
+      "glb": true,
+      "hand": [
+        0.3428655481165933,
+        0.9263774908479673,
+        -30.00939504158382
+      ],
+      "leftArm": [
+        0.12002825736999512,
+        0.07123592495918274,
+        -0.07135617733001709,
+        0.9876370429992676
+      ]
+    },
+    "signs": [],
+    "models": [
+      {
+        "id": "npc1",
+        "name": "Lia",
+        "base": "mulher",
+        "team": "vermelho",
+        "glb": false,
+        "walk": false,
+        "run": false
+      },
+      {
+        "id": "npc2",
+        "name": "Caio",
+        "base": "homem",
+        "team": "amarelo",
+        "glb": true,
+        "walk": true,
+        "run": true
+      },
+      {
+        "id": "npc3",
+        "name": "Bia",
+        "base": "mulher",
+        "team": "amarelo",
+        "glb": false,
+        "walk": false,
+        "run": false
+      },
+      {
+        "id": "npc4",
+        "name": "Rafa",
+        "base": "idoso",
+        "team": "vermelho",
+        "glb": false,
+        "walk": false,
+        "run": false
+      },
+      {
+        "id": "npc5",
+        "name": "Ivo",
+        "base": "homem",
+        "team": "vermelho",
+        "glb": true,
+        "walk": true,
+        "run": true
+      },
+      {
+        "id": "npc6",
+        "name": "Nina",
+        "base": "idosa",
+        "team": "amarelo",
+        "glb": false,
+        "walk": false,
+        "run": false
+      }
+    ],
+    "baseStatus": {
+      "idosa": "faltando",
+      "idoso": "faltando",
+      "mulher": "faltando",
+      "homem": "ok"
+    },
+    "density": 180,
+    "render": {
+      "calls": 436,
+      "triangles": 879834
+    }
+  },
+  "transport": {
+    "secureContext": true,
+    "url": "wss://127.0.0.1:34395/api/ws",
+    "joined": true,
+    "webgl": true
+  },
+  "signReceivedByIndependentPeer": true,
+  "twoBrowsers": {
+    "executed": false,
+    "reason": "Local continuation; second-context timeout preserved in separate attempts. CI runs the complete scenario."
+  },
+  "touch": {
+    "moved": true,
+    "cancelStopped": true,
+    "source": "CDP emulated touch, not a physical touchscreen"
+  },
+  "hud": [
+    {
+      "width": 390,
+      "height": 844,
+      "panel": "hud-chat",
+      "boxes": [
+        {
+          "selector": ".game-toolbar",
+          "x": 6,
+          "y": 8,
+          "w": 378,
+          "h": 96
+        },
+        {
+          "selector": ".hud-panel:not([hidden])",
+          "x": 6,
+          "y": 111,
+          "w": 290,
+          "h": 64
+        },
+        {
+          "selector": "#joystick",
+          "x": 14,
+          "y": 714,
+          "w": 112,
+          "h": 112
+        },
+        {
+          "selector": "#mobile-run",
+          "x": 138,
+          "y": 782,
+          "w": 52,
+          "h": 44
+        },
+        {
+          "selector": ".pvp-base",
+          "x": 14,
+          "y": 666,
+          "w": 362,
+          "h": 30
+        },
+        {
+          "selector": ".pvp-acoes",
+          "x": 282,
+          "y": 782,
+          "w": 94,
+          "h": 44
+        }
+      ],
+      "outside": [],
+      "overlaps": [],
+      "circular": true
+    },
+    {
+      "width": 390,
+      "height": 844,
+      "panel": "hud-cartaz",
+      "boxes": [
+        {
+          "selector": ".game-toolbar",
+          "x": 6,
+          "y": 8,
+          "w": 378,
+          "h": 96
+        },
+        {
+          "selector": ".hud-panel:not([hidden])",
+          "x": 6,
+          "y": 111,
+          "w": 290,
+          "h": 142.390625
+        },
+        {
+          "selector": "#joystick",
+          "x": 14,
+          "y": 714,
+          "w": 112,
+          "h": 112
+        },
+        {
+          "selector": "#mobile-run",
+          "x": 138,
+          "y": 782,
+          "w": 52,
+          "h": 44
+        },
+        {
+          "selector": ".pvp-base",
+          "x": 14,
+          "y": 666,
+          "w": 362,
+          "h": 30
+        },
+        {
+          "selector": ".pvp-acoes",
+          "x": 282,
+          "y": 782,
+          "w": 94,
+          "h": 44
+        }
+      ],
+      "outside": [],
+      "overlaps": [],
+      "circular": true
+    },
+    {
+      "width": 390,
+      "height": 844,
+      "panel": "hud-settings",
+      "boxes": [
+        {
+          "selector": ".game-toolbar",
+          "x": 6,
+          "y": 8,
+          "w": 378,
+          "h": 96
+        },
+        {
+          "selector": ".hud-panel:not([hidden])",
+          "x": 6,
+          "y": 111,
+          "w": 290,
+          "h": 175
+        },
+        {
+          "selector": "#joystick",
+          "x": 14,
+          "y": 714,
+          "w": 112,
+          "h": 112
+        },
+        {
+          "selector": "#mobile-run",
+          "x": 138,
+          "y": 782,
+          "w": 52,
+          "h": 44
+        },
+        {
+          "selector": ".pvp-base",
+          "x": 14,
+          "y": 666,
+          "w": 362,
+          "h": 30
+        },
+        {
+          "selector": ".pvp-acoes",
+          "x": 282,
+          "y": 782,
+          "w": 94,
+          "h": 44
+        }
+      ],
+      "outside": [],
+      "overlaps": [],
+      "circular": true
+    },
+    {
+      "width": 320,
+      "height": 568,
+      "panel": "hud-chat",
+      "boxes": [
+        {
+          "selector": ".game-toolbar",
+          "x": 6,
+          "y": 8,
+          "w": 308,
+          "h": 96
+        },
+        {
+          "selector": ".hud-panel:not([hidden])",
+          "x": 6,
+          "y": 111,
+          "w": 290,
+          "h": 64
+        },
+        {
+          "selector": "#joystick",
+          "x": 14,
+          "y": 438,
+          "w": 112,
+          "h": 112
+        },
+        {
+          "selector": "#mobile-run",
+          "x": 138,
+          "y": 506,
+          "w": 52,
+          "h": 44
+        },
+        {
+          "selector": ".pvp-base",
+          "x": 14,
+          "y": 390,
+          "w": 292,
+          "h": 30
+        },
+        {
+          "selector": ".pvp-acoes",
+          "x": 212,
+          "y": 506,
+          "w": 94,
+          "h": 44
+        }
+      ],
+      "outside": [],
+      "overlaps": [],
+      "circular": true
+    },
+    {
+      "width": 320,
+      "height": 568,
+      "panel": "hud-cartaz",
+      "boxes": [
+        {
+          "selector": ".game-toolbar",
+          "x": 6,
+          "y": 8,
+          "w": 308,
+          "h": 96
+        },
+        {
+          "selector": ".hud-panel:not([hidden])",
+          "x": 6,
+          "y": 111,
+          "w": 290,
+          "h": 142.390625
+        },
+        {
+          "selector": "#joystick",
+          "x": 14,
+          "y": 438,
+          "w": 112,
+          "h": 112
+        },
+        {
+          "selector": "#mobile-run",
+          "x": 138,
+          "y": 506,
+          "w": 52,
+          "h": 44
+        },
+        {
+          "selector": ".pvp-base",
+          "x": 14,
+          "y": 390,
+          "w": 292,
+          "h": 30
+        },
+        {
+          "selector": ".pvp-acoes",
+          "x": 212,
+          "y": 506,
+          "w": 94,
+          "h": 44
+        }
+      ],
+      "outside": [],
+      "overlaps": [],
+      "circular": true
+    },
+    {
+      "width": 320,
+      "height": 568,
+      "panel": "hud-settings",
+      "boxes": [
+        {
+          "selector": ".game-toolbar",
+          "x": 6,
+          "y": 8,
+          "w": 308,
+          "h": 96
+        },
+        {
+          "selector": ".hud-panel:not([hidden])",
+          "x": 6,
+          "y": 111,
+          "w": 290,
+          "h": 175
+        },
+        {
+          "selector": "#joystick",
+          "x": 14,
+          "y": 438,
+          "w": 112,
+          "h": 112
+        },
+        {
+          "selector": "#mobile-run",
+          "x": 138,
+          "y": 506,
+          "w": 52,
+          "h": 44
+        },
+        {
+          "selector": ".pvp-base",
+          "x": 14,
+          "y": 390,
+          "w": 292,
+          "h": 30
+        },
+        {
+          "selector": ".pvp-acoes",
+          "x": 212,
+          "y": 506,
+          "w": 94,
+          "h": 44
+        }
+      ],
+      "outside": [],
+      "overlaps": [],
+      "circular": true
+    },
+    {
+      "width": 844,
+      "height": 390,
+      "panel": "hud-chat",
+      "boxes": [
+        {
+          "selector": ".game-toolbar",
+          "x": 10,
+          "y": 8,
+          "w": 824,
+          "h": 52
+        },
+        {
+          "selector": ".hud-panel:not([hidden])",
+          "x": 10,
+          "y": 67,
+          "w": 320,
+          "h": 64
+        },
+        {
+          "selector": "#joystick",
+          "x": 14,
+          "y": 260,
+          "w": 112,
+          "h": 112
+        },
+        {
+          "selector": "#mobile-run",
+          "x": 138,
+          "y": 328,
+          "w": 52,
+          "h": 44
+        },
+        {
+          "selector": ".pvp-base",
+          "x": 14,
+          "y": 212,
+          "w": 816,
+          "h": 30
+        },
+        {
+          "selector": ".pvp-acoes",
+          "x": 736,
+          "y": 328,
+          "w": 94,
+          "h": 44
+        }
+      ],
+      "outside": [],
+      "overlaps": [],
+      "circular": true
+    },
+    {
+      "width": 844,
+      "height": 390,
+      "panel": "hud-cartaz",
+      "boxes": [
+        {
+          "selector": ".game-toolbar",
+          "x": 10,
+          "y": 8,
+          "w": 824,
+          "h": 52
+        },
+        {
+          "selector": ".hud-panel:not([hidden])",
+          "x": 10,
+          "y": 67,
+          "w": 320,
+          "h": 128
+        },
+        {
+          "selector": "#joystick",
+          "x": 14,
+          "y": 260,
+          "w": 112,
+          "h": 112
+        },
+        {
+          "selector": "#mobile-run",
+          "x": 138,
+          "y": 328,
+          "w": 52,
+          "h": 44
+        },
+        {
+          "selector": ".pvp-base",
+          "x": 14,
+          "y": 212,
+          "w": 816,
+          "h": 30
+        },
+        {
+          "selector": ".pvp-acoes",
+          "x": 736,
+          "y": 328,
+          "w": 94,
+          "h": 44
+        }
+      ],
+      "outside": [],
+      "overlaps": [],
+      "circular": true
+    },
+    {
+      "width": 844,
+      "height": 390,
+      "panel": "hud-settings",
+      "boxes": [
+        {
+          "selector": ".game-toolbar",
+          "x": 10,
+          "y": 8,
+          "w": 824,
+          "h": 52
+        },
+        {
+          "selector": ".hud-panel:not([hidden])",
+          "x": 10,
+          "y": 67,
+          "w": 320,
+          "h": 128
+        },
+        {
+          "selector": "#joystick",
+          "x": 14,
+          "y": 260,
+          "w": 112,
+          "h": 112
+        },
+        {
+          "selector": "#mobile-run",
+          "x": 138,
+          "y": 328,
+          "w": 52,
+          "h": 44
+        },
+        {
+          "selector": ".pvp-base",
+          "x": 14,
+          "y": 212,
+          "w": 816,
+          "h": 30
+        },
+        {
+          "selector": ".pvp-acoes",
+          "x": 736,
+          "y": 328,
+          "w": 94,
+          "h": 44
+        }
+      ],
+      "outside": [],
+      "overlaps": [],
+      "circular": true
+    }
+  ],
+  "visitor": {
+    "actions": "none",
+    "life": "none",
+    "disabled": true
+  },
+  "final": {
+    "entered": true,
+    "role": "visitor",
+    "input": {
+      "x": 0,
+      "y": 0,
+      "intensidade": 0,
+      "running": false
+    },
+    "localNameTags": 0,
+    "player": {
+      "position": [
+        0,
+        0,
+        -30
+      ],
+      "moving": false,
+      "running": false,
+      "locomotion": "idle",
+      "glb": true,
+      "hand": [
+        0.3368138907105008,
+        0.9263774908479673,
+        -30.064818623219786
+      ],
+      "leftArm": [
+        0.12002825736999512,
+        0.07123592495918274,
+        -0.07135617733001709,
+        0.9876370429992676
+      ]
+    },
+    "signs": [],
+    "models": [
+      {
+        "id": "npc1",
+        "name": "Lia",
+        "base": "mulher",
+        "team": "vermelho",
+        "glb": false,
+        "walk": false,
+        "run": false
+      },
+      {
+        "id": "npc2",
+        "name": "Caio",
+        "base": "homem",
+        "team": "amarelo",
+        "glb": true,
+        "walk": true,
+        "run": true
+      },
+      {
+        "id": "npc3",
+        "name": "Bia",
+        "base": "mulher",
+        "team": "amarelo",
+        "glb": false,
+        "walk": false,
+        "run": false
+      },
+      {
+        "id": "npc4",
+        "name": "Rafa",
+        "base": "idoso",
+        "team": "vermelho",
+        "glb": false,
+        "walk": false,
+        "run": false
+      },
+      {
+        "id": "npc5",
+        "name": "Ivo",
+        "base": "homem",
+        "team": "vermelho",
+        "glb": true,
+        "walk": true,
+        "run": true
+      },
+      {
+        "id": "npc6",
+        "name": "Nina",
+        "base": "idosa",
+        "team": "amarelo",
+        "glb": false,
+        "walk": false,
+        "run": false
+      }
+    ],
+    "baseStatus": {
+      "idoso": "faltando",
+      "mulher": "faltando",
+      "idosa": "faltando",
+      "homem": "ok"
+    },
+    "density": 180,
+    "render": {
+      "calls": 174,
+      "triangles": 774582
+    }
+  },
+  "density": [
+    {
+      "requested": 180,
+      "actual": 180,
+      "virtualTotal": 186,
+      "frames": 6,
+      "frameP50Ms": 1050,
+      "frameP95Ms": 3216.5,
+      "jsHeapMiB": 24.801834106445312,
+      "render": {
+        "calls": 174,
+        "triangles": 774582
+      },
+      "scope": "Chromium/SwiftShader; emulação 390x844, não iPhone físico",
+      "safe": false
+    }
+  ],
+  "densityLimits": {
+    "p95FrameMs": 100,
+    "jsHeapMiB": 512,
+    "sampleFrames": 30,
+    "maxSeconds": 8
+  },
+  "densityStopped": "Limite de frame-time/memória ou amostra incompleta; estágios maiores não executados"
+}

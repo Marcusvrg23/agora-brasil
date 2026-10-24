@@ -1,0 +1,4 @@
+READY [{"id":"npc1","name":"Lia","base":"mulher","team":"vermelho","glb":false,"walk":false,"run":false},{"id":"npc2","name":"Caio","base":"homem","team":"amarelo","glb":true,"walk":true,"run":true},{"id":"npc3","name":"Bia","base":"mulher","team":"amarelo","glb":false,"walk":false,"run":false},{"id":"npc4","name":"Rafa","base":"idoso","team":"vermelho","glb":false,"walk":false,"run":false},{"id":"npc5","name":"Ivo","base":"homem","team":"vermelho","glb":true,"walk":true,"run":true},{"id":"npc6","name":"Nina","base":"idosa","team":"amarelo","glb":false,"walk":false,"run":false}]
+Error: Unexpected GLB clip
+    at file:///workspace/agora-brasil/scripts/mobile-readiness-qa.mjs:75:89
+{"ok":false,"poses":2,"screenshots":2,"transport":{"secureContext":true,"url":"wss://127.0.0.1:35585/api/ws","joined":true,"webgl":true},"error":"Error: Unexpected GLB clip\n    at file:///workspace/agora-brasil/scripts/mobile-readiness-qa.mjs:75:89"}

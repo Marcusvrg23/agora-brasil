@@ -1,0 +1,149 @@
+{
+  "at": "2026-10-23T23:59:40.379Z",
+  "issue": {
+    "url": "https://github.com/Marcusvrg23/agora-brasil/issues/15",
+    "title": "Release candidate Ágora Brasil — revisar PR #14, QA iPhone e pacote de staging isolado",
+    "issue_number": 15,
+    "body": "# Release candidate — próxima missão antes de qualquer deploy\n\n## Estado comprovado, 23/10/2026\n- **PR #14 (draft)**: https://github.com/Marcusvrg23/agora-brasil/pull/14 · branch `fix/animacao-corrida-higgsfield-v2-20261023`, HEAD conferido `a6b66bee865d72fded17b82f4669da8d9d8840ef`, baseada no PR #13; **86/86 testes** segundo descrição; workflows Node e Browser concluídos com **success**, GitHub Actions runs [39996624635](https://github.com/Marcusvrg23/agora-brasil/actions/runs/39996624635) e [39996624703](https://github.com/Marcusvrg23/agora-brasil/actions/runs/39996624703).\n- **SPRINT JÁ INTEGRADO NO PR #14**: `public/assets/anims/run-sprint-v2.glb`, clipe `Sprint_V2_RealStride`, 24 ossos, 21 canais, keyframes no quadril, fallback conservador. Não trocar por rig demonstrativo de 17 ossos feito em outro projeto Higgsfield; este era um protótipo exploratório.\n- **PR #13 (draft)**: https://github.com/Marcusvrg23/agora-brasil/pull/13 · caminhões V2 já no repo `public/assets/veiculos/v2/`, apenas na prévia `/preview-caminhoes.html?trucksV2=1`, V1 intacto; medição mobile física pendente.\n- **PR #11 (draft)**: https://github.com/Marcusvrg23/agora-brasil/pull/11 · reação visual de impacto experimental via `?ragdoll=1`, OFF por padrão, NÃO é física corporal articulada.\n- GitHub `main` ainda não incorpora essas features; produção Square Cloud não foi modificada. Todas as PRs estão empilhadas, não suponha que o código da `main` contenha a versão nova.\n- 3 GLBs de avatares mulher/idoso/idosa ainda precisam de disponibilidade/licença; bloqueio 403 ocorreu no proxy antes do CDN, não é prova de origem ausente.\n\n## Missão Codex, em ordem estrita\n1. **Auditoria sem mudanças duplicadas**. Abrir PRs #14/#13/#11/#9, checar HEADs reais, assets e CI. Partir de `fix/animacao-corrida-higgsfield-v2-20261023` em nova branch `qa/release-candidate-20261023` (ou nome equivalente se existir). Não reexecutar refatorações já resolvidas sem defeito reproduzido. Checar regressões após cada alteração.\n2. **QA visual priorizado:** avatar 6 tipos sem alterar identidade/modelagem; seleção, material/rosto, câmera e nomes; Sprint vs Walk realmente diferentes e solo de pé próximo de 0 sem foot slide; transição idle→walk→run e 2 jogadores; HUD 320×568/390×844/844×390/desktop, analógico circular, nomes únicos, chat minimizável, botões PvP acessíveis, cartazes 3D nas mãos. Tirar screenshots reais de navegador e rotular emulação. Ragdoll OFF.\n3. **Veículos:** conferir que carros não surgem/atravessam Congresso, câmera/colisão visual e spawn; V1 e V2 comparáveis no preview sem quebra de wheels/flags. Nenhum caminhão V2 vira produção por default.\n4. **Multiplayer e performance:** 2 clientes WebSocket com reconnect, visitante sem ações proibidas, dano autoritativo, flags de consentimento; figurantes virtuais separados de jogadores reais; 180 figurantes mobile e testes escalonados 300/600/1200/2000 **somente quando ambiente aguentar**, com métricas de memória e frame-time. Nunca chamar emulação de teste físico.\n5. **Pacote de homologação isolado:** reaproveitar workflow `preview-package.yml` do PR #11 se válido. Produzir ZIP/artifact do release candidate e instruções iPhone/Safari. **Não criar app Square Cloud público ou pago nem conectar staging a dados reais sem consentimento específico e credenciais seguras.** Se acesso de staging indisponível, relatório com bloqueios e passos concretos para obter preview. Nunca usar link presigned R2 15 min como link de entrega ao usuário.\n6. Executar `npm ci`, `npm test`, `npm run check`, `git diff --check`, layouts/mobile readiness, testes browser HTTPS/WSS e evidenciar todos os resultados. Garantir que bugs visuais corrigidos tenham regressão.\n7. Entregar PR **draft** com base no PR #14, relatório GO/NO-GO, screenshots, lista de riscos/pendências (incluindo iPhone físico, GLBs bloqueados e staging). Se não houver correção de código necessária, não fabricar commit para parecer progresso; um relatório no issue basta.\n\n## Gate de proteção\n**Não fazer merge, deploy, restart ou mudanças na Square Cloud da produção; não forçar integração na main, não ligar ragdoll nem V2 trucks por padrão; não instalar assets provisórios sobre 6 modelos originais.** Só considerar release após QA visual e autorização explícita. A nova cena de debate 3D será objeto de tarefa posterior e não bloqueia a estabilização pré-lançamento.\n\n## Critério objetivo\nAprovar somente requisitos comprovados em código/CI/browser, com URLs da evidência. Separar PASS em CI, PASS navegador emulado, PENDENTE Safari físico, PENDENTE stage público e BLOQUEADO origem GLB.",
+    "state": "open",
+    "user": {
+      "login": "Marcusvrg23",
+      "name": "Marcusvrg23",
+      "email": null,
+      "avatar_url": "https://avatars.githubusercontent.com/u/169153810?v=4",
+      "id": 169153810
+    },
+    "assignees": null,
+    "labels": null,
+    "milestone": null,
+    "state_reason": null,
+    "comments": 0,
+    "created_at": "2026-10-23T23:41:56Z",
+    "updated_at": "2026-10-23T23:41:56Z",
+    "closed_at": null,
+    "display_url": "https://github.com/Marcusvrg23/agora-brasil/issues/15",
+    "display_title": "Release candidate Ágora Brasil — revisar PR #14, QA iPhone e pacote de staging isolado"
+  },
+  "prs": [
+    {
+      "number": 14,
+      "head": "a6b66bee865d72fded17b82f4669da8d9d8840ef",
+      "base": "fix/p0-veiculos-corrida-visual-20261023",
+      "base_sha": "a602c7bb054f96b7196bac461cba95bdfcb52f81",
+      "draft": true,
+      "url": "https://github.com/Marcusvrg23/agora-brasil/pull/14",
+      "workflowRuns": [
+        {
+          "id": 39996624635,
+          "name": "Testes",
+          "status": "completed",
+          "conclusion": "success",
+          "run_number": 83,
+          "jobs_url": "https://api.github.com/repos/Marcusvrg23/agora-brasil/actions/runs/39996624635/jobs",
+          "logs_url": "https://api.github.com/repos/Marcusvrg23/agora-brasil/actions/runs/39996624635/logs",
+          "workflow_id": 390933570
+        },
+        {
+          "id": 39996624703,
+          "name": "Browser smoke - Desfile detalhado",
+          "status": "completed",
+          "conclusion": "success",
+          "run_number": 31,
+          "jobs_url": "https://api.github.com/repos/Marcusvrg23/agora-brasil/actions/runs/39996624703/jobs",
+          "logs_url": "https://api.github.com/repos/Marcusvrg23/agora-brasil/actions/runs/39996624703/logs",
+          "workflow_id": 393573572
+        }
+      ]
+    },
+    {
+      "number": 13,
+      "head": "a602c7bb054f96b7196bac461cba95bdfcb52f81",
+      "base": "preview/ragdoll-pr9-20261023",
+      "base_sha": "ee98e1cbccbfd4f7aa251d848d0db2bcac61a5e0",
+      "draft": true,
+      "url": "https://github.com/Marcusvrg23/agora-brasil/pull/13",
+      "workflowRuns": [
+        {
+          "id": 39949868096,
+          "name": "Browser smoke - Desfile detalhado",
+          "status": "completed",
+          "conclusion": "success",
+          "run_number": 24,
+          "jobs_url": "https://api.github.com/repos/Marcusvrg23/agora-brasil/actions/runs/39949868096/jobs",
+          "logs_url": "https://api.github.com/repos/Marcusvrg23/agora-brasil/actions/runs/39949868096/logs",
+          "workflow_id": 393573572
+        },
+        {
+          "id": 39949868076,
+          "name": "Testes",
+          "status": "completed",
+          "conclusion": "success",
+          "run_number": 76,
+          "jobs_url": "https://api.github.com/repos/Marcusvrg23/agora-brasil/actions/runs/39949868076/jobs",
+          "logs_url": "https://api.github.com/repos/Marcusvrg23/agora-brasil/actions/runs/39949868076/logs",
+          "workflow_id": 390933570
+        }
+      ]
+    },
+    {
+      "number": 11,
+      "head": "ee98e1cbccbfd4f7aa251d848d0db2bcac61a5e0",
+      "base": "investigation/original-assets-mobile-20261023",
+      "base_sha": "454f4411343a8c686bedc55aedf9d045feba5fb4",
+      "draft": true,
+      "url": "https://github.com/Marcusvrg23/agora-brasil/pull/11",
+      "workflowRuns": [
+        {
+          "id": 39923189776,
+          "name": "Browser smoke - Desfile detalhado",
+          "status": "completed",
+          "conclusion": "success",
+          "run_number": 12,
+          "jobs_url": "https://api.github.com/repos/Marcusvrg23/agora-brasil/actions/runs/39923189776/jobs",
+          "logs_url": "https://api.github.com/repos/Marcusvrg23/agora-brasil/actions/runs/39923189776/logs",
+          "workflow_id": 393573572
+        },
+        {
+          "id": 39923189774,
+          "name": "Testes",
+          "status": "completed",
+          "conclusion": "success",
+          "run_number": 64,
+          "jobs_url": "https://api.github.com/repos/Marcusvrg23/agora-brasil/actions/runs/39923189774/jobs",
+          "logs_url": "https://api.github.com/repos/Marcusvrg23/agora-brasil/actions/runs/39923189774/logs",
+          "workflow_id": 390933570
+        }
+      ]
+    },
+    {
+      "number": 9,
+      "head": "454f4411343a8c686bedc55aedf9d045feba5fb4",
+      "base": "integration/multiplayer-release-20261023",
+      "base_sha": "e4bc322ae986643987ceac99873bf64b0fe7dedb",
+      "draft": true,
+      "url": "https://github.com/Marcusvrg23/agora-brasil/pull/9",
+      "workflowRuns": [
+        {
+          "id": 39911613794,
+          "name": "Browser smoke - Desfile detalhado",
+          "status": "completed",
+          "conclusion": "success",
+          "run_number": 11,
+          "jobs_url": "https://api.github.com/repos/Marcusvrg23/agora-brasil/actions/runs/39911613794/jobs",
+          "logs_url": "https://api.github.com/repos/Marcusvrg23/agora-brasil/actions/runs/39911613794/logs",
+          "workflow_id": 393573572
+        },
+        {
+          "id": 39911613760,
+          "name": "Testes",
+          "status": "completed",
+          "conclusion": "success",
+          "run_number": 63,
+          "jobs_url": "https://api.github.com/repos/Marcusvrg23/agora-brasil/actions/runs/39911613760/jobs",
+          "logs_url": "https://api.github.com/repos/Marcusvrg23/agora-brasil/actions/runs/39911613760/logs",
+          "workflow_id": 390933570
+        }
+      ]
+    }
+  ]
+}

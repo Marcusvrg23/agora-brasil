@@ -1,0 +1,535 @@
+{
+  "screenshots": [
+    {
+      "file": "contact/run-0.15.png",
+      "width": 1000,
+      "height": 700,
+      "sha256": "b8f60516712baaff6840cc8a3926f4531dd9f154023ac77e7bdd2165fd5a41e0",
+      "method": "Real browser screenshot, Chromium 154 / SwiftShader, Puppeteer",
+      "physicalDeviceTested": false,
+      "iphoneViewportIsEmulated": null,
+      "scope": "Browser execution; see adjacent JSON for exact scene and transforms"
+    },
+    {
+      "file": "contact/run-0.55.png",
+      "width": 1000,
+      "height": 700,
+      "sha256": "1498eca024a8e1a608d679cc6043aef18c015005d70ae3d7180283c3ebf6d71d",
+      "method": "Real browser screenshot, Chromium 154 / SwiftShader, Puppeteer",
+      "physicalDeviceTested": false,
+      "iphoneViewportIsEmulated": null,
+      "scope": "Browser execution; see adjacent JSON for exact scene and transforms"
+    },
+    {
+      "file": "contact/walk-0.15.png",
+      "width": 1000,
+      "height": 700,
+      "sha256": "753b5dcf19fe9b1e6944a8d7052b3debf0cb15cbe99abbb46a020be5150391a0",
+      "method": "Real browser screenshot, Chromium 154 / SwiftShader, Puppeteer",
+      "physicalDeviceTested": false,
+      "iphoneViewportIsEmulated": null,
+      "scope": "Browser execution; see adjacent JSON for exact scene and transforms"
+    },
+    {
+      "file": "contact/walk-0.55.png",
+      "width": 1000,
+      "height": 700,
+      "sha256": "92dfa2e1b618e2330d347164b450a9fb90e71e40949b92df8e731667d1924551",
+      "method": "Real browser screenshot, Chromium 154 / SwiftShader, Puppeteer",
+      "physicalDeviceTested": false,
+      "iphoneViewportIsEmulated": null,
+      "scope": "Browser execution; see adjacent JSON for exact scene and transforms"
+    },
+    {
+      "file": "mobile/desktop-idle.png",
+      "width": 1000,
+      "height": 700,
+      "sha256": "01b59df598031790bd4914fff2f6b20a2bdf7aa3c7f0a45ac48d88e3bce1f66a",
+      "method": "Real browser screenshot, Chromium 154 / SwiftShader, Puppeteer",
+      "physicalDeviceTested": false,
+      "iphoneViewportIsEmulated": null,
+      "scope": "Browser execution; see adjacent JSON for exact scene and transforms"
+    },
+    {
+      "file": "mobile/desktop-run.png",
+      "width": 1000,
+      "height": 700,
+      "sha256": "620a4618f68d78ba712dea5685e270495646a0255caace41115fa2d044077d5c",
+      "method": "Real browser screenshot, Chromium 154 / SwiftShader, Puppeteer",
+      "physicalDeviceTested": false,
+      "iphoneViewportIsEmulated": null,
+      "scope": "Browser execution; see adjacent JSON for exact scene and transforms"
+    },
+    {
+      "file": "mobile/desktop-walk.png",
+      "width": 1000,
+      "height": 700,
+      "sha256": "e5f3acd6d89573bc180c64e5f30b1f5c2936afdb2a3c90aa986a9096510f0cbc",
+      "method": "Real browser screenshot, Chromium 154 / SwiftShader, Puppeteer",
+      "physicalDeviceTested": false,
+      "iphoneViewportIsEmulated": null,
+      "scope": "Browser execution; see adjacent JSON for exact scene and transforms"
+    },
+    {
+      "file": "mobile/hud-harness-first-attempt.png",
+      "width": 320,
+      "height": 568,
+      "sha256": "7278986d6375625fcb496c0bace305d519e891dcb396b819dcd98fb3cfbfbcfb",
+      "method": "Real browser screenshot, Chromium 154 / SwiftShader, Puppeteer",
+      "physicalDeviceTested": false,
+      "iphoneViewportIsEmulated": null,
+      "scope": "Failed attempt"
+    },
+    {
+      "file": "mobile/iphone-13-emulated.png",
+      "width": 390,
+      "height": 844,
+      "sha256": "7e83e0d7fc20cb5fc272b2a27fcf841e2b0d91db678ba8d90dabdec25261c03a",
+      "method": "Real browser screenshot, Chromium 154 / SwiftShader, Puppeteer",
+      "physicalDeviceTested": false,
+      "iphoneViewportIsEmulated": true,
+      "scope": "Browser execution; see adjacent JSON for exact scene and transforms"
+    },
+    {
+      "file": "mobile/iphone-landscape-emulated.png",
+      "width": 844,
+      "height": 390,
+      "sha256": "39e3a8343f287b2570d891300a876e941565eea4502dce6abbb4fc10ceb07910",
+      "method": "Real browser screenshot, Chromium 154 / SwiftShader, Puppeteer",
+      "physicalDeviceTested": false,
+      "iphoneViewportIsEmulated": true,
+      "scope": "Browser execution; see adjacent JSON for exact scene and transforms"
+    },
+    {
+      "file": "mobile/iphone-se-emulated.png",
+      "width": 320,
+      "height": 568,
+      "sha256": "ef8c404d52ca7734601ad0e689ef8c8a26bca88014407c880743845042edfe70",
+      "method": "Real browser screenshot, Chromium 154 / SwiftShader, Puppeteer",
+      "physicalDeviceTested": false,
+      "iphoneViewportIsEmulated": true,
+      "scope": "Browser execution; see adjacent JSON for exact scene and transforms"
+    },
+    {
+      "file": "mobile/iphone-visitor-emulated.png",
+      "width": 390,
+      "height": 844,
+      "sha256": "e28f91322e9e0673480194600ab312334cf9c423351787dd7ed91c9c5d3cfaf7",
+      "method": "Real browser screenshot, Chromium 154 / SwiftShader, Puppeteer",
+      "physicalDeviceTested": false,
+      "iphoneViewportIsEmulated": true,
+      "scope": "Browser execution; see adjacent JSON for exact scene and transforms"
+    },
+    {
+      "file": "mobile/second-browser-startup-retry.png",
+      "width": 1000,
+      "height": 700,
+      "sha256": "0b97edb1bc0909d7267df8cbdf3c40b948f3406cdd3f121468c5aeb518ca56e5",
+      "method": "Real browser screenshot, Chromium 154 / SwiftShader, Puppeteer",
+      "physicalDeviceTested": false,
+      "iphoneViewportIsEmulated": null,
+      "scope": "Failed attempt"
+    },
+    {
+      "file": "mobile/second-browser-startup-timeout.png",
+      "width": 1000,
+      "height": 700,
+      "sha256": "903412ebd2a5ea51e7d4c465ead011ff0e313c517535f93184883d13e415f0b4",
+      "method": "Real browser screenshot, Chromium 154 / SwiftShader, Puppeteer",
+      "physicalDeviceTested": false,
+      "iphoneViewportIsEmulated": null,
+      "scope": "Failed attempt"
+    },
+    {
+      "file": "mobile/selection-Bia.png",
+      "width": 120,
+      "height": 170,
+      "sha256": "f2ae65072b09d994a4c36075d5b55cb637b306ba8b6167fb3ed91d132fab7221",
+      "method": "Real browser screenshot, Chromium 154 / SwiftShader, Puppeteer",
+      "physicalDeviceTested": false,
+      "iphoneViewportIsEmulated": null,
+      "scope": "Browser execution; see adjacent JSON for exact scene and transforms"
+    },
+    {
+      "file": "mobile/selection-Caio.png",
+      "width": 120,
+      "height": 170,
+      "sha256": "f12627db0448d1c54442318290f9435038a923b67fce1e3a88bf764bb879daab",
+      "method": "Real browser screenshot, Chromium 154 / SwiftShader, Puppeteer",
+      "physicalDeviceTested": false,
+      "iphoneViewportIsEmulated": null,
+      "scope": "Browser execution; see adjacent JSON for exact scene and transforms"
+    },
+    {
+      "file": "mobile/selection-Ivo.png",
+      "width": 120,
+      "height": 170,
+      "sha256": "6fad502eac7ffbc1d6a8fd14b1de61dbbf5d131c85c8c4e0d954c2b60ef656d8",
+      "method": "Real browser screenshot, Chromium 154 / SwiftShader, Puppeteer",
+      "physicalDeviceTested": false,
+      "iphoneViewportIsEmulated": null,
+      "scope": "Browser execution; see adjacent JSON for exact scene and transforms"
+    },
+    {
+      "file": "mobile/selection-Lia.png",
+      "width": 120,
+      "height": 170,
+      "sha256": "c8270a8ec7b2a06e681e8f82f7e7ee52ad621cd331047240e36f30b3dbb47ea8",
+      "method": "Real browser screenshot, Chromium 154 / SwiftShader, Puppeteer",
+      "physicalDeviceTested": false,
+      "iphoneViewportIsEmulated": null,
+      "scope": "Browser execution; see adjacent JSON for exact scene and transforms"
+    },
+    {
+      "file": "mobile/selection-Nina.png",
+      "width": 120,
+      "height": 170,
+      "sha256": "ff216a085fcaba551cc3a3012eb154b1c9f22cd2972dfe1ec43475eafdf66e0e",
+      "method": "Real browser screenshot, Chromium 154 / SwiftShader, Puppeteer",
+      "physicalDeviceTested": false,
+      "iphoneViewportIsEmulated": null,
+      "scope": "Browser execution; see adjacent JSON for exact scene and transforms"
+    },
+    {
+      "file": "mobile/selection-Rafa.png",
+      "width": 120,
+      "height": 170,
+      "sha256": "1e48695ff800d4be43ea88752d888d16ae645f606a30f70fa004c0d8a4b5c22a",
+      "method": "Real browser screenshot, Chromium 154 / SwiftShader, Puppeteer",
+      "physicalDeviceTested": false,
+      "iphoneViewportIsEmulated": null,
+      "scope": "Browser execution; see adjacent JSON for exact scene and transforms"
+    },
+    {
+      "file": "mobile-baseline/failure.png",
+      "width": 1000,
+      "height": 700,
+      "sha256": "270266ce2e7a4b6f14e6022bedb994dcfa39b8d16eec563b61612d2d83bd5c55",
+      "method": "Real browser screenshot, Chromium 154 / SwiftShader, Puppeteer",
+      "physicalDeviceTested": false,
+      "iphoneViewportIsEmulated": null,
+      "scope": "Failed attempt"
+    },
+    {
+      "file": "trucks/run-fase-15.png",
+      "width": 1150,
+      "height": 780,
+      "sha256": "f37be0cc681f2d761819b1d45694952f133999caac4d5f02d1506e3a63a0a3ba",
+      "method": "Real browser screenshot, Chromium 154 / SwiftShader, Puppeteer",
+      "physicalDeviceTested": false,
+      "iphoneViewportIsEmulated": null,
+      "scope": "Browser execution; see adjacent JSON for exact scene and transforms"
+    },
+    {
+      "file": "trucks/run-fase-55.png",
+      "width": 1150,
+      "height": 780,
+      "sha256": "9a8deeedf04a4fde3958f49580245e53efbf82da3e87b715df9aeaf104ff3ebc",
+      "method": "Real browser screenshot, Chromium 154 / SwiftShader, Puppeteer",
+      "physicalDeviceTested": false,
+      "iphoneViewportIsEmulated": null,
+      "scope": "Browser execution; see adjacent JSON for exact scene and transforms"
+    },
+    {
+      "file": "trucks/verde-v1-lateral.png",
+      "width": 1150,
+      "height": 780,
+      "sha256": "efff44e648445918d282384fc989e004ec6b1f114458173a0fccb37d129b4550",
+      "method": "Real browser screenshot, Chromium 154 / SwiftShader, Puppeteer",
+      "physicalDeviceTested": false,
+      "iphoneViewportIsEmulated": null,
+      "scope": "Browser execution; see adjacent JSON for exact scene and transforms"
+    },
+    {
+      "file": "trucks/verde-v1-mobile-movimento.png",
+      "width": 390,
+      "height": 844,
+      "sha256": "351f021ba056d2b3873af5b11dee451fc8939aea64815a8426950376877e4299",
+      "method": "Real browser screenshot, Chromium 154 / SwiftShader, Puppeteer",
+      "physicalDeviceTested": false,
+      "iphoneViewportIsEmulated": true,
+      "scope": "Browser execution; see adjacent JSON for exact scene and transforms"
+    },
+    {
+      "file": "trucks/verde-v1-mobile.png",
+      "width": 390,
+      "height": 844,
+      "sha256": "a5307e89c1eaceef554a35b9ba94bac8f76ee5775ab70740c9a110d7e137922a",
+      "method": "Real browser screenshot, Chromium 154 / SwiftShader, Puppeteer",
+      "physicalDeviceTested": false,
+      "iphoneViewportIsEmulated": true,
+      "scope": "Browser execution; see adjacent JSON for exact scene and transforms"
+    },
+    {
+      "file": "trucks/verde-v1-movimento.png",
+      "width": 1150,
+      "height": 780,
+      "sha256": "6b429f95d43fd4dff68e34685e4bf009bbcc1613e8dbf620a3d259d5678919a1",
+      "method": "Real browser screenshot, Chromium 154 / SwiftShader, Puppeteer",
+      "physicalDeviceTested": false,
+      "iphoneViewportIsEmulated": null,
+      "scope": "Browser execution; see adjacent JSON for exact scene and transforms"
+    },
+    {
+      "file": "trucks/verde-v1.png",
+      "width": 1150,
+      "height": 780,
+      "sha256": "92bd3828eb1a933ee7a2d5a7e0265fd17053fc2b05708854789c2a669de0f063",
+      "method": "Real browser screenshot, Chromium 154 / SwiftShader, Puppeteer",
+      "physicalDeviceTested": false,
+      "iphoneViewportIsEmulated": null,
+      "scope": "Browser execution; see adjacent JSON for exact scene and transforms"
+    },
+    {
+      "file": "trucks/verde-v2-lateral.png",
+      "width": 1150,
+      "height": 780,
+      "sha256": "87b2c62596e0ab4a0fe94f034bb0cc1912c5a1e70a88049943b66a5bf7f36424",
+      "method": "Real browser screenshot, Chromium 154 / SwiftShader, Puppeteer",
+      "physicalDeviceTested": false,
+      "iphoneViewportIsEmulated": null,
+      "scope": "Browser execution; see adjacent JSON for exact scene and transforms"
+    },
+    {
+      "file": "trucks/verde-v2-mobile-movimento.png",
+      "width": 390,
+      "height": 844,
+      "sha256": "c1db94610e9754d3ad5a029b6fe1972181c95a5d2a407fba656c6ea056743175",
+      "method": "Real browser screenshot, Chromium 154 / SwiftShader, Puppeteer",
+      "physicalDeviceTested": false,
+      "iphoneViewportIsEmulated": true,
+      "scope": "Browser execution; see adjacent JSON for exact scene and transforms"
+    },
+    {
+      "file": "trucks/verde-v2-mobile.png",
+      "width": 390,
+      "height": 844,
+      "sha256": "a0ca675637d62cbb76fd0c91bfff4d1f3c54e0a162e05b3282743b74f3b7b508",
+      "method": "Real browser screenshot, Chromium 154 / SwiftShader, Puppeteer",
+      "physicalDeviceTested": false,
+      "iphoneViewportIsEmulated": true,
+      "scope": "Browser execution; see adjacent JSON for exact scene and transforms"
+    },
+    {
+      "file": "trucks/verde-v2-movimento.png",
+      "width": 1150,
+      "height": 780,
+      "sha256": "200f76abf664756b9f12e345900206b5873e44fb2185994a9eb0e6319772fa4e",
+      "method": "Real browser screenshot, Chromium 154 / SwiftShader, Puppeteer",
+      "physicalDeviceTested": false,
+      "iphoneViewportIsEmulated": null,
+      "scope": "Browser execution; see adjacent JSON for exact scene and transforms"
+    },
+    {
+      "file": "trucks/verde-v2.png",
+      "width": 1150,
+      "height": 780,
+      "sha256": "67b3226575b916c6204bcf84384a959e3b57d55717d94a1f2d79fa0282fa2fa5",
+      "method": "Real browser screenshot, Chromium 154 / SwiftShader, Puppeteer",
+      "physicalDeviceTested": false,
+      "iphoneViewportIsEmulated": null,
+      "scope": "Browser execution; see adjacent JSON for exact scene and transforms"
+    },
+    {
+      "file": "trucks/vermelho-v1-lateral.png",
+      "width": 1150,
+      "height": 780,
+      "sha256": "6912243d587c0a90366f9679b94b624f33201a7506d07282e8201aee425b8109",
+      "method": "Real browser screenshot, Chromium 154 / SwiftShader, Puppeteer",
+      "physicalDeviceTested": false,
+      "iphoneViewportIsEmulated": null,
+      "scope": "Browser execution; see adjacent JSON for exact scene and transforms"
+    },
+    {
+      "file": "trucks/vermelho-v1-mobile-movimento.png",
+      "width": 390,
+      "height": 844,
+      "sha256": "13acc15dd86fa8265460bffd447d7f107749cd17c3133e095ce466ea5ad1aead",
+      "method": "Real browser screenshot, Chromium 154 / SwiftShader, Puppeteer",
+      "physicalDeviceTested": false,
+      "iphoneViewportIsEmulated": true,
+      "scope": "Browser execution; see adjacent JSON for exact scene and transforms"
+    },
+    {
+      "file": "trucks/vermelho-v1-mobile.png",
+      "width": 390,
+      "height": 844,
+      "sha256": "d522621fcac964b9e7a3289448cb3499f936bc85d2c2d247262bb50feb8b5371",
+      "method": "Real browser screenshot, Chromium 154 / SwiftShader, Puppeteer",
+      "physicalDeviceTested": false,
+      "iphoneViewportIsEmulated": true,
+      "scope": "Browser execution; see adjacent JSON for exact scene and transforms"
+    },
+    {
+      "file": "trucks/vermelho-v1-movimento.png",
+      "width": 1150,
+      "height": 780,
+      "sha256": "ad13252badf9675508217aa39bc98c4c893f7bcc0c930fcd7783cf653de31ebc",
+      "method": "Real browser screenshot, Chromium 154 / SwiftShader, Puppeteer",
+      "physicalDeviceTested": false,
+      "iphoneViewportIsEmulated": null,
+      "scope": "Browser execution; see adjacent JSON for exact scene and transforms"
+    },
+    {
+      "file": "trucks/vermelho-v1.png",
+      "width": 1150,
+      "height": 780,
+      "sha256": "81c4595e9cfa11c35ebcc34e03a2fb57b5bd57ce4e3580c62863febfede401cd",
+      "method": "Real browser screenshot, Chromium 154 / SwiftShader, Puppeteer",
+      "physicalDeviceTested": false,
+      "iphoneViewportIsEmulated": null,
+      "scope": "Browser execution; see adjacent JSON for exact scene and transforms"
+    },
+    {
+      "file": "trucks/vermelho-v2-lateral.png",
+      "width": 1150,
+      "height": 780,
+      "sha256": "ed617a3f9be4bbc2e50f2dab39f7c172bb370fe64e062694b62ede053ab5332f",
+      "method": "Real browser screenshot, Chromium 154 / SwiftShader, Puppeteer",
+      "physicalDeviceTested": false,
+      "iphoneViewportIsEmulated": null,
+      "scope": "Browser execution; see adjacent JSON for exact scene and transforms"
+    },
+    {
+      "file": "trucks/vermelho-v2-mobile-movimento.png",
+      "width": 390,
+      "height": 844,
+      "sha256": "46189c677a8f40bb6d5d13a433dc9247b570cc1aacd1a50416fa90b17698099b",
+      "method": "Real browser screenshot, Chromium 154 / SwiftShader, Puppeteer",
+      "physicalDeviceTested": false,
+      "iphoneViewportIsEmulated": true,
+      "scope": "Browser execution; see adjacent JSON for exact scene and transforms"
+    },
+    {
+      "file": "trucks/vermelho-v2-mobile.png",
+      "width": 390,
+      "height": 844,
+      "sha256": "8a0ffc1f31da3ec8deb2605ab40269625dd7bfd3a872c29f22b29348eb5d912b",
+      "method": "Real browser screenshot, Chromium 154 / SwiftShader, Puppeteer",
+      "physicalDeviceTested": false,
+      "iphoneViewportIsEmulated": true,
+      "scope": "Browser execution; see adjacent JSON for exact scene and transforms"
+    },
+    {
+      "file": "trucks/vermelho-v2-movimento.png",
+      "width": 1150,
+      "height": 780,
+      "sha256": "b39d6c09018371fb95c66cb76fc434f5677e72427173bbf046273a8386c3ecda",
+      "method": "Real browser screenshot, Chromium 154 / SwiftShader, Puppeteer",
+      "physicalDeviceTested": false,
+      "iphoneViewportIsEmulated": null,
+      "scope": "Browser execution; see adjacent JSON for exact scene and transforms"
+    },
+    {
+      "file": "trucks/vermelho-v2.png",
+      "width": 1150,
+      "height": 780,
+      "sha256": "22b9bee7ba72eb1f46d5cd68e3dfbc3863bfbc8469dd329b819a8615c8f7bce0",
+      "method": "Real browser screenshot, Chromium 154 / SwiftShader, Puppeteer",
+      "physicalDeviceTested": false,
+      "iphoneViewportIsEmulated": null,
+      "scope": "Browser execution; see adjacent JSON for exact scene and transforms"
+    },
+    {
+      "file": "trucks/walk-fase-15.png",
+      "width": 1150,
+      "height": 780,
+      "sha256": "03663636f54dd5b19f5500b02aa0c10ef8008a0c138145aafff7fae01ea4495b",
+      "method": "Real browser screenshot, Chromium 154 / SwiftShader, Puppeteer",
+      "physicalDeviceTested": false,
+      "iphoneViewportIsEmulated": null,
+      "scope": "Browser execution; see adjacent JSON for exact scene and transforms"
+    },
+    {
+      "file": "trucks/walk-fase-55.png",
+      "width": 1150,
+      "height": 780,
+      "sha256": "9295ac35ebbf4a9bddf5d01b808d2d6d60aa2f5282310ed6bef3d20e566c27eb",
+      "method": "Real browser screenshot, Chromium 154 / SwiftShader, Puppeteer",
+      "physicalDeviceTested": false,
+      "iphoneViewportIsEmulated": null,
+      "scope": "Browser execution; see adjacent JSON for exact scene and transforms"
+    },
+    {
+      "file": "vehicle-run/caminhao-verde.png",
+      "width": 1150,
+      "height": 780,
+      "sha256": "70f06035d7a5fe76b368104203d68082ee7800064dfa71d871d2d1aba26ec89a",
+      "method": "Real browser screenshot, Chromium 154 / SwiftShader, Puppeteer",
+      "physicalDeviceTested": false,
+      "iphoneViewportIsEmulated": null,
+      "scope": "Browser execution; see adjacent JSON for exact scene and transforms"
+    },
+    {
+      "file": "vehicle-run/caminhao-vermelho.png",
+      "width": 1150,
+      "height": 780,
+      "sha256": "2dfdf6e67cd44575f7f69337c470b0d8d463d1b4415eb5702abda6ee1c477360",
+      "method": "Real browser screenshot, Chromium 154 / SwiftShader, Puppeteer",
+      "physicalDeviceTested": false,
+      "iphoneViewportIsEmulated": null,
+      "scope": "Browser execution; see adjacent JSON for exact scene and transforms"
+    },
+    {
+      "file": "vehicle-run/carro-esportivo.png",
+      "width": 1150,
+      "height": 780,
+      "sha256": "c4bc7e015d5f8923aed9b8db0fd43661e9b9abe4f03f551d2afbca1596cc9130",
+      "method": "Real browser screenshot, Chromium 154 / SwiftShader, Puppeteer",
+      "physicalDeviceTested": false,
+      "iphoneViewportIsEmulated": null,
+      "scope": "Browser execution; see adjacent JSON for exact scene and transforms"
+    },
+    {
+      "file": "vehicle-run/carro-mobile-emulado.png",
+      "width": 390,
+      "height": 844,
+      "sha256": "b110127cef688277a55c2de23cddddc095edf04a1f43bd9e1a2d20d0a0cbd97d",
+      "method": "Real browser screenshot, Chromium 154 / SwiftShader, Puppeteer",
+      "physicalDeviceTested": false,
+      "iphoneViewportIsEmulated": true,
+      "scope": "Browser execution; see adjacent JSON for exact scene and transforms"
+    },
+    {
+      "file": "vehicle-run/personagem-run.png",
+      "width": 390,
+      "height": 844,
+      "sha256": "1d94135eae5cfd219b3bd53091532b100f687c7e6e17fb7ceed196757b9cd7a2",
+      "method": "Real browser screenshot, Chromium 154 / SwiftShader, Puppeteer",
+      "physicalDeviceTested": false,
+      "iphoneViewportIsEmulated": null,
+      "scope": "Browser execution; see adjacent JSON for exact scene and transforms"
+    },
+    {
+      "file": "vehicle-run/personagem-walk.png",
+      "width": 390,
+      "height": 844,
+      "sha256": "f8796a7e55f37735fc789d953840a1038855d059334031af9aa35a78d91ba954",
+      "method": "Real browser screenshot, Chromium 154 / SwiftShader, Puppeteer",
+      "physicalDeviceTested": false,
+      "iphoneViewportIsEmulated": null,
+      "scope": "Browser execution; see adjacent JSON for exact scene and transforms"
+    },
+    {
+      "file": "vehicle-run/sprint-v2-frame-a.png",
+      "width": 390,
+      "height": 844,
+      "sha256": "1fbede1c3e9a5d074a4d269ecd4020e307acb1eadc7f74e9738f7d2d8e3379ef",
+      "method": "Real browser screenshot, Chromium 154 / SwiftShader, Puppeteer",
+      "physicalDeviceTested": false,
+      "iphoneViewportIsEmulated": null,
+      "scope": "Browser execution; see adjacent JSON for exact scene and transforms"
+    },
+    {
+      "file": "vehicle-run/sprint-v2-frame-b.png",
+      "width": 390,
+      "height": 844,
+      "sha256": "4ae947449a33d2f6813347ba4aebe9a22c9d2b380dece0c7f449e0d720bc514b",
+      "method": "Real browser screenshot, Chromium 154 / SwiftShader, Puppeteer",
+      "physicalDeviceTested": false,
+      "iphoneViewportIsEmulated": null,
+      "scope": "Browser execution; see adjacent JSON for exact scene and transforms"
+    }
+  ],
+  "count": 53
+}

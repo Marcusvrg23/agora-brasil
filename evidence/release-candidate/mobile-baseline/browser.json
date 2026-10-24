@@ -1,0 +1,262 @@
+{
+  "at": "2026-10-23T23:52:28.824Z",
+  "ok": false,
+  "scope": "Chromium + SwiftShader; viewport/touch emulation; local self-signed HTTPS/WSS only",
+  "physicalDeviceTested": false,
+  "publicStagingTested": false,
+  "errors": [],
+  "failedRequests": [
+    {
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3KLobL96cAs3bokj0G7CRMHMham/hf_20261020_214605_fadcc2c8-ed85-4ee7-8d46-5a6c03cd4abd.png",
+      "error": "net::ERR_TUNNEL_CONNECTION_FAILED"
+    },
+    {
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3KLobL96cAs3bokj0G7CRMHMham/hf_20261020_214605_df98cea5-b40e-4991-8e9b-30abdb82df67.png",
+      "error": "net::ERR_TUNNEL_CONNECTION_FAILED"
+    },
+    {
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3KLobL96cAs3bokj0G7CRMHMham/hf_20261020_214604_06344de0-261c-47fa-9072-21746ae89e10.png",
+      "error": "net::ERR_TUNNEL_CONNECTION_FAILED"
+    },
+    {
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3KLobL96cAs3bokj0G7CRMHMham/hf_20261020_214605_2272ba5a-4ea6-4f7c-9223-26f6a424a5a9.png",
+      "error": "net::ERR_TUNNEL_CONNECTION_FAILED"
+    },
+    {
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3KLobL96cAs3bokj0G7CRMHMham/hf_20261021_035345_d9a45351-2fb7-4851-a39b-d9344ccbf900.glb",
+      "error": "net::ERR_TUNNEL_CONNECTION_FAILED"
+    },
+    {
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3KLobL96cAs3bokj0G7CRMHMham/hf_20261021_035348_ac51b268-b3d6-4f59-96e0-90d8321b8b11.glb",
+      "error": "net::ERR_TUNNEL_CONNECTION_FAILED"
+    },
+    {
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3KLobL96cAs3bokj0G7CRMHMham/hf_20261021_035350_129869ee-bac0-4d0c-a62d-5f3ce1127f18.glb",
+      "error": "net::ERR_TUNNEL_CONNECTION_FAILED"
+    },
+    {
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3KLobL96cAs3bokj0G7CRMHMham/hf_20261021_054039_72ddea93-584e-4119-8d16-b263c8105194.glb",
+      "error": "net::ERR_TUNNEL_CONNECTION_FAILED"
+    },
+    {
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3KLobL96cAs3bokj0G7CRMHMham/hf_20261021_054045_47f8d46a-b148-48de-a2a0-8c308403abe2.glb",
+      "error": "net::ERR_TUNNEL_CONNECTION_FAILED"
+    },
+    {
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3KLobL96cAs3bokj0G7CRMHMham/hf_20261021_054048_1c7c5a8a-8be6-447a-b4c7-26963ec14352.glb",
+      "error": "net::ERR_TUNNEL_CONNECTION_FAILED"
+    },
+    {
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3KLobL96cAs3bokj0G7CRMHMham/hf_20261021_054042_70284ae2-93ad-4cce-91ef-73ffeac65aec.glb",
+      "error": "net::ERR_TUNNEL_CONNECTION_FAILED"
+    },
+    {
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3KLobL96cAs3bokj0G7CRMHMham/hf_20261021_054051_adf5bcf8-7b4b-4ff9-9397-fde6b58754e4.glb",
+      "error": "net::ERR_TUNNEL_CONNECTION_FAILED"
+    }
+  ],
+  "poses": [
+    {
+      "name": "idle",
+      "gap": 0,
+      "player": {
+        "position": [
+          0,
+          0,
+          -30
+        ],
+        "moving": false,
+        "running": false,
+        "locomotion": "idle",
+        "glb": true,
+        "hand": [
+          0.25159496872329795,
+          1.3379559020421716,
+          -30.418389249671346
+        ],
+        "leftArm": [
+          0.12002825736999512,
+          0.07123592495918274,
+          -0.07135617733001709,
+          0.9876370429992676
+        ]
+      },
+      "sign": {
+        "id": "p1",
+        "text": "PAZ E DIALOGO",
+        "position": [
+          0.25159496872329795,
+          1.3379559020421716,
+          -30.418389249671346
+        ],
+        "haste": 0.28,
+        "placa": 0.64,
+        "verso": true
+      }
+    },
+    {
+      "name": "walk",
+      "gap": 0,
+      "player": {
+        "position": [
+          -0.025921623901354957,
+          0,
+          -30.15788625467189
+        ],
+        "moving": true,
+        "running": false,
+        "locomotion": "caminhada",
+        "glb": true,
+        "hand": [
+          0.15150903937604351,
+          1.3271839847035656,
+          -30.62788004271492
+        ],
+        "leftArm": [
+          0.09608579647114487,
+          0.06434876010925647,
+          -0.05787937601765225,
+          0.9916031050163187
+        ]
+      },
+      "sign": {
+        "id": "p1",
+        "text": "PAZ E DIALOGO",
+        "position": [
+          0.15150903937604351,
+          1.3271839847035656,
+          -30.62788004271492
+        ],
+        "haste": 0.28,
+        "placa": 0.64,
+        "verso": true
+      }
+    }
+  ],
+  "screenshots": [
+    {
+      "file": "desktop-idle.png",
+      "width": 1000,
+      "height": 700,
+      "emulated": false,
+      "state": "idle"
+    },
+    {
+      "file": "desktop-walk.png",
+      "width": 1000,
+      "height": 700,
+      "emulated": false,
+      "state": "walk"
+    }
+  ],
+  "browser": "Chrome/154.0.8037.57",
+  "initial": {
+    "entered": true,
+    "role": "participant",
+    "input": {
+      "x": 0,
+      "y": 0,
+      "intensidade": 0,
+      "running": false
+    },
+    "localNameTags": 0,
+    "player": {
+      "position": [
+        0,
+        0,
+        -30
+      ],
+      "moving": false,
+      "running": false,
+      "locomotion": "idle",
+      "glb": true,
+      "hand": [
+        0.3428655481165933,
+        0.9263774908479673,
+        -30.00939504158382
+      ],
+      "leftArm": [
+        0.12002825736999512,
+        0.07123592495918274,
+        -0.07135617733001709,
+        0.9876370429992676
+      ]
+    },
+    "signs": [],
+    "models": [
+      {
+        "id": "npc1",
+        "name": "Lia",
+        "base": "mulher",
+        "team": "vermelho",
+        "glb": false,
+        "walk": false,
+        "run": false
+      },
+      {
+        "id": "npc2",
+        "name": "Caio",
+        "base": "homem",
+        "team": "amarelo",
+        "glb": true,
+        "walk": true,
+        "run": true
+      },
+      {
+        "id": "npc3",
+        "name": "Bia",
+        "base": "mulher",
+        "team": "amarelo",
+        "glb": false,
+        "walk": false,
+        "run": false
+      },
+      {
+        "id": "npc4",
+        "name": "Rafa",
+        "base": "idoso",
+        "team": "vermelho",
+        "glb": false,
+        "walk": false,
+        "run": false
+      },
+      {
+        "id": "npc5",
+        "name": "Ivo",
+        "base": "homem",
+        "team": "vermelho",
+        "glb": true,
+        "walk": true,
+        "run": true
+      },
+      {
+        "id": "npc6",
+        "name": "Nina",
+        "base": "idosa",
+        "team": "amarelo",
+        "glb": false,
+        "walk": false,
+        "run": false
+      }
+    ],
+    "baseStatus": {
+      "mulher": "faltando",
+      "idoso": "faltando",
+      "idosa": "faltando",
+      "homem": "ok"
+    },
+    "density": 180,
+    "render": {
+      "calls": 412,
+      "triangles": 871155
+    }
+  },
+  "transport": {
+    "secureContext": true,
+    "url": "wss://127.0.0.1:35585/api/ws",
+    "joined": true,
+    "webgl": true
+  },
+  "signReceivedByIndependentPeer": true,
+  "error": "Error: Unexpected GLB clip\n    at file:///workspace/agora-brasil/scripts/mobile-readiness-qa.mjs:75:89"
+}

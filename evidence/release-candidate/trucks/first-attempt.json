@@ -1,0 +1,3524 @@
+{
+  "at": "2026-10-23T23:52:03.205Z",
+  "ok": false,
+  "vehicles": [
+    {
+      "tipo": "caminhao-lula",
+      "status": "ok",
+      "rodas": 1,
+      "bandeiras": 1,
+      "vel": 0,
+      "procedural": false,
+      "origem": "original",
+      "viewport": {
+        "width": 1150,
+        "height": 780,
+        "maxProjectedX": 0.3966151565977561,
+        "maxProjectedY": 0.62637128834149
+      },
+      "frontGlassZ": null,
+      "flagAnchorDrift": 0.00952736249702475,
+      "box": {
+        "min": [
+          -1.9575000466847274,
+          1.1102230246251565e-16,
+          -8.5
+        ],
+        "max": [
+          1.9575000466847274,
+          7.130000233348508,
+          8.5
+        ],
+        "size": [
+          3.915000093369455,
+          7.130000233348508,
+          17
+        ]
+      },
+      "meshes": [
+        {
+          "name": "Chassi",
+          "vertices": 24,
+          "vertexColors": false,
+          "color": "9fa8ad",
+          "roughness": 0.4000000059604645,
+          "metalness": 0
+        },
+        {
+          "name": "Cabine",
+          "vertices": 24,
+          "vertexColors": false,
+          "color": "de6a7c",
+          "roughness": 0.4000000059604645,
+          "metalness": 0
+        },
+        {
+          "name": "Parabrisa",
+          "vertices": 24,
+          "vertexColors": false,
+          "color": "5a8a9e",
+          "roughness": 0.4000000059604645,
+          "metalness": 0
+        },
+        {
+          "name": "Bau_eleitoral",
+          "vertices": 24,
+          "vertexColors": false,
+          "color": "de6a7c",
+          "roughness": 0.4000000059604645,
+          "metalness": 0
+        },
+        {
+          "name": "Lona_faixa",
+          "vertices": 24,
+          "vertexColors": false,
+          "color": "f7f6f0",
+          "roughness": 0.4000000059604645,
+          "metalness": 0
+        },
+        {
+          "name": "Pneu",
+          "vertices": 96,
+          "vertexColors": false,
+          "color": "5c636c",
+          "roughness": 0.4000000059604645,
+          "metalness": 0
+        },
+        {
+          "name": "Roda",
+          "vertices": 96,
+          "vertexColors": false,
+          "color": "9fa8ad",
+          "roughness": 0.4000000059604645,
+          "metalness": 0
+        },
+        {
+          "name": "Pneu001",
+          "vertices": 96,
+          "vertexColors": false,
+          "color": "5c636c",
+          "roughness": 0.4000000059604645,
+          "metalness": 0
+        },
+        {
+          "name": "Roda001",
+          "vertices": 96,
+          "vertexColors": false,
+          "color": "9fa8ad",
+          "roughness": 0.4000000059604645,
+          "metalness": 0
+        },
+        {
+          "name": "Pneu002",
+          "vertices": 96,
+          "vertexColors": false,
+          "color": "5c636c",
+          "roughness": 0.4000000059604645,
+          "metalness": 0
+        },
+        {
+          "name": "Roda002",
+          "vertices": 96,
+          "vertexColors": false,
+          "color": "9fa8ad",
+          "roughness": 0.4000000059604645,
+          "metalness": 0
+        },
+        {
+          "name": "Pneu003",
+          "vertices": 96,
+          "vertexColors": false,
+          "color": "5c636c",
+          "roughness": 0.4000000059604645,
+          "metalness": 0
+        },
+        {
+          "name": "Roda003",
+          "vertices": 96,
+          "vertexColors": false,
+          "color": "9fa8ad",
+          "roughness": 0.4000000059604645,
+          "metalness": 0
+        },
+        {
+          "name": "Pneu004",
+          "vertices": 96,
+          "vertexColors": false,
+          "color": "5c636c",
+          "roughness": 0.4000000059604645,
+          "metalness": 0
+        },
+        {
+          "name": "Roda004",
+          "vertices": 96,
+          "vertexColors": false,
+          "color": "9fa8ad",
+          "roughness": 0.4000000059604645,
+          "metalness": 0
+        },
+        {
+          "name": "Pneu005",
+          "vertices": 96,
+          "vertexColors": false,
+          "color": "5c636c",
+          "roughness": 0.4000000059604645,
+          "metalness": 0
+        },
+        {
+          "name": "Roda005",
+          "vertices": 96,
+          "vertexColors": false,
+          "color": "9fa8ad",
+          "roughness": 0.4000000059604645,
+          "metalness": 0
+        },
+        {
+          "name": "Pneu006",
+          "vertices": 96,
+          "vertexColors": false,
+          "color": "5c636c",
+          "roughness": 0.4000000059604645,
+          "metalness": 0
+        },
+        {
+          "name": "Roda006",
+          "vertices": 96,
+          "vertexColors": false,
+          "color": "9fa8ad",
+          "roughness": 0.4000000059604645,
+          "metalness": 0
+        },
+        {
+          "name": "Letreiro_lateral",
+          "vertices": 414,
+          "vertexColors": false,
+          "color": "f7f6f0",
+          "roughness": 0.4000000059604645,
+          "metalness": 0
+        },
+        {
+          "name": "Pneu007",
+          "vertices": 96,
+          "vertexColors": false,
+          "color": "5c636c",
+          "roughness": 0.4000000059604645,
+          "metalness": 0
+        },
+        {
+          "name": "Roda007",
+          "vertices": 96,
+          "vertexColors": false,
+          "color": "9fa8ad",
+          "roughness": 0.4000000059604645,
+          "metalness": 0
+        },
+        {
+          "name": "Pneu008",
+          "vertices": 96,
+          "vertexColors": false,
+          "color": "5c636c",
+          "roughness": 0.4000000059604645,
+          "metalness": 0
+        },
+        {
+          "name": "Roda008",
+          "vertices": 96,
+          "vertexColors": false,
+          "color": "9fa8ad",
+          "roughness": 0.4000000059604645,
+          "metalness": 0
+        },
+        {
+          "name": "Pneu009",
+          "vertices": 96,
+          "vertexColors": false,
+          "color": "5c636c",
+          "roughness": 0.4000000059604645,
+          "metalness": 0
+        },
+        {
+          "name": "Roda009",
+          "vertices": 96,
+          "vertexColors": false,
+          "color": "9fa8ad",
+          "roughness": 0.4000000059604645,
+          "metalness": 0
+        },
+        {
+          "name": "Pneu010",
+          "vertices": 96,
+          "vertexColors": false,
+          "color": "5c636c",
+          "roughness": 0.4000000059604645,
+          "metalness": 0
+        },
+        {
+          "name": "Roda010",
+          "vertices": 96,
+          "vertexColors": false,
+          "color": "9fa8ad",
+          "roughness": 0.4000000059604645,
+          "metalness": 0
+        },
+        {
+          "name": "Pneu011",
+          "vertices": 96,
+          "vertexColors": false,
+          "color": "5c636c",
+          "roughness": 0.4000000059604645,
+          "metalness": 0
+        },
+        {
+          "name": "Roda011",
+          "vertices": 96,
+          "vertexColors": false,
+          "color": "9fa8ad",
+          "roughness": 0.4000000059604645,
+          "metalness": 0
+        },
+        {
+          "name": "Pneu012",
+          "vertices": 96,
+          "vertexColors": false,
+          "color": "5c636c",
+          "roughness": 0.4000000059604645,
+          "metalness": 0
+        },
+        {
+          "name": "Roda012",
+          "vertices": 96,
+          "vertexColors": false,
+          "color": "9fa8ad",
+          "roughness": 0.4000000059604645,
+          "metalness": 0
+        },
+        {
+          "name": "Pneu013",
+          "vertices": 96,
+          "vertexColors": false,
+          "color": "5c636c",
+          "roughness": 0.4000000059604645,
+          "metalness": 0
+        },
+        {
+          "name": "Roda013",
+          "vertices": 96,
+          "vertexColors": false,
+          "color": "9fa8ad",
+          "roughness": 0.4000000059604645,
+          "metalness": 0
+        },
+        {
+          "name": "Letreiro_lateral001",
+          "vertices": 414,
+          "vertexColors": false,
+          "color": "f7f6f0",
+          "roughness": 0.4000000059604645,
+          "metalness": 0
+        },
+        {
+          "name": "Caixa_som",
+          "vertices": 24,
+          "vertexColors": false,
+          "color": "5c636c",
+          "roughness": 0.4000000059604645,
+          "metalness": 0
+        },
+        {
+          "name": "Alto_falante",
+          "vertices": 96,
+          "vertexColors": false,
+          "color": "9fa8ad",
+          "roughness": 0.4000000059604645,
+          "metalness": 0
+        },
+        {
+          "name": "Caixa_som001",
+          "vertices": 24,
+          "vertexColors": false,
+          "color": "5c636c",
+          "roughness": 0.4000000059604645,
+          "metalness": 0
+        },
+        {
+          "name": "Alto_falante001",
+          "vertices": 96,
+          "vertexColors": false,
+          "color": "9fa8ad",
+          "roughness": 0.4000000059604645,
+          "metalness": 0
+        },
+        {
+          "name": "Mastro",
+          "vertices": 96,
+          "vertexColors": false,
+          "color": "9fa8ad",
+          "roughness": 0.4000000059604645,
+          "metalness": 0
+        },
+        {
+          "name": "Bandeira",
+          "vertices": 24,
+          "vertexColors": false,
+          "color": "f7f6f0",
+          "roughness": 0.4000000059604645,
+          "metalness": 0
+        },
+        {
+          "name": "Caixa_som002",
+          "vertices": 24,
+          "vertexColors": false,
+          "color": "5c636c",
+          "roughness": 0.4000000059604645,
+          "metalness": 0
+        },
+        {
+          "name": "Alto_falante002",
+          "vertices": 96,
+          "vertexColors": false,
+          "color": "9fa8ad",
+          "roughness": 0.4000000059604645,
+          "metalness": 0
+        },
+        {
+          "name": "Caixa_som003",
+          "vertices": 24,
+          "vertexColors": false,
+          "color": "5c636c",
+          "roughness": 0.4000000059604645,
+          "metalness": 0
+        },
+        {
+          "name": "Alto_falante003",
+          "vertices": 96,
+          "vertexColors": false,
+          "color": "9fa8ad",
+          "roughness": 0.4000000059604645,
+          "metalness": 0
+        },
+        {
+          "name": "Mastro001",
+          "vertices": 96,
+          "vertexColors": false,
+          "color": "9fa8ad",
+          "roughness": 0.4000000059604645,
+          "metalness": 0
+        },
+        {
+          "name": "Bandeira001",
+          "vertices": 24,
+          "vertexColors": false,
+          "color": "f7f6f0",
+          "roughness": 0.4000000059604645,
+          "metalness": 0
+        },
+        {
+          "name": "Caixa_som004",
+          "vertices": 24,
+          "vertexColors": false,
+          "color": "5c636c",
+          "roughness": 0.4000000059604645,
+          "metalness": 0
+        },
+        {
+          "name": "Alto_falante004",
+          "vertices": 96,
+          "vertexColors": false,
+          "color": "9fa8ad",
+          "roughness": 0.4000000059604645,
+          "metalness": 0
+        },
+        {
+          "name": "Caixa_som005",
+          "vertices": 24,
+          "vertexColors": false,
+          "color": "5c636c",
+          "roughness": 0.4000000059604645,
+          "metalness": 0
+        },
+        {
+          "name": "Alto_falante005",
+          "vertices": 96,
+          "vertexColors": false,
+          "color": "9fa8ad",
+          "roughness": 0.4000000059604645,
+          "metalness": 0
+        },
+        {
+          "name": "Mastro002",
+          "vertices": 96,
+          "vertexColors": false,
+          "color": "9fa8ad",
+          "roughness": 0.4000000059604645,
+          "metalness": 0
+        },
+        {
+          "name": "Bandeira002",
+          "vertices": 24,
+          "vertexColors": false,
+          "color": "f7f6f0",
+          "roughness": 0.4000000059604645,
+          "metalness": 0
+        },
+        {
+          "name": "Caixa_som006",
+          "vertices": 24,
+          "vertexColors": false,
+          "color": "5c636c",
+          "roughness": 0.4000000059604645,
+          "metalness": 0
+        },
+        {
+          "name": "Alto_falante006",
+          "vertices": 96,
+          "vertexColors": false,
+          "color": "9fa8ad",
+          "roughness": 0.4000000059604645,
+          "metalness": 0
+        },
+        {
+          "name": "Caixa_som007",
+          "vertices": 24,
+          "vertexColors": false,
+          "color": "5c636c",
+          "roughness": 0.4000000059604645,
+          "metalness": 0
+        },
+        {
+          "name": "Alto_falante007",
+          "vertices": 96,
+          "vertexColors": false,
+          "color": "9fa8ad",
+          "roughness": 0.4000000059604645,
+          "metalness": 0
+        },
+        {
+          "name": "Mastro003",
+          "vertices": 96,
+          "vertexColors": false,
+          "color": "9fa8ad",
+          "roughness": 0.4000000059604645,
+          "metalness": 0
+        },
+        {
+          "name": "Bandeira003",
+          "vertices": 24,
+          "vertexColors": false,
+          "color": "f7f6f0",
+          "roughness": 0.4000000059604645,
+          "metalness": 0
+        },
+        {
+          "name": "Caixa_som008",
+          "vertices": 24,
+          "vertexColors": false,
+          "color": "5c636c",
+          "roughness": 0.4000000059604645,
+          "metalness": 0
+        },
+        {
+          "name": "Alto_falante008",
+          "vertices": 96,
+          "vertexColors": false,
+          "color": "9fa8ad",
+          "roughness": 0.4000000059604645,
+          "metalness": 0
+        },
+        {
+          "name": "Caixa_som009",
+          "vertices": 24,
+          "vertexColors": false,
+          "color": "5c636c",
+          "roughness": 0.4000000059604645,
+          "metalness": 0
+        },
+        {
+          "name": "Alto_falante009",
+          "vertices": 96,
+          "vertexColors": false,
+          "color": "9fa8ad",
+          "roughness": 0.4000000059604645,
+          "metalness": 0
+        },
+        {
+          "name": "Mastro004",
+          "vertices": 96,
+          "vertexColors": false,
+          "color": "9fa8ad",
+          "roughness": 0.4000000059604645,
+          "metalness": 0
+        },
+        {
+          "name": "Bandeira004",
+          "vertices": 24,
+          "vertexColors": false,
+          "color": "f7f6f0",
+          "roughness": 0.4000000059604645,
+          "metalness": 0
+        },
+        {
+          "name": "Identidade_frontal",
+          "vertices": 414,
+          "vertexColors": false,
+          "color": "f7f6f0",
+          "roughness": 0.4000000059604645,
+          "metalness": 0
+        }
+      ],
+      "radii": [
+        0.730000137981077
+      ],
+      "animatedWheels": 1,
+      "wheelCenterDrift": 1.1102230246251565e-16,
+      "wheelSpinDelta": [
+        0.27397255095475664
+      ],
+      "flags": [
+        {
+          "name": "Bandeira",
+          "rotation": [
+            -0.015785245246032892,
+            0,
+            0,
+            "XYZ"
+          ],
+          "localBounds": {
+            "min": [
+              -0.5400000214576721,
+              -0.32499998807907104,
+              -0.019999999552965164
+            ],
+            "max": [
+              0.5400000214576721,
+              0.32499998807907104,
+              0.019999999552965164
+            ]
+          }
+        }
+      ],
+      "version": 1,
+      "mobile": false,
+      "frameMs": {
+        "median": 50,
+        "p95": 133.29999999999927
+      }
+    },
+    {
+      "tipo": "caminhao-bolsonaro",
+      "status": "ok",
+      "rodas": 1,
+      "bandeiras": 1,
+      "vel": 0,
+      "procedural": false,
+      "origem": "original",
+      "viewport": {
+        "width": 1150,
+        "height": 780,
+        "maxProjectedX": 0.3966151565977561,
+        "maxProjectedY": 0.62637128834149
+      },
+      "frontGlassZ": null,
+      "flagAnchorDrift": 0.011365915954881432,
+      "box": {
+        "min": [
+          -1.9575000466847274,
+          1.1102230246251565e-16,
+          -8.5
+        ],
+        "max": [
+          1.9575000466847274,
+          7.130000233348508,
+          8.5
+        ],
+        "size": [
+          3.915000093369455,
+          7.130000233348508,
+          17
+        ]
+      },
+      "meshes": [
+        {
+          "name": "Chassi",
+          "vertices": 24,
+          "vertexColors": false,
+          "color": "9fa8ad",
+          "roughness": 0.4000000059604645,
+          "metalness": 0
+        },
+        {
+          "name": "Cabine",
+          "vertices": 24,
+          "vertexColors": false,
+          "color": "4fbb8e",
+          "roughness": 0.4000000059604645,
+          "metalness": 0
+        },
+        {
+          "name": "Parabrisa",
+          "vertices": 24,
+          "vertexColors": false,
+          "color": "5a8a9e",
+          "roughness": 0.4000000059604645,
+          "metalness": 0
+        },
+        {
+          "name": "Bau_eleitoral",
+          "vertices": 24,
+          "vertexColors": false,
+          "color": "4fbb8e",
+          "roughness": 0.4000000059604645,
+          "metalness": 0
+        },
+        {
+          "name": "Lona_faixa",
+          "vertices": 24,
+          "vertexColors": false,
+          "color": "fde653",
+          "roughness": 0.4000000059604645,
+          "metalness": 0
+        },
+        {
+          "name": "Pneu",
+          "vertices": 96,
+          "vertexColors": false,
+          "color": "5c636c",
+          "roughness": 0.4000000059604645,
+          "metalness": 0
+        },
+        {
+          "name": "Roda",
+          "vertices": 96,
+          "vertexColors": false,
+          "color": "9fa8ad",
+          "roughness": 0.4000000059604645,
+          "metalness": 0
+        },
+        {
+          "name": "Pneu001",
+          "vertices": 96,
+          "vertexColors": false,
+          "color": "5c636c",
+          "roughness": 0.4000000059604645,
+          "metalness": 0
+        },
+        {
+          "name": "Roda001",
+          "vertices": 96,
+          "vertexColors": false,
+          "color": "9fa8ad",
+          "roughness": 0.4000000059604645,
+          "metalness": 0
+        },
+        {
+          "name": "Pneu002",
+          "vertices": 96,
+          "vertexColors": false,
+          "color": "5c636c",
+          "roughness": 0.4000000059604645,
+          "metalness": 0
+        },
+        {
+          "name": "Roda002",
+          "vertices": 96,
+          "vertexColors": false,
+          "color": "9fa8ad",
+          "roughness": 0.4000000059604645,
+          "metalness": 0
+        },
+        {
+          "name": "Pneu003",
+          "vertices": 96,
+          "vertexColors": false,
+          "color": "5c636c",
+          "roughness": 0.4000000059604645,
+          "metalness": 0
+        },
+        {
+          "name": "Roda003",
+          "vertices": 96,
+          "vertexColors": false,
+          "color": "9fa8ad",
+          "roughness": 0.4000000059604645,
+          "metalness": 0
+        },
+        {
+          "name": "Pneu004",
+          "vertices": 96,
+          "vertexColors": false,
+          "color": "5c636c",
+          "roughness": 0.4000000059604645,
+          "metalness": 0
+        },
+        {
+          "name": "Roda004",
+          "vertices": 96,
+          "vertexColors": false,
+          "color": "9fa8ad",
+          "roughness": 0.4000000059604645,
+          "metalness": 0
+        },
+        {
+          "name": "Pneu005",
+          "vertices": 96,
+          "vertexColors": false,
+          "color": "5c636c",
+          "roughness": 0.4000000059604645,
+          "metalness": 0
+        },
+        {
+          "name": "Roda005",
+          "vertices": 96,
+          "vertexColors": false,
+          "color": "9fa8ad",
+          "roughness": 0.4000000059604645,
+          "metalness": 0
+        },
+        {
+          "name": "Pneu006",
+          "vertices": 96,
+          "vertexColors": false,
+          "color": "5c636c",
+          "roughness": 0.4000000059604645,
+          "metalness": 0
+        },
+        {
+          "name": "Roda006",
+          "vertices": 96,
+          "vertexColors": false,
+          "color": "9fa8ad",
+          "roughness": 0.4000000059604645,
+          "metalness": 0
+        },
+        {
+          "name": "Letreiro_lateral",
+          "vertices": 2580,
+          "vertexColors": false,
+          "color": "f7f6f0",
+          "roughness": 0.4000000059604645,
+          "metalness": 0
+        },
+        {
+          "name": "Pneu007",
+          "vertices": 96,
+          "vertexColors": false,
+          "color": "5c636c",
+          "roughness": 0.4000000059604645,
+          "metalness": 0
+        },
+        {
+          "name": "Roda007",
+          "vertices": 96,
+          "vertexColors": false,
+          "color": "9fa8ad",
+          "roughness": 0.4000000059604645,
+          "metalness": 0
+        },
+        {
+          "name": "Pneu008",
+          "vertices": 96,
+          "vertexColors": false,
+          "color": "5c636c",
+          "roughness": 0.4000000059604645,
+          "metalness": 0
+        },
+        {
+          "name": "Roda008",
+          "vertices": 96,
+          "vertexColors": false,
+          "color": "9fa8ad",
+          "roughness": 0.4000000059604645,
+          "metalness": 0
+        },
+        {
+          "name": "Pneu009",
+          "vertices": 96,
+          "vertexColors": false,
+          "color": "5c636c",
+          "roughness": 0.4000000059604645,
+          "metalness": 0
+        },
+        {
+          "name": "Roda009",
+          "vertices": 96,
+          "vertexColors": false,
+          "color": "9fa8ad",
+          "roughness": 0.4000000059604645,
+          "metalness": 0
+        },
+        {
+          "name": "Pneu010",
+          "vertices": 96,
+          "vertexColors": false,
+          "color": "5c636c",
+          "roughness": 0.4000000059604645,
+          "metalness": 0
+        },
+        {
+          "name": "Roda010",
+          "vertices": 96,
+          "vertexColors": false,
+          "color": "9fa8ad",
+          "roughness": 0.4000000059604645,
+          "metalness": 0
+        },
+        {
+          "name": "Pneu011",
+          "vertices": 96,
+          "vertexColors": false,
+          "color": "5c636c",
+          "roughness": 0.4000000059604645,
+          "metalness": 0
+        },
+        {
+          "name": "Roda011",
+          "vertices": 96,
+          "vertexColors": false,
+          "color": "9fa8ad",
+          "roughness": 0.4000000059604645,
+          "metalness": 0
+        },
+        {
+          "name": "Pneu012",
+          "vertices": 96,
+          "vertexColors": false,
+          "color": "5c636c",
+          "roughness": 0.4000000059604645,
+          "metalness": 0
+        },
+        {
+          "name": "Roda012",
+          "vertices": 96,
+          "vertexColors": false,
+          "color": "9fa8ad",
+          "roughness": 0.4000000059604645,
+          "metalness": 0
+        },
+        {
+          "name": "Pneu013",
+          "vertices": 96,
+          "vertexColors": false,
+          "color": "5c636c",
+          "roughness": 0.4000000059604645,
+          "metalness": 0
+        },
+        {
+          "name": "Roda013",
+          "vertices": 96,
+          "vertexColors": false,
+          "color": "9fa8ad",
+          "roughness": 0.4000000059604645,
+          "metalness": 0
+        },
+        {
+          "name": "Letreiro_lateral001",
+          "vertices": 2580,
+          "vertexColors": false,
+          "color": "f7f6f0",
+          "roughness": 0.4000000059604645,
+          "metalness": 0
+        },
+        {
+          "name": "Caixa_som",
+          "vertices": 24,
+          "vertexColors": false,
+          "color": "5c636c",
+          "roughness": 0.4000000059604645,
+          "metalness": 0
+        },
+        {
+          "name": "Alto_falante",
+          "vertices": 96,
+          "vertexColors": false,
+          "color": "9fa8ad",
+          "roughness": 0.4000000059604645,
+          "metalness": 0
+        },
+        {
+          "name": "Caixa_som001",
+          "vertices": 24,
+          "vertexColors": false,
+          "color": "5c636c",
+          "roughness": 0.4000000059604645,
+          "metalness": 0
+        },
+        {
+          "name": "Alto_falante001",
+          "vertices": 96,
+          "vertexColors": false,
+          "color": "9fa8ad",
+          "roughness": 0.4000000059604645,
+          "metalness": 0
+        },
+        {
+          "name": "Mastro",
+          "vertices": 96,
+          "vertexColors": false,
+          "color": "9fa8ad",
+          "roughness": 0.4000000059604645,
+          "metalness": 0
+        },
+        {
+          "name": "Bandeira",
+          "vertices": 24,
+          "vertexColors": false,
+          "color": "fde653",
+          "roughness": 0.4000000059604645,
+          "metalness": 0
+        },
+        {
+          "name": "Caixa_som002",
+          "vertices": 24,
+          "vertexColors": false,
+          "color": "5c636c",
+          "roughness": 0.4000000059604645,
+          "metalness": 0
+        },
+        {
+          "name": "Alto_falante002",
+          "vertices": 96,
+          "vertexColors": false,
+          "color": "9fa8ad",
+          "roughness": 0.4000000059604645,
+          "metalness": 0
+        },
+        {
+          "name": "Caixa_som003",
+          "vertices": 24,
+          "vertexColors": false,
+          "color": "5c636c",
+          "roughness": 0.4000000059604645,
+          "metalness": 0
+        },
+        {
+          "name": "Alto_falante003",
+          "vertices": 96,
+          "vertexColors": false,
+          "color": "9fa8ad",
+          "roughness": 0.4000000059604645,
+          "metalness": 0
+        },
+        {
+          "name": "Mastro001",
+          "vertices": 96,
+          "vertexColors": false,
+          "color": "9fa8ad",
+          "roughness": 0.4000000059604645,
+          "metalness": 0
+        },
+        {
+          "name": "Bandeira001",
+          "vertices": 24,
+          "vertexColors": false,
+          "color": "fde653",
+          "roughness": 0.4000000059604645,
+          "metalness": 0
+        },
+        {
+          "name": "Caixa_som004",
+          "vertices": 24,
+          "vertexColors": false,
+          "color": "5c636c",
+          "roughness": 0.4000000059604645,
+          "metalness": 0
+        },
+        {
+          "name": "Alto_falante004",
+          "vertices": 96,
+          "vertexColors": false,
+          "color": "9fa8ad",
+          "roughness": 0.4000000059604645,
+          "metalness": 0
+        },
+        {
+          "name": "Caixa_som005",
+          "vertices": 24,
+          "vertexColors": false,
+          "color": "5c636c",
+          "roughness": 0.4000000059604645,
+          "metalness": 0
+        },
+        {
+          "name": "Alto_falante005",
+          "vertices": 96,
+          "vertexColors": false,
+          "color": "9fa8ad",
+          "roughness": 0.4000000059604645,
+          "metalness": 0
+        },
+        {
+          "name": "Mastro002",
+          "vertices": 96,
+          "vertexColors": false,
+          "color": "9fa8ad",
+          "roughness": 0.4000000059604645,
+          "metalness": 0
+        },
+        {
+          "name": "Bandeira002",
+          "vertices": 24,
+          "vertexColors": false,
+          "color": "fde653",
+          "roughness": 0.4000000059604645,
+          "metalness": 0
+        },
+        {
+          "name": "Caixa_som006",
+          "vertices": 24,
+          "vertexColors": false,
+          "color": "5c636c",
+          "roughness": 0.4000000059604645,
+          "metalness": 0
+        },
+        {
+          "name": "Alto_falante006",
+          "vertices": 96,
+          "vertexColors": false,
+          "color": "9fa8ad",
+          "roughness": 0.4000000059604645,
+          "metalness": 0
+        },
+        {
+          "name": "Caixa_som007",
+          "vertices": 24,
+          "vertexColors": false,
+          "color": "5c636c",
+          "roughness": 0.4000000059604645,
+          "metalness": 0
+        },
+        {
+          "name": "Alto_falante007",
+          "vertices": 96,
+          "vertexColors": false,
+          "color": "9fa8ad",
+          "roughness": 0.4000000059604645,
+          "metalness": 0
+        },
+        {
+          "name": "Mastro003",
+          "vertices": 96,
+          "vertexColors": false,
+          "color": "9fa8ad",
+          "roughness": 0.4000000059604645,
+          "metalness": 0
+        },
+        {
+          "name": "Bandeira003",
+          "vertices": 24,
+          "vertexColors": false,
+          "color": "fde653",
+          "roughness": 0.4000000059604645,
+          "metalness": 0
+        },
+        {
+          "name": "Caixa_som008",
+          "vertices": 24,
+          "vertexColors": false,
+          "color": "5c636c",
+          "roughness": 0.4000000059604645,
+          "metalness": 0
+        },
+        {
+          "name": "Alto_falante008",
+          "vertices": 96,
+          "vertexColors": false,
+          "color": "9fa8ad",
+          "roughness": 0.4000000059604645,
+          "metalness": 0
+        },
+        {
+          "name": "Caixa_som009",
+          "vertices": 24,
+          "vertexColors": false,
+          "color": "5c636c",
+          "roughness": 0.4000000059604645,
+          "metalness": 0
+        },
+        {
+          "name": "Alto_falante009",
+          "vertices": 96,
+          "vertexColors": false,
+          "color": "9fa8ad",
+          "roughness": 0.4000000059604645,
+          "metalness": 0
+        },
+        {
+          "name": "Mastro004",
+          "vertices": 96,
+          "vertexColors": false,
+          "color": "9fa8ad",
+          "roughness": 0.4000000059604645,
+          "metalness": 0
+        },
+        {
+          "name": "Bandeira004",
+          "vertices": 24,
+          "vertexColors": false,
+          "color": "fde653",
+          "roughness": 0.4000000059604645,
+          "metalness": 0
+        },
+        {
+          "name": "Identidade_frontal",
+          "vertices": 2580,
+          "vertexColors": false,
+          "color": "fde653",
+          "roughness": 0.4000000059604645,
+          "metalness": 0
+        }
+      ],
+      "radii": [
+        0.730000137981077
+      ],
+      "animatedWheels": 1,
+      "wheelCenterDrift": 1.1102230246251565e-16,
+      "wheelSpinDelta": [
+        0.27397255095475664
+      ],
+      "flags": [
+        {
+          "name": "Bandeira",
+          "rotation": [
+            -0.015785245246032892,
+            0,
+            0,
+            "XYZ"
+          ],
+          "localBounds": {
+            "min": [
+              -0.5400000214576721,
+              -0.32499998807907104,
+              -0.019999999552965164
+            ],
+            "max": [
+              0.5400000214576721,
+              0.32499998807907104,
+              0.019999999552965164
+            ]
+          }
+        }
+      ],
+      "version": 1,
+      "mobile": false,
+      "frameMs": {
+        "median": 66.69999999999891,
+        "p95": 133.3000000000011
+      }
+    },
+    {
+      "tipo": "caminhao-lula",
+      "status": "ok",
+      "rodas": 4,
+      "bandeiras": 3,
+      "vel": 0,
+      "procedural": false,
+      "origem": "v2",
+      "viewport": {
+        "width": 1150,
+        "height": 780,
+        "maxProjectedX": 0.3942290562940996,
+        "maxProjectedY": 0.6256263882424649
+      },
+      "frontGlassZ": 6.55427914957311,
+      "flagAnchorDrift": 8.881784197001252e-16,
+      "box": {
+        "min": [
+          -1.9395169142899218,
+          1.1102230246251565e-16,
+          -8.5
+        ],
+        "max": [
+          1.9395169142899216,
+          6.8128422897485486,
+          8.5
+        ],
+        "size": [
+          3.8790338285798436,
+          6.8128422897485486,
+          17
+        ]
+      },
+      "meshes": [
+        {
+          "name": "Static_crimson",
+          "vertices": 44,
+          "vertexColors": true,
+          "color": "ffffff",
+          "roughness": 0.78,
+          "metalness": 0
+        },
+        {
+          "name": "Static_glass",
+          "vertices": 12,
+          "vertexColors": true,
+          "color": "ffffff",
+          "roughness": 0.78,
+          "metalness": 0
+        },
+        {
+          "name": "Static_charcoal",
+          "vertices": 272,
+          "vertexColors": true,
+          "color": "ffffff",
+          "roughness": 0.78,
+          "metalness": 0
+        },
+        {
+          "name": "Static_steel",
+          "vertices": 604,
+          "vertexColors": true,
+          "color": "ffffff",
+          "roughness": 0.38,
+          "metalness": 0.55
+        },
+        {
+          "name": "Static_chrome",
+          "vertices": 660,
+          "vertexColors": true,
+          "color": "ffffff",
+          "roughness": 0.38,
+          "metalness": 0.55
+        },
+        {
+          "name": "Static_light",
+          "vertices": 268,
+          "vertexColors": true,
+          "color": "ffffff",
+          "roughness": 0.78,
+          "metalness": 0
+        },
+        {
+          "name": "Static_amber",
+          "vertices": 40,
+          "vertexColors": true,
+          "color": "ffffff",
+          "roughness": 0.78,
+          "metalness": 0
+        },
+        {
+          "name": "Static_red",
+          "vertices": 1384,
+          "vertexColors": true,
+          "color": "ffffff",
+          "roughness": 0.78,
+          "metalness": 0
+        },
+        {
+          "name": "Static_cream",
+          "vertices": 1368,
+          "vertexColors": true,
+          "color": "ffffff",
+          "roughness": 0.78,
+          "metalness": 0
+        },
+        {
+          "name": "Static_shade",
+          "vertices": 336,
+          "vertexColors": true,
+          "color": "ffffff",
+          "roughness": 0.78,
+          "metalness": 0
+        },
+        {
+          "name": "Bandeira_roof_0",
+          "vertices": 60,
+          "vertexColors": true,
+          "color": "ffffff",
+          "roughness": 0.78,
+          "metalness": 0
+        },
+        {
+          "name": "Bandeira_roof_1",
+          "vertices": 60,
+          "vertexColors": true,
+          "color": "ffffff",
+          "roughness": 0.78,
+          "metalness": 0
+        },
+        {
+          "name": "Bandeira_cab",
+          "vertices": 60,
+          "vertexColors": true,
+          "color": "ffffff",
+          "roughness": 0.78,
+          "metalness": 0
+        },
+        {
+          "name": "Pneu_0_L",
+          "vertices": 374,
+          "vertexColors": true,
+          "color": "ffffff",
+          "roughness": 0.78,
+          "metalness": 0
+        },
+        {
+          "name": "Pneu_1_R",
+          "vertices": 374,
+          "vertexColors": true,
+          "color": "ffffff",
+          "roughness": 0.78,
+          "metalness": 0
+        },
+        {
+          "name": "Pneu_2_L",
+          "vertices": 374,
+          "vertexColors": true,
+          "color": "ffffff",
+          "roughness": 0.78,
+          "metalness": 0
+        },
+        {
+          "name": "Pneu_3_R",
+          "vertices": 374,
+          "vertexColors": true,
+          "color": "ffffff",
+          "roughness": 0.78,
+          "metalness": 0
+        }
+      ],
+      "radii": [
+        0.7670087350660502,
+        0.7670087350660502,
+        0.7670087350660502,
+        0.7670087350660502
+      ],
+      "animatedWheels": 4,
+      "wheelCenterDrift": 1.1102230246251565e-16,
+      "wheelSpinDelta": [
+        0.26075322334207474,
+        0.26075322334207474,
+        0.26075322334207474,
+        0.26075322334207474
+      ],
+      "flags": [
+        {
+          "name": "Bandeira_roof_0",
+          "rotation": [
+            0,
+            -0.015785245246032892,
+            0,
+            "XYZ"
+          ],
+          "localBounds": {
+            "min": [
+              -0.009099327027797699,
+              0.04399999976158142,
+              0
+            ],
+            "max": [
+              0.009295759722590446,
+              0.08266666531562805,
+              0.06333333253860474
+            ]
+          }
+        },
+        {
+          "name": "Bandeira_roof_1",
+          "rotation": [
+            0,
+            -0.043090110335217195,
+            0,
+            "XYZ"
+          ],
+          "localBounds": {
+            "min": [
+              -0.009099327027797699,
+              0.04399999976158142,
+              0
+            ],
+            "max": [
+              0.009295759722590446,
+              0.08266666531562805,
+              0.06333333253860474
+            ]
+          }
+        },
+        {
+          "name": "Bandeira_cab",
+          "rotation": [
+            0,
+            -0.03642446954009787,
+            0,
+            "XYZ"
+          ],
+          "localBounds": {
+            "min": [
+              -0.009099327027797699,
+              0.04399999976158142,
+              0
+            ],
+            "max": [
+              0.009295759722590446,
+              0.08266666531562805,
+              0.06333333253860474
+            ]
+          }
+        }
+      ],
+      "version": 2,
+      "mobile": false,
+      "frameMs": {
+        "median": 83.30000000000018,
+        "p95": 166.60000000000036
+      }
+    },
+    {
+      "tipo": "caminhao-bolsonaro",
+      "status": "ok",
+      "rodas": 6,
+      "bandeiras": 3,
+      "vel": 0,
+      "procedural": false,
+      "origem": "v2",
+      "viewport": {
+        "width": 1150,
+        "height": 780,
+        "maxProjectedX": 0.3942290562940996,
+        "maxProjectedY": 0.6256263882424649
+      },
+      "frontGlassZ": 6.55427914957311,
+      "flagAnchorDrift": 8.881784197001252e-16,
+      "box": {
+        "min": [
+          -1.9395169142899218,
+          1.1102230246251565e-16,
+          -8.5
+        ],
+        "max": [
+          1.9395169142899216,
+          6.8128422897485486,
+          8.5
+        ],
+        "size": [
+          3.8790338285798436,
+          6.8128422897485486,
+          17
+        ]
+      },
+      "meshes": [
+        {
+          "name": "Static_emerald",
+          "vertices": 44,
+          "vertexColors": true,
+          "color": "ffffff",
+          "roughness": 0.78,
+          "metalness": 0
+        },
+        {
+          "name": "Static_glass",
+          "vertices": 12,
+          "vertexColors": true,
+          "color": "ffffff",
+          "roughness": 0.78,
+          "metalness": 0
+        },
+        {
+          "name": "Static_charcoal",
+          "vertices": 294,
+          "vertexColors": true,
+          "color": "ffffff",
+          "roughness": 0.78,
+          "metalness": 0
+        },
+        {
+          "name": "Static_steel",
+          "vertices": 604,
+          "vertexColors": true,
+          "color": "ffffff",
+          "roughness": 0.38,
+          "metalness": 0.55
+        },
+        {
+          "name": "Static_chrome",
+          "vertices": 660,
+          "vertexColors": true,
+          "color": "ffffff",
+          "roughness": 0.38,
+          "metalness": 0.55
+        },
+        {
+          "name": "Static_light",
+          "vertices": 268,
+          "vertexColors": true,
+          "color": "ffffff",
+          "roughness": 0.78,
+          "metalness": 0
+        },
+        {
+          "name": "Static_amber",
+          "vertices": 40,
+          "vertexColors": true,
+          "color": "ffffff",
+          "roughness": 0.78,
+          "metalness": 0
+        },
+        {
+          "name": "Static_green",
+          "vertices": 1368,
+          "vertexColors": true,
+          "color": "ffffff",
+          "roughness": 0.78,
+          "metalness": 0
+        },
+        {
+          "name": "Static_yellow",
+          "vertices": 1368,
+          "vertexColors": true,
+          "color": "ffffff",
+          "roughness": 0.78,
+          "metalness": 0
+        },
+        {
+          "name": "Static_shade",
+          "vertices": 336,
+          "vertexColors": true,
+          "color": "ffffff",
+          "roughness": 0.78,
+          "metalness": 0
+        },
+        {
+          "name": "Static_red",
+          "vertices": 16,
+          "vertexColors": true,
+          "color": "ffffff",
+          "roughness": 0.78,
+          "metalness": 0
+        },
+        {
+          "name": "Bandeira_roof_0",
+          "vertices": 60,
+          "vertexColors": true,
+          "color": "ffffff",
+          "roughness": 0.78,
+          "metalness": 0
+        },
+        {
+          "name": "Bandeira_roof_1",
+          "vertices": 60,
+          "vertexColors": true,
+          "color": "ffffff",
+          "roughness": 0.78,
+          "metalness": 0
+        },
+        {
+          "name": "Bandeira_cab",
+          "vertices": 60,
+          "vertexColors": true,
+          "color": "ffffff",
+          "roughness": 0.78,
+          "metalness": 0
+        },
+        {
+          "name": "Pneu_0_L",
+          "vertices": 374,
+          "vertexColors": true,
+          "color": "ffffff",
+          "roughness": 0.78,
+          "metalness": 0
+        },
+        {
+          "name": "Pneu_1_R",
+          "vertices": 374,
+          "vertexColors": true,
+          "color": "ffffff",
+          "roughness": 0.78,
+          "metalness": 0
+        },
+        {
+          "name": "Pneu_2_L",
+          "vertices": 374,
+          "vertexColors": true,
+          "color": "ffffff",
+          "roughness": 0.78,
+          "metalness": 0
+        },
+        {
+          "name": "Pneu_3_R",
+          "vertices": 374,
+          "vertexColors": true,
+          "color": "ffffff",
+          "roughness": 0.78,
+          "metalness": 0
+        },
+        {
+          "name": "Pneu_4_L",
+          "vertices": 374,
+          "vertexColors": true,
+          "color": "ffffff",
+          "roughness": 0.78,
+          "metalness": 0
+        },
+        {
+          "name": "Pneu_5_R",
+          "vertices": 374,
+          "vertexColors": true,
+          "color": "ffffff",
+          "roughness": 0.78,
+          "metalness": 0
+        }
+      ],
+      "radii": [
+        0.7670087350660502,
+        0.7670087350660502,
+        0.7670087350660502,
+        0.7670087350660502,
+        0.7670087350660502,
+        0.7670087350660502
+      ],
+      "animatedWheels": 6,
+      "wheelCenterDrift": 1.1102230246251565e-16,
+      "wheelSpinDelta": [
+        0.26075322334207474,
+        0.26075322334207474,
+        0.26075322334207474,
+        0.26075322334207474,
+        0.26075322334207474,
+        0.26075322334207474
+      ],
+      "flags": [
+        {
+          "name": "Bandeira_roof_0",
+          "rotation": [
+            0,
+            -0.015785245246032892,
+            0,
+            "XYZ"
+          ],
+          "localBounds": {
+            "min": [
+              -0.009099327027797699,
+              0.04399999976158142,
+              0
+            ],
+            "max": [
+              0.009295759722590446,
+              0.08266666531562805,
+              0.06333333253860474
+            ]
+          }
+        },
+        {
+          "name": "Bandeira_roof_1",
+          "rotation": [
+            0,
+            -0.043090110335217195,
+            0,
+            "XYZ"
+          ],
+          "localBounds": {
+            "min": [
+              -0.009099327027797699,
+              0.04399999976158142,
+              0
+            ],
+            "max": [
+              0.009295759722590446,
+              0.08266666531562805,
+              0.06333333253860474
+            ]
+          }
+        },
+        {
+          "name": "Bandeira_cab",
+          "rotation": [
+            0,
+            -0.03642446954009787,
+            0,
+            "XYZ"
+          ],
+          "localBounds": {
+            "min": [
+              -0.009099327027797699,
+              0.04399999976158142,
+              0
+            ],
+            "max": [
+              0.009295759722590446,
+              0.08266666531562805,
+              0.06333333253860474
+            ]
+          }
+        }
+      ],
+      "version": 2,
+      "mobile": false,
+      "frameMs": {
+        "median": 66.69999999999891,
+        "p95": 116.60000000000036
+      }
+    },
+    {
+      "tipo": "caminhao-lula",
+      "status": "ok",
+      "rodas": 1,
+      "bandeiras": 1,
+      "vel": 0,
+      "procedural": false,
+      "origem": "original",
+      "viewport": {
+        "width": 390,
+        "height": 844,
+        "maxProjectedX": 0.48437864338654496,
+        "maxProjectedY": 0.2914978124745728
+      },
+      "frontGlassZ": null,
+      "flagAnchorDrift": 0.010578257957124531,
+      "box": {
+        "min": [
+          -1.9575000466847274,
+          1.1102230246251565e-16,
+          -8.5
+        ],
+        "max": [
+          1.9575000466847274,
+          7.130000233348508,
+          8.5
+        ],
+        "size": [
+          3.915000093369455,
+          7.130000233348508,
+          17
+        ]
+      },
+      "meshes": [
+        {
+          "name": "Chassi",
+          "vertices": 24,
+          "vertexColors": false,
+          "color": "9fa8ad",
+          "roughness": 0.4000000059604645,
+          "metalness": 0
+        },
+        {
+          "name": "Cabine",
+          "vertices": 24,
+          "vertexColors": false,
+          "color": "de6a7c",
+          "roughness": 0.4000000059604645,
+          "metalness": 0
+        },
+        {
+          "name": "Parabrisa",
+          "vertices": 24,
+          "vertexColors": false,
+          "color": "5a8a9e",
+          "roughness": 0.4000000059604645,
+          "metalness": 0
+        },
+        {
+          "name": "Bau_eleitoral",
+          "vertices": 24,
+          "vertexColors": false,
+          "color": "de6a7c",
+          "roughness": 0.4000000059604645,
+          "metalness": 0
+        },
+        {
+          "name": "Lona_faixa",
+          "vertices": 24,
+          "vertexColors": false,
+          "color": "f7f6f0",
+          "roughness": 0.4000000059604645,
+          "metalness": 0
+        },
+        {
+          "name": "Pneu",
+          "vertices": 96,
+          "vertexColors": false,
+          "color": "5c636c",
+          "roughness": 0.4000000059604645,
+          "metalness": 0
+        },
+        {
+          "name": "Roda",
+          "vertices": 96,
+          "vertexColors": false,
+          "color": "9fa8ad",
+          "roughness": 0.4000000059604645,
+          "metalness": 0
+        },
+        {
+          "name": "Pneu001",
+          "vertices": 96,
+          "vertexColors": false,
+          "color": "5c636c",
+          "roughness": 0.4000000059604645,
+          "metalness": 0
+        },
+        {
+          "name": "Roda001",
+          "vertices": 96,
+          "vertexColors": false,
+          "color": "9fa8ad",
+          "roughness": 0.4000000059604645,
+          "metalness": 0
+        },
+        {
+          "name": "Pneu002",
+          "vertices": 96,
+          "vertexColors": false,
+          "color": "5c636c",
+          "roughness": 0.4000000059604645,
+          "metalness": 0
+        },
+        {
+          "name": "Roda002",
+          "vertices": 96,
+          "vertexColors": false,
+          "color": "9fa8ad",
+          "roughness": 0.4000000059604645,
+          "metalness": 0
+        },
+        {
+          "name": "Pneu003",
+          "vertices": 96,
+          "vertexColors": false,
+          "color": "5c636c",
+          "roughness": 0.4000000059604645,
+          "metalness": 0
+        },
+        {
+          "name": "Roda003",
+          "vertices": 96,
+          "vertexColors": false,
+          "color": "9fa8ad",
+          "roughness": 0.4000000059604645,
+          "metalness": 0
+        },
+        {
+          "name": "Pneu004",
+          "vertices": 96,
+          "vertexColors": false,
+          "color": "5c636c",
+          "roughness": 0.4000000059604645,
+          "metalness": 0
+        },
+        {
+          "name": "Roda004",
+          "vertices": 96,
+          "vertexColors": false,
+          "color": "9fa8ad",
+          "roughness": 0.4000000059604645,
+          "metalness": 0
+        },
+        {
+          "name": "Pneu005",
+          "vertices": 96,
+          "vertexColors": false,
+          "color": "5c636c",
+          "roughness": 0.4000000059604645,
+          "metalness": 0
+        },
+        {
+          "name": "Roda005",
+          "vertices": 96,
+          "vertexColors": false,
+          "color": "9fa8ad",
+          "roughness": 0.4000000059604645,
+          "metalness": 0
+        },
+        {
+          "name": "Pneu006",
+          "vertices": 96,
+          "vertexColors": false,
+          "color": "5c636c",
+          "roughness": 0.4000000059604645,
+          "metalness": 0
+        },
+        {
+          "name": "Roda006",
+          "vertices": 96,
+          "vertexColors": false,
+          "color": "9fa8ad",
+          "roughness": 0.4000000059604645,
+          "metalness": 0
+        },
+        {
+          "name": "Letreiro_lateral",
+          "vertices": 414,
+          "vertexColors": false,
+          "color": "f7f6f0",
+          "roughness": 0.4000000059604645,
+          "metalness": 0
+        },
+        {
+          "name": "Pneu007",
+          "vertices": 96,
+          "vertexColors": false,
+          "color": "5c636c",
+          "roughness": 0.4000000059604645,
+          "metalness": 0
+        },
+        {
+          "name": "Roda007",
+          "vertices": 96,
+          "vertexColors": false,
+          "color": "9fa8ad",
+          "roughness": 0.4000000059604645,
+          "metalness": 0
+        },
+        {
+          "name": "Pneu008",
+          "vertices": 96,
+          "vertexColors": false,
+          "color": "5c636c",
+          "roughness": 0.4000000059604645,
+          "metalness": 0
+        },
+        {
+          "name": "Roda008",
+          "vertices": 96,
+          "vertexColors": false,
+          "color": "9fa8ad",
+          "roughness": 0.4000000059604645,
+          "metalness": 0
+        },
+        {
+          "name": "Pneu009",
+          "vertices": 96,
+          "vertexColors": false,
+          "color": "5c636c",
+          "roughness": 0.4000000059604645,
+          "metalness": 0
+        },
+        {
+          "name": "Roda009",
+          "vertices": 96,
+          "vertexColors": false,
+          "color": "9fa8ad",
+          "roughness": 0.4000000059604645,
+          "metalness": 0
+        },
+        {
+          "name": "Pneu010",
+          "vertices": 96,
+          "vertexColors": false,
+          "color": "5c636c",
+          "roughness": 0.4000000059604645,
+          "metalness": 0
+        },
+        {
+          "name": "Roda010",
+          "vertices": 96,
+          "vertexColors": false,
+          "color": "9fa8ad",
+          "roughness": 0.4000000059604645,
+          "metalness": 0
+        },
+        {
+          "name": "Pneu011",
+          "vertices": 96,
+          "vertexColors": false,
+          "color": "5c636c",
+          "roughness": 0.4000000059604645,
+          "metalness": 0
+        },
+        {
+          "name": "Roda011",
+          "vertices": 96,
+          "vertexColors": false,
+          "color": "9fa8ad",
+          "roughness": 0.4000000059604645,
+          "metalness": 0
+        },
+        {
+          "name": "Pneu012",
+          "vertices": 96,
+          "vertexColors": false,
+          "color": "5c636c",
+          "roughness": 0.4000000059604645,
+          "metalness": 0
+        },
+        {
+          "name": "Roda012",
+          "vertices": 96,
+          "vertexColors": false,
+          "color": "9fa8ad",
+          "roughness": 0.4000000059604645,
+          "metalness": 0
+        },
+        {
+          "name": "Pneu013",
+          "vertices": 96,
+          "vertexColors": false,
+          "color": "5c636c",
+          "roughness": 0.4000000059604645,
+          "metalness": 0
+        },
+        {
+          "name": "Roda013",
+          "vertices": 96,
+          "vertexColors": false,
+          "color": "9fa8ad",
+          "roughness": 0.4000000059604645,
+          "metalness": 0
+        },
+        {
+          "name": "Letreiro_lateral001",
+          "vertices": 414,
+          "vertexColors": false,
+          "color": "f7f6f0",
+          "roughness": 0.4000000059604645,
+          "metalness": 0
+        },
+        {
+          "name": "Caixa_som",
+          "vertices": 24,
+          "vertexColors": false,
+          "color": "5c636c",
+          "roughness": 0.4000000059604645,
+          "metalness": 0
+        },
+        {
+          "name": "Alto_falante",
+          "vertices": 96,
+          "vertexColors": false,
+          "color": "9fa8ad",
+          "roughness": 0.4000000059604645,
+          "metalness": 0
+        },
+        {
+          "name": "Caixa_som001",
+          "vertices": 24,
+          "vertexColors": false,
+          "color": "5c636c",
+          "roughness": 0.4000000059604645,
+          "metalness": 0
+        },
+        {
+          "name": "Alto_falante001",
+          "vertices": 96,
+          "vertexColors": false,
+          "color": "9fa8ad",
+          "roughness": 0.4000000059604645,
+          "metalness": 0
+        },
+        {
+          "name": "Mastro",
+          "vertices": 96,
+          "vertexColors": false,
+          "color": "9fa8ad",
+          "roughness": 0.4000000059604645,
+          "metalness": 0
+        },
+        {
+          "name": "Bandeira",
+          "vertices": 24,
+          "vertexColors": false,
+          "color": "f7f6f0",
+          "roughness": 0.4000000059604645,
+          "metalness": 0
+        },
+        {
+          "name": "Caixa_som002",
+          "vertices": 24,
+          "vertexColors": false,
+          "color": "5c636c",
+          "roughness": 0.4000000059604645,
+          "metalness": 0
+        },
+        {
+          "name": "Alto_falante002",
+          "vertices": 96,
+          "vertexColors": false,
+          "color": "9fa8ad",
+          "roughness": 0.4000000059604645,
+          "metalness": 0
+        },
+        {
+          "name": "Caixa_som003",
+          "vertices": 24,
+          "vertexColors": false,
+          "color": "5c636c",
+          "roughness": 0.4000000059604645,
+          "metalness": 0
+        },
+        {
+          "name": "Alto_falante003",
+          "vertices": 96,
+          "vertexColors": false,
+          "color": "9fa8ad",
+          "roughness": 0.4000000059604645,
+          "metalness": 0
+        },
+        {
+          "name": "Mastro001",
+          "vertices": 96,
+          "vertexColors": false,
+          "color": "9fa8ad",
+          "roughness": 0.4000000059604645,
+          "metalness": 0
+        },
+        {
+          "name": "Bandeira001",
+          "vertices": 24,
+          "vertexColors": false,
+          "color": "f7f6f0",
+          "roughness": 0.4000000059604645,
+          "metalness": 0
+        },
+        {
+          "name": "Caixa_som004",
+          "vertices": 24,
+          "vertexColors": false,
+          "color": "5c636c",
+          "roughness": 0.4000000059604645,
+          "metalness": 0
+        },
+        {
+          "name": "Alto_falante004",
+          "vertices": 96,
+          "vertexColors": false,
+          "color": "9fa8ad",
+          "roughness": 0.4000000059604645,
+          "metalness": 0
+        },
+        {
+          "name": "Caixa_som005",
+          "vertices": 24,
+          "vertexColors": false,
+          "color": "5c636c",
+          "roughness": 0.4000000059604645,
+          "metalness": 0
+        },
+        {
+          "name": "Alto_falante005",
+          "vertices": 96,
+          "vertexColors": false,
+          "color": "9fa8ad",
+          "roughness": 0.4000000059604645,
+          "metalness": 0
+        },
+        {
+          "name": "Mastro002",
+          "vertices": 96,
+          "vertexColors": false,
+          "color": "9fa8ad",
+          "roughness": 0.4000000059604645,
+          "metalness": 0
+        },
+        {
+          "name": "Bandeira002",
+          "vertices": 24,
+          "vertexColors": false,
+          "color": "f7f6f0",
+          "roughness": 0.4000000059604645,
+          "metalness": 0
+        },
+        {
+          "name": "Caixa_som006",
+          "vertices": 24,
+          "vertexColors": false,
+          "color": "5c636c",
+          "roughness": 0.4000000059604645,
+          "metalness": 0
+        },
+        {
+          "name": "Alto_falante006",
+          "vertices": 96,
+          "vertexColors": false,
+          "color": "9fa8ad",
+          "roughness": 0.4000000059604645,
+          "metalness": 0
+        },
+        {
+          "name": "Caixa_som007",
+          "vertices": 24,
+          "vertexColors": false,
+          "color": "5c636c",
+          "roughness": 0.4000000059604645,
+          "metalness": 0
+        },
+        {
+          "name": "Alto_falante007",
+          "vertices": 96,
+          "vertexColors": false,
+          "color": "9fa8ad",
+          "roughness": 0.4000000059604645,
+          "metalness": 0
+        },
+        {
+          "name": "Mastro003",
+          "vertices": 96,
+          "vertexColors": false,
+          "color": "9fa8ad",
+          "roughness": 0.4000000059604645,
+          "metalness": 0
+        },
+        {
+          "name": "Bandeira003",
+          "vertices": 24,
+          "vertexColors": false,
+          "color": "f7f6f0",
+          "roughness": 0.4000000059604645,
+          "metalness": 0
+        },
+        {
+          "name": "Caixa_som008",
+          "vertices": 24,
+          "vertexColors": false,
+          "color": "5c636c",
+          "roughness": 0.4000000059604645,
+          "metalness": 0
+        },
+        {
+          "name": "Alto_falante008",
+          "vertices": 96,
+          "vertexColors": false,
+          "color": "9fa8ad",
+          "roughness": 0.4000000059604645,
+          "metalness": 0
+        },
+        {
+          "name": "Caixa_som009",
+          "vertices": 24,
+          "vertexColors": false,
+          "color": "5c636c",
+          "roughness": 0.4000000059604645,
+          "metalness": 0
+        },
+        {
+          "name": "Alto_falante009",
+          "vertices": 96,
+          "vertexColors": false,
+          "color": "9fa8ad",
+          "roughness": 0.4000000059604645,
+          "metalness": 0
+        },
+        {
+          "name": "Mastro004",
+          "vertices": 96,
+          "vertexColors": false,
+          "color": "9fa8ad",
+          "roughness": 0.4000000059604645,
+          "metalness": 0
+        },
+        {
+          "name": "Bandeira004",
+          "vertices": 24,
+          "vertexColors": false,
+          "color": "f7f6f0",
+          "roughness": 0.4000000059604645,
+          "metalness": 0
+        },
+        {
+          "name": "Identidade_frontal",
+          "vertices": 414,
+          "vertexColors": false,
+          "color": "f7f6f0",
+          "roughness": 0.4000000059604645,
+          "metalness": 0
+        }
+      ],
+      "radii": [
+        0.730000137981077
+      ],
+      "animatedWheels": 1,
+      "wheelCenterDrift": 1.1102230246251565e-16,
+      "wheelSpinDelta": [
+        0.27397255095475664
+      ],
+      "flags": [
+        {
+          "name": "Bandeira",
+          "rotation": [
+            -0.015785245246032892,
+            0,
+            0,
+            "XYZ"
+          ],
+          "localBounds": {
+            "min": [
+              -0.5400000214576721,
+              -0.32499998807907104,
+              -0.019999999552965164
+            ],
+            "max": [
+              0.5400000214576721,
+              0.32499998807907104,
+              0.019999999552965164
+            ]
+          }
+        }
+      ],
+      "version": 1,
+      "mobile": true,
+      "frameMs": {
+        "median": 33.30000000000018,
+        "p95": 100
+      }
+    },
+    {
+      "tipo": "caminhao-bolsonaro",
+      "status": "ok",
+      "rodas": 1,
+      "bandeiras": 1,
+      "vel": 0,
+      "procedural": false,
+      "origem": "original",
+      "viewport": {
+        "width": 390,
+        "height": 844,
+        "maxProjectedX": 0.48437864338654496,
+        "maxProjectedY": 0.2914978124745728
+      },
+      "frontGlassZ": null,
+      "flagAnchorDrift": 0.009445759730080343,
+      "box": {
+        "min": [
+          -1.9575000466847274,
+          1.1102230246251565e-16,
+          -8.5
+        ],
+        "max": [
+          1.9575000466847274,
+          7.130000233348508,
+          8.5
+        ],
+        "size": [
+          3.915000093369455,
+          7.130000233348508,
+          17
+        ]
+      },
+      "meshes": [
+        {
+          "name": "Chassi",
+          "vertices": 24,
+          "vertexColors": false,
+          "color": "9fa8ad",
+          "roughness": 0.4000000059604645,
+          "metalness": 0
+        },
+        {
+          "name": "Cabine",
+          "vertices": 24,
+          "vertexColors": false,
+          "color": "4fbb8e",
+          "roughness": 0.4000000059604645,
+          "metalness": 0
+        },
+        {
+          "name": "Parabrisa",
+          "vertices": 24,
+          "vertexColors": false,
+          "color": "5a8a9e",
+          "roughness": 0.4000000059604645,
+          "metalness": 0
+        },
+        {
+          "name": "Bau_eleitoral",
+          "vertices": 24,
+          "vertexColors": false,
+          "color": "4fbb8e",
+          "roughness": 0.4000000059604645,
+          "metalness": 0
+        },
+        {
+          "name": "Lona_faixa",
+          "vertices": 24,
+          "vertexColors": false,
+          "color": "fde653",
+          "roughness": 0.4000000059604645,
+          "metalness": 0
+        },
+        {
+          "name": "Pneu",
+          "vertices": 96,
+          "vertexColors": false,
+          "color": "5c636c",
+          "roughness": 0.4000000059604645,
+          "metalness": 0
+        },
+        {
+          "name": "Roda",
+          "vertices": 96,
+          "vertexColors": false,
+          "color": "9fa8ad",
+          "roughness": 0.4000000059604645,
+          "metalness": 0
+        },
+        {
+          "name": "Pneu001",
+          "vertices": 96,
+          "vertexColors": false,
+          "color": "5c636c",
+          "roughness": 0.4000000059604645,
+          "metalness": 0
+        },
+        {
+          "name": "Roda001",
+          "vertices": 96,
+          "vertexColors": false,
+          "color": "9fa8ad",
+          "roughness": 0.4000000059604645,
+          "metalness": 0
+        },
+        {
+          "name": "Pneu002",
+          "vertices": 96,
+          "vertexColors": false,
+          "color": "5c636c",
+          "roughness": 0.4000000059604645,
+          "metalness": 0
+        },
+        {
+          "name": "Roda002",
+          "vertices": 96,
+          "vertexColors": false,
+          "color": "9fa8ad",
+          "roughness": 0.4000000059604645,
+          "metalness": 0
+        },
+        {
+          "name": "Pneu003",
+          "vertices": 96,
+          "vertexColors": false,
+          "color": "5c636c",
+          "roughness": 0.4000000059604645,
+          "metalness": 0
+        },
+        {
+          "name": "Roda003",
+          "vertices": 96,
+          "vertexColors": false,
+          "color": "9fa8ad",
+          "roughness": 0.4000000059604645,
+          "metalness": 0
+        },
+        {
+          "name": "Pneu004",
+          "vertices": 96,
+          "vertexColors": false,
+          "color": "5c636c",
+          "roughness": 0.4000000059604645,
+          "metalness": 0
+        },
+        {
+          "name": "Roda004",
+          "vertices": 96,
+          "vertexColors": false,
+          "color": "9fa8ad",
+          "roughness": 0.4000000059604645,
+          "metalness": 0
+        },
+        {
+          "name": "Pneu005",
+          "vertices": 96,
+          "vertexColors": false,
+          "color": "5c636c",
+          "roughness": 0.4000000059604645,
+          "metalness": 0
+        },
+        {
+          "name": "Roda005",
+          "vertices": 96,
+          "vertexColors": false,
+          "color": "9fa8ad",
+          "roughness": 0.4000000059604645,
+          "metalness": 0
+        },
+        {
+          "name": "Pneu006",
+          "vertices": 96,
+          "vertexColors": false,
+          "color": "5c636c",
+          "roughness": 0.4000000059604645,
+          "metalness": 0
+        },
+        {
+          "name": "Roda006",
+          "vertices": 96,
+          "vertexColors": false,
+          "color": "9fa8ad",
+          "roughness": 0.4000000059604645,
+          "metalness": 0
+        },
+        {
+          "name": "Letreiro_lateral",
+          "vertices": 2580,
+          "vertexColors": false,
+          "color": "f7f6f0",
+          "roughness": 0.4000000059604645,
+          "metalness": 0
+        },
+        {
+          "name": "Pneu007",
+          "vertices": 96,
+          "vertexColors": false,
+          "color": "5c636c",
+          "roughness": 0.4000000059604645,
+          "metalness": 0
+        },
+        {
+          "name": "Roda007",
+          "vertices": 96,
+          "vertexColors": false,
+          "color": "9fa8ad",
+          "roughness": 0.4000000059604645,
+          "metalness": 0
+        },
+        {
+          "name": "Pneu008",
+          "vertices": 96,
+          "vertexColors": false,
+          "color": "5c636c",
+          "roughness": 0.4000000059604645,
+          "metalness": 0
+        },
+        {
+          "name": "Roda008",
+          "vertices": 96,
+          "vertexColors": false,
+          "color": "9fa8ad",
+          "roughness": 0.4000000059604645,
+          "metalness": 0
+        },
+        {
+          "name": "Pneu009",
+          "vertices": 96,
+          "vertexColors": false,
+          "color": "5c636c",
+          "roughness": 0.4000000059604645,
+          "metalness": 0
+        },
+        {
+          "name": "Roda009",
+          "vertices": 96,
+          "vertexColors": false,
+          "color": "9fa8ad",
+          "roughness": 0.4000000059604645,
+          "metalness": 0
+        },
+        {
+          "name": "Pneu010",
+          "vertices": 96,
+          "vertexColors": false,
+          "color": "5c636c",
+          "roughness": 0.4000000059604645,
+          "metalness": 0
+        },
+        {
+          "name": "Roda010",
+          "vertices": 96,
+          "vertexColors": false,
+          "color": "9fa8ad",
+          "roughness": 0.4000000059604645,
+          "metalness": 0
+        },
+        {
+          "name": "Pneu011",
+          "vertices": 96,
+          "vertexColors": false,
+          "color": "5c636c",
+          "roughness": 0.4000000059604645,
+          "metalness": 0
+        },
+        {
+          "name": "Roda011",
+          "vertices": 96,
+          "vertexColors": false,
+          "color": "9fa8ad",
+          "roughness": 0.4000000059604645,
+          "metalness": 0
+        },
+        {
+          "name": "Pneu012",
+          "vertices": 96,
+          "vertexColors": false,
+          "color": "5c636c",
+          "roughness": 0.4000000059604645,
+          "metalness": 0
+        },
+        {
+          "name": "Roda012",
+          "vertices": 96,
+          "vertexColors": false,
+          "color": "9fa8ad",
+          "roughness": 0.4000000059604645,
+          "metalness": 0
+        },
+        {
+          "name": "Pneu013",
+          "vertices": 96,
+          "vertexColors": false,
+          "color": "5c636c",
+          "roughness": 0.4000000059604645,
+          "metalness": 0
+        },
+        {
+          "name": "Roda013",
+          "vertices": 96,
+          "vertexColors": false,
+          "color": "9fa8ad",
+          "roughness": 0.4000000059604645,
+          "metalness": 0
+        },
+        {
+          "name": "Letreiro_lateral001",
+          "vertices": 2580,
+          "vertexColors": false,
+          "color": "f7f6f0",
+          "roughness": 0.4000000059604645,
+          "metalness": 0
+        },
+        {
+          "name": "Caixa_som",
+          "vertices": 24,
+          "vertexColors": false,
+          "color": "5c636c",
+          "roughness": 0.4000000059604645,
+          "metalness": 0
+        },
+        {
+          "name": "Alto_falante",
+          "vertices": 96,
+          "vertexColors": false,
+          "color": "9fa8ad",
+          "roughness": 0.4000000059604645,
+          "metalness": 0
+        },
+        {
+          "name": "Caixa_som001",
+          "vertices": 24,
+          "vertexColors": false,
+          "color": "5c636c",
+          "roughness": 0.4000000059604645,
+          "metalness": 0
+        },
+        {
+          "name": "Alto_falante001",
+          "vertices": 96,
+          "vertexColors": false,
+          "color": "9fa8ad",
+          "roughness": 0.4000000059604645,
+          "metalness": 0
+        },
+        {
+          "name": "Mastro",
+          "vertices": 96,
+          "vertexColors": false,
+          "color": "9fa8ad",
+          "roughness": 0.4000000059604645,
+          "metalness": 0
+        },
+        {
+          "name": "Bandeira",
+          "vertices": 24,
+          "vertexColors": false,
+          "color": "fde653",
+          "roughness": 0.4000000059604645,
+          "metalness": 0
+        },
+        {
+          "name": "Caixa_som002",
+          "vertices": 24,
+          "vertexColors": false,
+          "color": "5c636c",
+          "roughness": 0.4000000059604645,
+          "metalness": 0
+        },
+        {
+          "name": "Alto_falante002",
+          "vertices": 96,
+          "vertexColors": false,
+          "color": "9fa8ad",
+          "roughness": 0.4000000059604645,
+          "metalness": 0
+        },
+        {
+          "name": "Caixa_som003",
+          "vertices": 24,
+          "vertexColors": false,
+          "color": "5c636c",
+          "roughness": 0.4000000059604645,
+          "metalness": 0
+        },
+        {
+          "name": "Alto_falante003",
+          "vertices": 96,
+          "vertexColors": false,
+          "color": "9fa8ad",
+          "roughness": 0.4000000059604645,
+          "metalness": 0
+        },
+        {
+          "name": "Mastro001",
+          "vertices": 96,
+          "vertexColors": false,
+          "color": "9fa8ad",
+          "roughness": 0.4000000059604645,
+          "metalness": 0
+        },
+        {
+          "name": "Bandeira001",
+          "vertices": 24,
+          "vertexColors": false,
+          "color": "fde653",
+          "roughness": 0.4000000059604645,
+          "metalness": 0
+        },
+        {
+          "name": "Caixa_som004",
+          "vertices": 24,
+          "vertexColors": false,
+          "color": "5c636c",
+          "roughness": 0.4000000059604645,
+          "metalness": 0
+        },
+        {
+          "name": "Alto_falante004",
+          "vertices": 96,
+          "vertexColors": false,
+          "color": "9fa8ad",
+          "roughness": 0.4000000059604645,
+          "metalness": 0
+        },
+        {
+          "name": "Caixa_som005",
+          "vertices": 24,
+          "vertexColors": false,
+          "color": "5c636c",
+          "roughness": 0.4000000059604645,
+          "metalness": 0
+        },
+        {
+          "name": "Alto_falante005",
+          "vertices": 96,
+          "vertexColors": false,
+          "color": "9fa8ad",
+          "roughness": 0.4000000059604645,
+          "metalness": 0
+        },
+        {
+          "name": "Mastro002",
+          "vertices": 96,
+          "vertexColors": false,
+          "color": "9fa8ad",
+          "roughness": 0.4000000059604645,
+          "metalness": 0
+        },
+        {
+          "name": "Bandeira002",
+          "vertices": 24,
+          "vertexColors": false,
+          "color": "fde653",
+          "roughness": 0.4000000059604645,
+          "metalness": 0
+        },
+        {
+          "name": "Caixa_som006",
+          "vertices": 24,
+          "vertexColors": false,
+          "color": "5c636c",
+          "roughness": 0.4000000059604645,
+          "metalness": 0
+        },
+        {
+          "name": "Alto_falante006",
+          "vertices": 96,
+          "vertexColors": false,
+          "color": "9fa8ad",
+          "roughness": 0.4000000059604645,
+          "metalness": 0
+        },
+        {
+          "name": "Caixa_som007",
+          "vertices": 24,
+          "vertexColors": false,
+          "color": "5c636c",
+          "roughness": 0.4000000059604645,
+          "metalness": 0
+        },
+        {
+          "name": "Alto_falante007",
+          "vertices": 96,
+          "vertexColors": false,
+          "color": "9fa8ad",
+          "roughness": 0.4000000059604645,
+          "metalness": 0
+        },
+        {
+          "name": "Mastro003",
+          "vertices": 96,
+          "vertexColors": false,
+          "color": "9fa8ad",
+          "roughness": 0.4000000059604645,
+          "metalness": 0
+        },
+        {
+          "name": "Bandeira003",
+          "vertices": 24,
+          "vertexColors": false,
+          "color": "fde653",
+          "roughness": 0.4000000059604645,
+          "metalness": 0
+        },
+        {
+          "name": "Caixa_som008",
+          "vertices": 24,
+          "vertexColors": false,
+          "color": "5c636c",
+          "roughness": 0.4000000059604645,
+          "metalness": 0
+        },
+        {
+          "name": "Alto_falante008",
+          "vertices": 96,
+          "vertexColors": false,
+          "color": "9fa8ad",
+          "roughness": 0.4000000059604645,
+          "metalness": 0
+        },
+        {
+          "name": "Caixa_som009",
+          "vertices": 24,
+          "vertexColors": false,
+          "color": "5c636c",
+          "roughness": 0.4000000059604645,
+          "metalness": 0
+        },
+        {
+          "name": "Alto_falante009",
+          "vertices": 96,
+          "vertexColors": false,
+          "color": "9fa8ad",
+          "roughness": 0.4000000059604645,
+          "metalness": 0
+        },
+        {
+          "name": "Mastro004",
+          "vertices": 96,
+          "vertexColors": false,
+          "color": "9fa8ad",
+          "roughness": 0.4000000059604645,
+          "metalness": 0
+        },
+        {
+          "name": "Bandeira004",
+          "vertices": 24,
+          "vertexColors": false,
+          "color": "fde653",
+          "roughness": 0.4000000059604645,
+          "metalness": 0
+        },
+        {
+          "name": "Identidade_frontal",
+          "vertices": 2580,
+          "vertexColors": false,
+          "color": "fde653",
+          "roughness": 0.4000000059604645,
+          "metalness": 0
+        }
+      ],
+      "radii": [
+        0.730000137981077
+      ],
+      "animatedWheels": 1,
+      "wheelCenterDrift": 1.1102230246251565e-16,
+      "wheelSpinDelta": [
+        0.27397255095475664
+      ],
+      "flags": [
+        {
+          "name": "Bandeira",
+          "rotation": [
+            -0.015785245246032892,
+            0,
+            0,
+            "XYZ"
+          ],
+          "localBounds": {
+            "min": [
+              -0.5400000214576721,
+              -0.32499998807907104,
+              -0.019999999552965164
+            ],
+            "max": [
+              0.5400000214576721,
+              0.32499998807907104,
+              0.019999999552965164
+            ]
+          }
+        }
+      ],
+      "version": 1,
+      "mobile": true,
+      "frameMs": {
+        "median": 66.59999999999945,
+        "p95": 116.60000000000036
+      }
+    },
+    {
+      "tipo": "caminhao-lula",
+      "status": "ok",
+      "rodas": 4,
+      "bandeiras": 3,
+      "vel": 0,
+      "procedural": false,
+      "origem": "v2",
+      "viewport": {
+        "width": 390,
+        "height": 844,
+        "maxProjectedX": 0.48253357372014055,
+        "maxProjectedY": 0.2912295855201436
+      },
+      "frontGlassZ": 6.55427914957311,
+      "flagAnchorDrift": 8.881784197001252e-16,
+      "box": {
+        "min": [
+          -1.9395169142899218,
+          1.1102230246251565e-16,
+          -8.5
+        ],
+        "max": [
+          1.9395169142899216,
+          6.8128422897485486,
+          8.5
+        ],
+        "size": [
+          3.8790338285798436,
+          6.8128422897485486,
+          17
+        ]
+      },
+      "meshes": [
+        {
+          "name": "Static_crimson",
+          "vertices": 44,
+          "vertexColors": true,
+          "color": "ffffff",
+          "roughness": 0.78,
+          "metalness": 0
+        },
+        {
+          "name": "Static_glass",
+          "vertices": 12,
+          "vertexColors": true,
+          "color": "ffffff",
+          "roughness": 0.78,
+          "metalness": 0
+        },
+        {
+          "name": "Static_charcoal",
+          "vertices": 272,
+          "vertexColors": true,
+          "color": "ffffff",
+          "roughness": 0.78,
+          "metalness": 0
+        },
+        {
+          "name": "Static_steel",
+          "vertices": 604,
+          "vertexColors": true,
+          "color": "ffffff",
+          "roughness": 0.38,
+          "metalness": 0.55
+        },
+        {
+          "name": "Static_chrome",
+          "vertices": 660,
+          "vertexColors": true,
+          "color": "ffffff",
+          "roughness": 0.38,
+          "metalness": 0.55
+        },
+        {
+          "name": "Static_light",
+          "vertices": 268,
+          "vertexColors": true,
+          "color": "ffffff",
+          "roughness": 0.78,
+          "metalness": 0
+        },
+        {
+          "name": "Static_amber",
+          "vertices": 40,
+          "vertexColors": true,
+          "color": "ffffff",
+          "roughness": 0.78,
+          "metalness": 0
+        },
+        {
+          "name": "Static_red",
+          "vertices": 1384,
+          "vertexColors": true,
+          "color": "ffffff",
+          "roughness": 0.78,
+          "metalness": 0
+        },
+        {
+          "name": "Static_cream",
+          "vertices": 1368,
+          "vertexColors": true,
+          "color": "ffffff",
+          "roughness": 0.78,
+          "metalness": 0
+        },
+        {
+          "name": "Static_shade",
+          "vertices": 336,
+          "vertexColors": true,
+          "color": "ffffff",
+          "roughness": 0.78,
+          "metalness": 0
+        },
+        {
+          "name": "Bandeira_roof_0",
+          "vertices": 60,
+          "vertexColors": true,
+          "color": "ffffff",
+          "roughness": 0.78,
+          "metalness": 0
+        },
+        {
+          "name": "Bandeira_roof_1",
+          "vertices": 60,
+          "vertexColors": true,
+          "color": "ffffff",
+          "roughness": 0.78,
+          "metalness": 0
+        },
+        {
+          "name": "Bandeira_cab",
+          "vertices": 60,
+          "vertexColors": true,
+          "color": "ffffff",
+          "roughness": 0.78,
+          "metalness": 0
+        },
+        {
+          "name": "Pneu_0_L",
+          "vertices": 374,
+          "vertexColors": true,
+          "color": "ffffff",
+          "roughness": 0.78,
+          "metalness": 0
+        },
+        {
+          "name": "Pneu_1_R",
+          "vertices": 374,
+          "vertexColors": true,
+          "color": "ffffff",
+          "roughness": 0.78,
+          "metalness": 0
+        },
+        {
+          "name": "Pneu_2_L",
+          "vertices": 374,
+          "vertexColors": true,
+          "color": "ffffff",
+          "roughness": 0.78,
+          "metalness": 0
+        },
+        {
+          "name": "Pneu_3_R",
+          "vertices": 374,
+          "vertexColors": true,
+          "color": "ffffff",
+          "roughness": 0.78,
+          "metalness": 0
+        }
+      ],
+      "radii": [
+        0.7670087350660502,
+        0.7670087350660502,
+        0.7670087350660502,
+        0.7670087350660502
+      ],
+      "animatedWheels": 4,
+      "wheelCenterDrift": 1.1102230246251565e-16,
+      "wheelSpinDelta": [
+        0.26075322334207474,
+        0.26075322334207474,
+        0.26075322334207474,
+        0.26075322334207474
+      ],
+      "flags": [
+        {
+          "name": "Bandeira_roof_0",
+          "rotation": [
+            0,
+            -0.015785245246032892,
+            0,
+            "XYZ"
+          ],
+          "localBounds": {
+            "min": [
+              -0.009099327027797699,
+              0.04399999976158142,
+              0
+            ],
+            "max": [
+              0.009295759722590446,
+              0.08266666531562805,
+              0.06333333253860474
+            ]
+          }
+        },
+        {
+          "name": "Bandeira_roof_1",
+          "rotation": [
+            0,
+            -0.043090110335217195,
+            0,
+            "XYZ"
+          ],
+          "localBounds": {
+            "min": [
+              -0.009099327027797699,
+              0.04399999976158142,
+              0
+            ],
+            "max": [
+              0.009295759722590446,
+              0.08266666531562805,
+              0.06333333253860474
+            ]
+          }
+        },
+        {
+          "name": "Bandeira_cab",
+          "rotation": [
+            0,
+            -0.03642446954009787,
+            0,
+            "XYZ"
+          ],
+          "localBounds": {
+            "min": [
+              -0.009099327027797699,
+              0.04399999976158142,
+              0
+            ],
+            "max": [
+              0.009295759722590446,
+              0.08266666531562805,
+              0.06333333253860474
+            ]
+          }
+        }
+      ],
+      "version": 2,
+      "mobile": true,
+      "frameMs": {
+        "median": 66.69999999999982,
+        "p95": 150
+      }
+    },
+    {
+      "tipo": "caminhao-bolsonaro",
+      "status": "ok",
+      "rodas": 6,
+      "bandeiras": 3,
+      "vel": 0,
+      "procedural": false,
+      "origem": "v2",
+      "viewport": {
+        "width": 390,
+        "height": 844,
+        "maxProjectedX": 0.48253357372014055,
+        "maxProjectedY": 0.2912295855201436
+      },
+      "frontGlassZ": 6.55427914957311,
+      "flagAnchorDrift": 8.881784197001252e-16,
+      "box": {
+        "min": [
+          -1.9395169142899218,
+          1.1102230246251565e-16,
+          -8.5
+        ],
+        "max": [
+          1.9395169142899216,
+          6.8128422897485486,
+          8.5
+        ],
+        "size": [
+          3.8790338285798436,
+          6.8128422897485486,
+          17
+        ]
+      },
+      "meshes": [
+        {
+          "name": "Static_emerald",
+          "vertices": 44,
+          "vertexColors": true,
+          "color": "ffffff",
+          "roughness": 0.78,
+          "metalness": 0
+        },
+        {
+          "name": "Static_glass",
+          "vertices": 12,
+          "vertexColors": true,
+          "color": "ffffff",
+          "roughness": 0.78,
+          "metalness": 0
+        },
+        {
+          "name": "Static_charcoal",
+          "vertices": 294,
+          "vertexColors": true,
+          "color": "ffffff",
+          "roughness": 0.78,
+          "metalness": 0
+        },
+        {
+          "name": "Static_steel",
+          "vertices": 604,
+          "vertexColors": true,
+          "color": "ffffff",
+          "roughness": 0.38,
+          "metalness": 0.55
+        },
+        {
+          "name": "Static_chrome",
+          "vertices": 660,
+          "vertexColors": true,
+          "color": "ffffff",
+          "roughness": 0.38,
+          "metalness": 0.55
+        },
+        {
+          "name": "Static_light",
+          "vertices": 268,
+          "vertexColors": true,
+          "color": "ffffff",
+          "roughness": 0.78,
+          "metalness": 0
+        },
+        {
+          "name": "Static_amber",
+          "vertices": 40,
+          "vertexColors": true,
+          "color": "ffffff",
+          "roughness": 0.78,
+          "metalness": 0
+        },
+        {
+          "name": "Static_green",
+          "vertices": 1368,
+          "vertexColors": true,
+          "color": "ffffff",
+          "roughness": 0.78,
+          "metalness": 0
+        },
+        {
+          "name": "Static_yellow",
+          "vertices": 1368,
+          "vertexColors": true,
+          "color": "ffffff",
+          "roughness": 0.78,
+          "metalness": 0
+        },
+        {
+          "name": "Static_shade",
+          "vertices": 336,
+          "vertexColors": true,
+          "color": "ffffff",
+          "roughness": 0.78,
+          "metalness": 0
+        },
+        {
+          "name": "Static_red",
+          "vertices": 16,
+          "vertexColors": true,
+          "color": "ffffff",
+          "roughness": 0.78,
+          "metalness": 0
+        },
+        {
+          "name": "Bandeira_roof_0",
+          "vertices": 60,
+          "vertexColors": true,
+          "color": "ffffff",
+          "roughness": 0.78,
+          "metalness": 0
+        },
+        {
+          "name": "Bandeira_roof_1",
+          "vertices": 60,
+          "vertexColors": true,
+          "color": "ffffff",
+          "roughness": 0.78,
+          "metalness": 0
+        },
+        {
+          "name": "Bandeira_cab",
+          "vertices": 60,
+          "vertexColors": true,
+          "color": "ffffff",
+          "roughness": 0.78,
+          "metalness": 0
+        },
+        {
+          "name": "Pneu_0_L",
+          "vertices": 374,
+          "vertexColors": true,
+          "color": "ffffff",
+          "roughness": 0.78,
+          "metalness": 0
+        },
+        {
+          "name": "Pneu_1_R",
+          "vertices": 374,
+          "vertexColors": true,
+          "color": "ffffff",
+          "roughness": 0.78,
+          "metalness": 0
+        },
+        {
+          "name": "Pneu_2_L",
+          "vertices": 374,
+          "vertexColors": true,
+          "color": "ffffff",
+          "roughness": 0.78,
+          "metalness": 0
+        },
+        {
+          "name": "Pneu_3_R",
+          "vertices": 374,
+          "vertexColors": true,
+          "color": "ffffff",
+          "roughness": 0.78,
+          "metalness": 0
+        },
+        {
+          "name": "Pneu_4_L",
+          "vertices": 374,
+          "vertexColors": true,
+          "color": "ffffff",
+          "roughness": 0.78,
+          "metalness": 0
+        },
+        {
+          "name": "Pneu_5_R",
+          "vertices": 374,
+          "vertexColors": true,
+          "color": "ffffff",
+          "roughness": 0.78,
+          "metalness": 0
+        }
+      ],
+      "radii": [
+        0.7670087350660502,
+        0.7670087350660502,
+        0.7670087350660502,
+        0.7670087350660502,
+        0.7670087350660502,
+        0.7670087350660502
+      ],
+      "animatedWheels": 6,
+      "wheelCenterDrift": 1.1102230246251565e-16,
+      "wheelSpinDelta": [
+        0.26075322334207474,
+        0.26075322334207474,
+        0.26075322334207474,
+        0.26075322334207474,
+        0.26075322334207474,
+        0.26075322334207474
+      ],
+      "flags": [
+        {
+          "name": "Bandeira_roof_0",
+          "rotation": [
+            0,
+            -0.015785245246032892,
+            0,
+            "XYZ"
+          ],
+          "localBounds": {
+            "min": [
+              -0.009099327027797699,
+              0.04399999976158142,
+              0
+            ],
+            "max": [
+              0.009295759722590446,
+              0.08266666531562805,
+              0.06333333253860474
+            ]
+          }
+        },
+        {
+          "name": "Bandeira_roof_1",
+          "rotation": [
+            0,
+            -0.043090110335217195,
+            0,
+            "XYZ"
+          ],
+          "localBounds": {
+            "min": [
+              -0.009099327027797699,
+              0.04399999976158142,
+              0
+            ],
+            "max": [
+              0.009295759722590446,
+              0.08266666531562805,
+              0.06333333253860474
+            ]
+          }
+        },
+        {
+          "name": "Bandeira_cab",
+          "rotation": [
+            0,
+            -0.03642446954009787,
+            0,
+            "XYZ"
+          ],
+          "localBounds": {
+            "min": [
+              -0.009099327027797699,
+              0.04399999976158142,
+              0
+            ],
+            "max": [
+              0.009295759722590446,
+              0.08266666531562805,
+              0.06333333253860474
+            ]
+          }
+        }
+      ],
+      "version": 2,
+      "mobile": true,
+      "frameMs": {
+        "median": 33.399999999999636,
+        "p95": 100.09999999999945
+      }
+    }
+  ],
+  "locomotion": [],
+  "errors": [],
+  "requestFailures": [],
+  "limitations": [
+    "Chromium/SwiftShader; viewport mobile emulado, sem homologação de GPU móvel/Safari/iPhone físico."
+  ],
+  "origin": "http://127.0.0.1:42221",
+  "browser": "Chrome/154.0.8037.57",
+  "cdnTransport": "curl pelo proxy do ambiente, TLS verificado, módulos sem alteração",
+  "fallback": [
+    {
+      "tipo": "caminhao-lula",
+      "status": "ok",
+      "rodas": 1,
+      "bandeiras": 1,
+      "vel": 0,
+      "procedural": false,
+      "origem": "original"
+    },
+    {
+      "tipo": "caminhao-bolsonaro",
+      "status": "ok",
+      "rodas": 1,
+      "bandeiras": 1,
+      "vel": 0,
+      "procedural": false,
+      "origem": "original"
+    }
+  ],
+  "error": "TimeoutError: Navigation timeout of 30000 ms exceeded\n    at new Deferred (file:///tmp/agora-qa-tools/node_modules/puppeteer-core/lib/puppeteer/util/Deferred.js:57:34)\n    at Deferred.create (file:///tmp/agora-qa-tools/node_modules/puppeteer-core/lib/puppeteer/util/Deferred.js:18:16)\n    at new LifecycleWatcher (file:///tmp/agora-qa-tools/node_modules/puppeteer-core/lib/puppeteer/cdp/LifecycleWatcher.js:70:46)\n    at CdpFrame.goto (file:///tmp/agora-qa-tools/node_modules/puppeteer-core/lib/puppeteer/cdp/Frame.js:152:29)\n    at CdpFrame.<anonymous> (file:///tmp/agora-qa-tools/node_modules/puppeteer-core/lib/puppeteer/util/decorators.js:101:27)\n    at CdpPage.goto (file:///tmp/agora-qa-tools/node_modules/puppeteer-core/lib/puppeteer/api/Page.js:582:43)\n    at file:///workspace/agora-brasil/scripts/trucks-v2-browser-qa.mjs:89:13"
+}
