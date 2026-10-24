@@ -1,8 +1,11 @@
-name: Pacote de preview isolado - PR9 ragdoll
+name: Pacote de preview isolado
 on:
   push:
     branches:
       - preview/ragdoll-pr9-20261023
+  pull_request:
+    branches:
+      - fix/animacao-corrida-higgsfield-v2-20261023
   workflow_dispatch:
 permissions:
   contents: read
@@ -12,6 +15,8 @@ jobs:
     timeout-minutes: 12
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
@@ -23,23 +28,16 @@ jobs:
           npm run check
           node --check public/ragdoll-experimental.mjs
           node --check test/ragdoll-experimental.test.mjs
+          node --check scripts/package-preview.mjs
+          node --check scripts/sprint-contact-qa.mjs
       - name: Executar suite automatizada
         run: timeout 100s node --test --test-timeout=12000 --test-force-exit
       - name: Montar pacote de preview separado
-        run: |
-          set -eu
-          mkdir -p release
-          cp ops/staging/squarecloud-preview.app release/squarecloud.app
-          cp package.json package-lock.json server.js combate.js debate.js anuncios.js pagamentos.js release/
-          cp -a public release/
-          grep -qx 'SUBDOMAIN=agora-brasil-preview-qa' release/squarecloud.app
-          if grep -q 'SUBDOMAIN=agora-brasil-multiplayer' release/squarecloud.app; then
-            echo 'Bloqueado: configuracao do app de producao'; exit 1
-          fi
-          (cd release && zip -qr ../agora-brasil-preview-qa.zip .)
-          unzip -t agora-brasil-preview-qa.zip | tail -1
+        run: node scripts/package-preview.mjs
       - uses: actions/upload-artifact@v4
         with:
-          name: agora-brasil-pr9-ragdoll-preview
-          path: agora-brasil-preview-qa.zip
-          retention-days: 7
+          name: agora-brasil-release-candidate-preview
+          path: |
+            agora-brasil-preview-qa.zip
+            agora-brasil-preview-qa.zip.sha256
+          retention-days: 14

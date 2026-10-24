@@ -5,12 +5,15 @@ on:
       - 'public/**'
       - 'server.js'
       - 'test/**'
+      - 'scripts/**'
       - '.github/workflows/desfile-browser-smoke.yml'
   workflow_dispatch:
 jobs:
   smoke-browser:
     runs-on: ubuntu-latest
     timeout-minutes: 10
+    env:
+      CHROME_BIN: /usr/bin/google-chrome
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -26,6 +29,17 @@ jobs:
         run: node scripts/ci-vehicle-run-smoke.mjs
       - name: Validar GLBs V2 e comparar prévias desktop/mobile
         run: node scripts/validate-trucks-v2.mjs && node scripts/trucks-v2-browser-qa.mjs
+      - name: Homologação local HTTPS WSS e contato do Sprint preservado
+        env:
+          QA_RC: '1'
+          QA_OUTPUT: evidence/release-candidate/mobile
+        run: |
+          node scripts/mobile-readiness-qa.mjs
+          QA_OUTPUT=evidence/release-candidate/contact node scripts/sprint-contact-qa.mjs
+      - name: Layout da HUD
+        env:
+          QA_OUTPUT: evidence/release-candidate/layout
+        run: npm run test:visual:layout
       - uses: actions/upload-artifact@v4
         if: always()
         with:
@@ -33,5 +47,6 @@ jobs:
           path: |
             evidence/vehicle-run-smoke/
             evidence/trucks-v2/
+            evidence/release-candidate/
           if-no-files-found: warn
           retention-days: 14

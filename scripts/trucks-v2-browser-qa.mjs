@@ -76,7 +76,7 @@ try{
  }
  // Fallback real de carregamento: falha de V2 mantém os originais disponíveis.
  const fallback=await browser.newPage();await configureQaCdn(fallback,{abortV2:true});
- await fallback.goto(origin+'/preview-caminhoes.html?trucksV2=1');
+ await fallback.goto(origin+'/preview-caminhoes.html?trucksV2=1',{waitUntil:'domcontentloaded'});
  await fallback.waitForFunction(()=>window.__truckPreview?.status==='ok');
  result.fallback=[];
  for(const button of ['lula','bolsonaro']){

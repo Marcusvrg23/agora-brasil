@@ -4,7 +4,7 @@ import puppeteer from 'puppeteer-core';
 import {configureQaCdn} from './qa-cdn-transport.mjs';
 const require=createRequire(import.meta.url);
 const {server}=require('../server.js');
-const evidence='evidence/vehicle-run-smoke';
+const evidence=process.env.QA_OUTPUT||'evidence/vehicle-run-smoke';
 fs.mkdirSync(evidence,{recursive:true});
 let browser;
 const result={at:new Date().toISOString(),ok:false,vehicles:[],run:null,errors:[],limitations:['Chromium + SwiftShader emulado; não equivale a Safari em iPhone físico.']};
